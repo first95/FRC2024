@@ -87,6 +87,9 @@ public class NoteHandler extends SubsystemBase {
   public void setIntakeSpeed(double speed){
     Intake_Roller.set(speed);
   }
+  public void setLoaderSpeed(double speed){
+    loader.set(speed);
+  }
   public void setShooterRPM(double RPM){
     shooterPID.setReference(RPM, ControlType.kVelocity , 0, feedforward.calculate(RPM));
   }
