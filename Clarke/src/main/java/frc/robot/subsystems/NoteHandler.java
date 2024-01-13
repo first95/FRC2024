@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,12 +23,14 @@ public class NoteHandler extends SubsystemBase {
   private final CANSparkMax Intake_Roller,shooter,loader;
   private final SparkPIDController shooterPID;
   private final SimpleMotorFeedforward feedforward;
+  private final DigitalInput loaderSensor;
   public NoteHandler() {
     Intake_Roller = new CANSparkMax(NoteHandlerConstants.INTAKE_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
     shooter = new CANSparkMax(NoteHandlerConstants.SHOOTER_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(NoteHandlerConstants.LOADER_MOTOR_CONTROLLER_ID,  MotorType.kBrushless);
     shooterPID = shooter.getPIDController();
     feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS,NoteHandlerConstants.LOADER_KV,NoteHandlerConstants.LOADER_KA)
+    loaderSensor = new DigitalInput(NoteHandlerConstants.LOADERSENSOR_ID)
 
     Intake_Roller.restoreFactoryDefaults();
     shooter.restoreFactoryDefaults();
@@ -92,5 +95,8 @@ public class NoteHandler extends SubsystemBase {
   }
   public void setShooterRPM(double RPM){
     shooterPID.setReference(RPM, ControlType.kVelocity , 0, feedforward.calculate(RPM));
+  }
+  public boolean getLoaderSensor(){
+    return loaderSensor.get();
   }
 }
