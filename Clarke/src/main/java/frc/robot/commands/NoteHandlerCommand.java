@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.NoteHandler;
 
 import java.util.function.DoubleSupplier;
@@ -13,10 +12,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class NoteHandlerCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final NoteHandler noteHandler;
   private final DoubleSupplier intakeSpeedAxis;
 
+  private enum State {
+    SHOOTING, IDLE, INTAKING
+  }
+
+  private State currentState;
+  private double intakespeed;
+  private double shootingspeed;
+  private double loaderspeed;
+  private boolean sensorvalue;
+  
   public NoteHandlerCommand(NoteHandler noteHandler, DoubleSupplier intakeSpeedAxis) {
     this.noteHandler = noteHandler;
     this.intakeSpeedAxis = intakeSpeedAxis;
@@ -26,7 +34,10 @@ public class NoteHandlerCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    
+    currentState = State.IDLE;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
