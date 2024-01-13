@@ -273,8 +273,21 @@ public final class Constants {
     }
 
     public class NoteHandlerConstants {
-        public static final int INTAKE_MOTOR_CONTROLLER_ID = 10;
+        public static final int LOADER_MOTOR_CONTROLLER_ID = 10;
+        public static final int INTAKE_MOTOR_CONTROLLER_ID = 11;
+        public static final int SHOOTER_MOTOR_CONTROLLER_ID = 13;
+        
         public static final boolean INVERT_INTAKE_ROLLER = false;
+        public static final boolean INVERT_LOADER = false;
+        public static final boolean INVERT_SHOOTER = false;
+        public static final double SHOOTER_KP = 0;
+        public static final double SHOOTER_KI = 0;
+        public static final double SHOOTER_KD = 0;
+        public static final double SHOOTER_KFF = 0;
+    
+        public static final double LOADER_KS = 0;
+        public static final double LOADER_KV = 0;
+        public static final double LOADER_KA = 0;
     }
 
     public static class Vision {
