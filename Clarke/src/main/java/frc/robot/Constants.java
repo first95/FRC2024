@@ -273,7 +273,7 @@ public final class Constants {
     }
 
     public class NoteHandlerConstants {
-
+        public static final int INTAKE_MOTOR_CONTROLLER_ID = 10;
     }
 
     public static class Vision {

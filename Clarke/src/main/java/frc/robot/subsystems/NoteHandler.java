@@ -4,13 +4,23 @@
 
 package frc.robot.subsystems;
 
+import java.lang.reflect.Method;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants.NoteHandlerConstants;
 public class NoteHandler extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public NoteHandler() {}
 
+  private final CANSparkMax Intake_Roller;
+  
+  public NoteHandler() {
+    Intake_Roller = new CANSparkMax(NoteHandlerConstants.INTAKE_MOTOR_CONTROLLER_ID, MotorType.kBrushless)
+    
+  }
   /**
    * Example command factory method.
    *
@@ -44,4 +54,8 @@ public class NoteHandler extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
+  public void setIntakespeed(double speed){
+    Intake_Roller.set(speed);
+  }
+  
 }
