@@ -5,8 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.Drivebase;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,16 +22,31 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private Timer disabledTimer;
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
-  public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+  public void robotInit() { 
+        
+    // Instantiate our RobotContainer.  
+    // This will perform all our button bindings, and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
+    // immediately when disabled, but then also let it be pushed more 
+    disabledTimer = new Timer();
+
+    if (SmartDashboard.getNumber("KP", 1000000) == 1000000) {
+      SmartDashboard.putNumber("KP", Drivebase.VELOCITY_KP);
+      SmartDashboard.putNumber("KI", Drivebase.VELOCITY_KI);
+      SmartDashboard.putNumber("KD", Drivebase.VELOCITY_KD);
+      SmartDashboard.putNumber("KS", Drivebase.KS);
+      SmartDashboard.putNumber("KV", Drivebase.KV);
+      SmartDashboard.putNumber("KA", Drivebase.KA);
+    }
   }
 
   /**
@@ -48,14 +67,25 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.setMotorBrake(true);
+    disabledTimer.reset();
+    disabledTimer.start();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (disabledTimer.hasElapsed(Constants.Drivebase.WHEEL_LOCK_TIME)) {
+      m_robotContainer.setMotorBrake(false);
+      disabledTimer.stop();
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.setMotorBrake(true);
+    m_robotContainer.prepareDriveForAuto();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -77,6 +107,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.setMotorBrake(true);
+    m_robotContainer.prepareDriveForTeleop();
   }
 
   /** This function is called periodically during operator control. */
