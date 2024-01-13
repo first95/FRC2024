@@ -19,7 +19,8 @@ public class NoteHandler extends SubsystemBase {
   
   public NoteHandler() {
     Intake_Roller = new CANSparkMax(NoteHandlerConstants.INTAKE_MOTOR_CONTROLLER_ID, MotorType.kBrushless)
-    
+    Intake_Roller.restoreFactoryDefaults();
+    Intake_Roller.burnFlash();
   }
   /**
    * Example command factory method.
@@ -57,5 +58,5 @@ public class NoteHandler extends SubsystemBase {
   public void setIntakespeed(double speed){
     Intake_Roller.set(speed);
   }
-  
+
 }
