@@ -6,9 +6,11 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.NoteHandlerCommand;
 import frc.robot.drivebase.AbsoluteDrive;
 import frc.robot.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.NoteHandler;
 import frc.robot.subsystems.SwerveBase;
 
 import java.util.NoSuchElementException;
@@ -37,6 +39,9 @@ public class RobotContainer {
 
   private final AbsoluteDrive absoluteDrive, closedAbsoluteDrive;
   private final TeleopDrive openFieldRel, openRobotRel, closedFieldRel, closedRobotRel;
+
+  private final NoteHandlerCommand noteHandlerController;
+  private final NoteHandler noteHandler;
 
   private Alliance alliance;
 
@@ -116,7 +121,9 @@ public class RobotContainer {
       }
       
     }).ignoringDisable(true));
-      
+
+    noteHandler = new NoteHandler();
+    noteHandlerController = new NoteHandlerCommand(noteHandler, () -> operatorController.getLeftTriggerAxis());
   }
 
   /**
