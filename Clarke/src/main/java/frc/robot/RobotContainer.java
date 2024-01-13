@@ -5,10 +5,22 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.drivebase.AbsoluteDrive;
+import frc.robot.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.SwerveBase;
+
+import java.util.NoSuchElementException;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -20,16 +32,91 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final SwerveBase drivebase = new SwerveBase();
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
+  private final AbsoluteDrive absoluteDrive, closedAbsoluteDrive;
+  private final TeleopDrive openFieldRel, openRobotRel, closedFieldRel, closedRobotRel;
+
+  private Alliance alliance;
+
+  private SendableChooser<Command> driveModeSelector;
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  CommandJoystick driverController = new CommandJoystick(OperatorConstants.DRIVE_CONTROLLER_PORT);
+  CommandJoystick rotationController = new CommandJoystick(OperatorConstants.ANGLE_CONTROLLER_PORT);
+  CommandXboxController operatorController = new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    absoluteDrive = new AbsoluteDrive(
+      drivebase,
+      // Applies deadbands and inverts controls because joysticks are back-right positive while robot
+      // controls are front-left positive
+      () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? -driverController.getY() : 0,
+      () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? -driverController.getX() : 0,
+      () -> -rotationController.getX(),
+      () -> -rotationController.getY(), true);
+
+    closedAbsoluteDrive = new AbsoluteDrive(
+      drivebase,
+      // Applies deadbands and inverts controls because joysticks are back-right positive while robot
+      // controls are front-left positive
+      () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? -driverController.getY() : 0,
+      () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? -driverController.getX() : 0,
+      () -> -rotationController.getX(),
+      () -> -rotationController.getY(), false);
+
+    openRobotRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? -driverController.getY() : 0,
+      () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? -driverController.getX() : 0,
+      () -> -driverController.getTwist(), () -> false, true);
+    
+    closedRobotRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? -driverController.getY() : 0,
+      () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? -driverController.getX() : 0,
+      () -> -driverController.getTwist(), () -> false, false);
+    
+    openFieldRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? -driverController.getY() : 0,
+      () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? -driverController.getX() : 0,
+      () -> -driverController.getTwist(), () -> true, true);
+
+    closedFieldRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(driverController.getY()) > OperatorConstants.LEFT_Y_DEADBAND) ? -driverController.getY() : 0,
+      () -> (Math.abs(driverController.getX()) > OperatorConstants.LEFT_X_DEADBAND) ? -driverController.getX() : 0,
+      () -> -driverController.getTwist(), () -> true, false);
+
+    driveModeSelector = new SendableChooser<>();
+    driveModeSelector.setDefaultOption("AbsoluteDrive", absoluteDrive);
+    driveModeSelector.addOption("Field Relative", openFieldRel);
+    driveModeSelector.addOption("Robot Relative", openRobotRel);
+    driveModeSelector.addOption("Absolute (Closed)", closedAbsoluteDrive);
+    driveModeSelector.addOption("Field Relative (Closed)", closedFieldRel);
+    driveModeSelector.addOption("Robot Relative (Closed)", closedRobotRel);
+    
+    SmartDashboard.putData(driveModeSelector);
+
+    //SmartDashboard.putData("SetModuleGains", new InstantCommand(drivebase::setVelocityModuleGains).ignoringDisable(true));
+    SmartDashboard.putNumber("ANGLE", 0);
+    //SmartDashboard.putData("setAngle", new InstantCommand(() -> drivebase.setGyro(new Rotation2d(SmartDashboard.getNumber("ANGLE", 0)))).ignoringDisable(true));
+    SmartDashboard.putData("sendAlliance", new InstantCommand(() -> {
+      try {
+        drivebase.setAlliance(DriverStation.getAlliance().get());
+      } catch (NoSuchElementException e) {
+        drivebase.setAlliance(null);
+        DriverStation.reportWarning("Alliance failed to send!", false);
+      }
+      
+    }).ignoringDisable(true));
+      
   }
 
   /**
@@ -46,9 +133,7 @@ public class RobotContainer {
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    driverController.button(2).onTrue((new InstantCommand(drivebase::zeroGyro)));
   }
 
   /**
@@ -58,6 +143,21 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return null;
+  }
+
+  public void setDriveMode() {
+    //drivebase.setDefaultCommand();
+  }
+  public void prepareDriveForTeleop() {
+    drivebase.setDefaultCommand(closedAbsoluteDrive);
+    absoluteDrive.setHeading(drivebase.getPose().getRotation());
+    closedAbsoluteDrive.setHeading(drivebase.getPose().getRotation());
+  }
+  public void prepareDriveForAuto() {
+    drivebase.setDefaultCommand(new RepeatCommand(new InstantCommand(() -> {}, drivebase)));
+  }
+  public void setMotorBrake(boolean brake) {
+    drivebase.setMotorBrake(brake);
   }
 }
