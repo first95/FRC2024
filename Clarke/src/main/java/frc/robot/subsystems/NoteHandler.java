@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.lang.reflect.Method;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -20,6 +21,8 @@ public class NoteHandler extends SubsystemBase {
   public NoteHandler() {
     Intake_Roller = new CANSparkMax(NoteHandlerConstants.INTAKE_MOTOR_CONTROLLER_ID, MotorType.kBrushless)
     Intake_Roller.restoreFactoryDefaults();
+    Intake_Roller.setInverted(NoteHandlerConstants.INVERT_INTAKE_ROLLER);
+    Intake_Roller.setIdleMode(IdleMode.kBrake);
     Intake_Roller.burnFlash();
   }
   /**
