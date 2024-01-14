@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
+
 /** An example command that uses an example subsystem. */
 public class NoteHandlerCommand extends Command {
   private final NoteHandler noteHandler;
@@ -35,15 +36,41 @@ public class NoteHandlerCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
     currentState = State.IDLE;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    noteHandler.setIntakeSpeed(intakeSpeedAxis.getAsDouble());
+    sensorvalue = noteHandler.getLoaderSensor();
+    switch(currentState){
+      case IDLE:
+      if(sensorvalue == true){//and user input
+        currentState = State.SHOOTING;
+        intakespeed = 0;
+      }
+      if(sensorvalue == false){//and user input
+        currentState = State.INTAKING;
+      }
+      break;
+
+      case SHOOTING:
+        if (sensorvalue == false){
+          currentState = State.IDLE;
+        }
+      break;
+
+      case INTAKING:
+        if (sensorvalue == true){
+          currentState = State.IDLE;
+        }
+        intakespeed = intakeSpeedAxis.getAsDouble();
+      break;
+    }
+    noteHandler.setIntakeSpeed(intakespeed);
   }
+
+
 
   // Called once the command ends or is interrupted.
   @Override
