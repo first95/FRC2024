@@ -22,9 +22,7 @@ public class NoteHandlerCommand extends Command {
   }
 
   private State currentState;
-  private double intakespeed;
-  private double shootingspeed;
-  private double loaderspeed;
+  private double intakeSpeed, shootingSpeed, loaderSpeed;
   private boolean sensorvalue;
   
   public NoteHandlerCommand(NoteHandler noteHandler, DoubleSupplier intakeSpeedAxis) {
@@ -44,11 +42,12 @@ public class NoteHandlerCommand extends Command {
   @Override
   public void execute() {
     sensorvalue = noteHandler.getLoaderSensor();
+
     switch(currentState){
       case IDLE:
       if(sensorvalue == true){//and user input
         currentState = State.SHOOTING;
-        intakespeed = 0;
+        intakeSpeed = 0;
       }
       if(sensorvalue == false){//and user input
         currentState = State.INTAKING;
@@ -59,20 +58,20 @@ public class NoteHandlerCommand extends Command {
         if (sensorvalue == false){
           currentState = State.IDLE;
         }
-        loaderspeed=Constants.NoteHandlerConstants.LOADERSPEED;
-        shootingspeed=Constants.NoteHandlerConstants.SHOOTERSPEED;
+        loaderSpeed=Constants.NoteHandlerConstants.LOADERSPEED;
+        shootingSpeed=Constants.NoteHandlerConstants.SHOOTERSPEED;
       break;
 
       case INTAKING:
         if (sensorvalue == true){
           currentState = State.IDLE;
         }
-        intakespeed = intakeSpeedAxis.getAsDouble();
+        intakeSpeed = intakeSpeedAxis.getAsDouble();
       break;
     }
-    noteHandler.setIntakeSpeed(intakespeed);
-    noteHandler.setShooterRPM(shootingspeed);
-    noteHandler.setLoaderSpeed(loaderspeed);
+    noteHandler.setIntakeSpeed(intakeSpeed);
+    noteHandler.setShooterRPM(shootingSpeed);
+    noteHandler.setLoaderSpeed(loaderSpeed);
   }
 
 
