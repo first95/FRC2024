@@ -143,7 +143,7 @@ public class RobotContainer {
       })
     );
     shooterTester.addRequirements(noteHandler);
-    noteHandler.setDefaultCommand(shooterTester);
+    noteHandler.setDefaultCommand(noteHandlerController);
   }
 
   /**
