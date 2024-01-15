@@ -142,6 +142,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("RealShooterRPM", noteHandler.getShooterRPM());
       })
     );
+    shooterTester.addRequirements(noteHandler);
     noteHandler.setDefaultCommand(shooterTester);
   }
 

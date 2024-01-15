@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.NoteHandlerConstants;
@@ -31,8 +32,8 @@ public class NoteHandler extends SubsystemBase {
     shooter = new CANSparkMax(NoteHandlerConstants.SHOOTER_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(NoteHandlerConstants.LOADER_MOTOR_CONTROLLER_ID,  MotorType.kBrushless);
     shooterPID = shooter.getPIDController();
-    feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS, NoteHandlerConstants.LOADER_KV, NoteHandlerConstants.LOADER_KA);
-    loaderSensor = new DigitalInput(NoteHandlerConstants.LOADERSENSOR_ID);
+    feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.SHOOTER_KS, NoteHandlerConstants.SHOOTER_KV, NoteHandlerConstants.SHOOTER_KA);
+    loaderSensor = new DigitalInput(NoteHandlerConstants.LOADER_SENSOR_ID);
     shooterEncoder = shooter.getEncoder();
 
     Intake_Roller.restoreFactoryDefaults();
@@ -84,6 +85,7 @@ public class NoteHandler extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("ShooterVolts", shooter.get() * shooter.getBusVoltage());
   }
 
   @Override

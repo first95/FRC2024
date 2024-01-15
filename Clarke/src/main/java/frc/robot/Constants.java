@@ -276,7 +276,7 @@ public final class Constants {
         public static final int LOADER_MOTOR_CONTROLLER_ID = 10;
         public static final int INTAKE_MOTOR_CONTROLLER_ID = 11;
         public static final int SHOOTER_MOTOR_CONTROLLER_ID = 13;
-        public static final int LOADERSENSOR_ID = 0;
+        public static final int LOADER_SENSOR_ID = 0;
 
         public static final boolean INVERT_INTAKE_ROLLER = false;
         public static final boolean INVERT_LOADER = false;
@@ -286,12 +286,12 @@ public final class Constants {
         public static final double SHOOTER_KD = 0;
         public static final double SHOOTER_KFF = 0;
     
-        public static final double LOADER_KS = 0;
-        public static final double LOADER_KV = 0;
-        public static final double LOADER_KA = 0;
+        public static final double SHOOTER_KS = 0;
+        public static final double SHOOTER_KV = 0;
+        public static final double SHOOTER_KA = 0;
 
-        public static final double SHOOTER_SPEED=0;
-        public static final double LOADERSPEED=0;
+        public static final double SHOOTER_SPEED = 4000;
+        public static final double LOADER_SPEED = 0.8;
         
         public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }

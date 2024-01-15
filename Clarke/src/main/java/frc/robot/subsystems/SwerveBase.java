@@ -364,7 +364,7 @@ public class SwerveBase extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Gyro", getYaw().toString());
-    SmartDashboard.putString("alliance", alliance.toString());
+    SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded) { 

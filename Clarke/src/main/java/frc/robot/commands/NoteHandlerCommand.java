@@ -76,7 +76,7 @@ public class NoteHandlerCommand extends Command {
 
       case SHOOTING:
         intakeSpeed = 0;
-        loaderSpeed = NoteHandlerConstants.LOADERSPEED;
+        loaderSpeed = NoteHandlerConstants.LOADER_SPEED;
         shootingSpeed = NoteHandlerConstants.SHOOTER_SPEED;
 
         if (sensorvalue == false){
