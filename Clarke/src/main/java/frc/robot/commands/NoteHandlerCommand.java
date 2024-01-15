@@ -47,19 +47,25 @@ public class NoteHandlerCommand extends Command {
     sensorvalue = noteHandler.getLoaderSensor();
     shooterbutton = shooterButtonSupplier.getAsBoolean();
     commandedIntakeSpeed = intakeSpeedAxis.getAsDouble();
-    shooterAtSpeed = (Math.abs(NoteHandlerConstants.SHOOTERSPEED-noteHandler.getShooterRPM())
-    <=NoteHandlerConstants.SHOOTERSPEEDTOLERANCE);
+    shooterAtSpeed = (Math.abs(NoteHandlerConstants.SHOOTER_SPEED - noteHandler.getShooterRPM())
+    <= NoteHandlerConstants.SHOOTER_SPEED_TOLERANCE);
+
     switch(currentState){
       case IDLE:
       intakeSpeed = commandedIntakeSpeed;
       loaderSpeed = commandedIntakeSpeed;
+      shootingSpeed = 0;
+
       if (sensorvalue){
         currentState = State.HOLDING;
       }
       break;
 
       case SPOOLING:
-        shootingSpeed = NoteHandlerConstants.SHOOTERSPEED;
+        shootingSpeed = NoteHandlerConstants.SHOOTER_SPEED;
+        intakeSpeed = 0;
+        loaderSpeed = 0;
+
         if (!shooterbutton){
           currentState = State.HOLDING;
         }
@@ -69,21 +75,25 @@ public class NoteHandlerCommand extends Command {
       break;
 
       case SHOOTING:
-        intakeSpeed = commandedIntakeSpeed;
-        loaderSpeed = commandedIntakeSpeed;
+        intakeSpeed = 0;
+        loaderSpeed = NoteHandlerConstants.LOADERSPEED;
+        shootingSpeed = NoteHandlerConstants.SHOOTER_SPEED;
+
         if (sensorvalue == false){
           currentState = State.IDLE;
         }
-        loaderSpeed = NoteHandlerConstants.LOADERSPEED;
       break;
       
       case HOLDING:
-        intakeSpeed=0;
+        intakeSpeed = 0;
+        loaderSpeed = 0;
+        shootingSpeed = 0;
         if (shooterbutton){
           currentState = State.SPOOLING;
         }
       break;
     }
+    
     noteHandler.setIntakeSpeed(intakeSpeed);
     noteHandler.setShooterRPM(shootingSpeed);
     noteHandler.setLoaderSpeed(loaderSpeed);

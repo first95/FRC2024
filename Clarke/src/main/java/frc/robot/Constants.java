@@ -290,10 +290,10 @@ public final class Constants {
         public static final double LOADER_KV = 0;
         public static final double LOADER_KA = 0;
 
-        public static final double SHOOTERSPEED=0;
+        public static final double SHOOTER_SPEED=0;
         public static final double LOADERSPEED=0;
         
-        public static final double SHOOTERSPEEDTOLERANCE = 100;
+        public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }
 
     public static class Vision {
