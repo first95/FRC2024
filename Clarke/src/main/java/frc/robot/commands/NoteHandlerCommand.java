@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.NoteHandler;
 
 import java.util.function.DoubleSupplier;
@@ -58,8 +59,8 @@ public class NoteHandlerCommand extends Command {
         if (sensorvalue == false){
           currentState = State.IDLE;
         }
-        noteHandler.setShooterRPM(shootingspeed);
-        noteHandler.setLoaderSpeed(loaderspeed);
+        loaderspeed=Constants.NoteHandlerConstants.LOADERSPEED;
+        shootingspeed=Constants.NoteHandlerConstants.SHOOTERSPEED;
       break;
 
       case INTAKING:
@@ -70,6 +71,8 @@ public class NoteHandlerCommand extends Command {
       break;
     }
     noteHandler.setIntakeSpeed(intakespeed);
+    noteHandler.setShooterRPM(shootingspeed);
+    noteHandler.setLoaderSpeed(loaderspeed);
   }
 
 

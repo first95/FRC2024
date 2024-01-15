@@ -289,6 +289,9 @@ public final class Constants {
         public static final double LOADER_KS = 0;
         public static final double LOADER_KV = 0;
         public static final double LOADER_KA = 0;
+
+        public static final double SHOOTERSPEED=0;
+        public static final double LOADERSPEED=0;
     }
 
     public static class Vision {
