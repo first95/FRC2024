@@ -58,6 +58,8 @@ public class NoteHandlerCommand extends Command {
         if (sensorvalue == false){
           currentState = State.IDLE;
         }
+        noteHandler.setShooterRPM(shootingspeed);
+        noteHandler.setLoaderSpeed(loaderspeed);
       break;
 
       case INTAKING:
