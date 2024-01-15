@@ -287,11 +287,11 @@ public final class Constants {
         public static final double SHOOTER_KFF = 0;
     
         public static final double SHOOTER_KS = 0;
-        public static final double SHOOTER_KV = 0;
+        public static final double SHOOTER_KV = 12 / NEO_FREE_SPEED;
         public static final double SHOOTER_KA = 0;
 
         public static final double SHOOTER_SPEED = 4000;
-        public static final double LOADER_SPEED = 0.8;
+        public static final double LOADER_SPEED = 0.1;
         
         public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }
