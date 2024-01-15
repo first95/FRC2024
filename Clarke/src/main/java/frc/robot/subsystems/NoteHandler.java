@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.lang.reflect.Method;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -24,6 +25,7 @@ public class NoteHandler extends SubsystemBase {
   private final SparkPIDController shooterPID;
   private final SimpleMotorFeedforward feedforward;
   private final DigitalInput loaderSensor;
+  private final RelativeEncoder shooterEncoder;
   public NoteHandler() {
     Intake_Roller = new CANSparkMax(NoteHandlerConstants.INTAKE_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
     shooter = new CANSparkMax(NoteHandlerConstants.SHOOTER_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
@@ -31,6 +33,7 @@ public class NoteHandler extends SubsystemBase {
     shooterPID = shooter.getPIDController();
     feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS,NoteHandlerConstants.LOADER_KV,NoteHandlerConstants.LOADER_KA);
     loaderSensor = new DigitalInput(NoteHandlerConstants.LOADERSENSOR_ID);
+    shooterEncoder = shooter.getEncoder();
 
     Intake_Roller.restoreFactoryDefaults();
     shooter.restoreFactoryDefaults();
@@ -98,5 +101,8 @@ public class NoteHandler extends SubsystemBase {
   }
   public boolean getLoaderSensor(){
     return loaderSensor.get();
+  }
+  public double getShooterRPM(){
+    return shooterEncoder.getVelocity();
   }
 }

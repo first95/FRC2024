@@ -5,8 +5,10 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.NoteHandlerConstants;
 import frc.robot.subsystems.NoteHandler;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,18 +18,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class NoteHandlerCommand extends Command {
   private final NoteHandler noteHandler;
   private final DoubleSupplier intakeSpeedAxis;
-
+  private final BooleanSupplier shooterButtonSupplier;
   private enum State {
-    SHOOTING, IDLE, INTAKING
+    SHOOTING, IDLE, HOLDING, SPOOLING
   }
 
   private State currentState;
-  private double intakeSpeed, shootingSpeed, loaderSpeed;
-  private boolean sensorvalue;
+  private double intakeSpeed, shootingSpeed, loaderSpeed, commandedIntakeSpeed;
+  private boolean sensorvalue, shooterbutton, shooterAtSpeed;
   
-  public NoteHandlerCommand(NoteHandler noteHandler, DoubleSupplier intakeSpeedAxis) {
+  public NoteHandlerCommand(NoteHandler noteHandler, DoubleSupplier intakeSpeedAxis, BooleanSupplier shooterButtonSupplier) {
     this.noteHandler = noteHandler;
     this.intakeSpeedAxis = intakeSpeedAxis;
+    this.shooterButtonSupplier = shooterButtonSupplier;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(noteHandler);
   }
@@ -42,31 +45,43 @@ public class NoteHandlerCommand extends Command {
   @Override
   public void execute() {
     sensorvalue = noteHandler.getLoaderSensor();
-
+    shooterbutton = shooterButtonSupplier.getAsBoolean();
+    commandedIntakeSpeed = intakeSpeedAxis.getAsDouble();
+    shooterAtSpeed = (Math.abs(NoteHandlerConstants.SHOOTERSPEED-noteHandler.getShooterRPM())
+    <=NoteHandlerConstants.SHOOTERSPEEDTOLERANCE);
     switch(currentState){
       case IDLE:
-      if(sensorvalue == true){//and user input
-        currentState = State.SHOOTING;
-        intakeSpeed = 0;
+      intakeSpeed = commandedIntakeSpeed;
+      loaderSpeed = commandedIntakeSpeed;
+      if (sensorvalue){
+        currentState = State.HOLDING;
       }
-      if(sensorvalue == false){//and user input
-        currentState = State.INTAKING;
-      }
+      break;
+
+      case SPOOLING:
+        shootingSpeed = NoteHandlerConstants.SHOOTERSPEED;
+        if (!shooterbutton){
+          currentState = State.HOLDING;
+        }
+        if (shooterbutton && shooterAtSpeed){
+          currentState = State.SHOOTING;
+        }
       break;
 
       case SHOOTING:
+        intakeSpeed = commandedIntakeSpeed;
+        loaderSpeed = commandedIntakeSpeed;
         if (sensorvalue == false){
           currentState = State.IDLE;
         }
-        loaderSpeed=Constants.NoteHandlerConstants.LOADERSPEED;
-        shootingSpeed=Constants.NoteHandlerConstants.SHOOTERSPEED;
+        loaderSpeed = NoteHandlerConstants.LOADERSPEED;
       break;
-
-      case INTAKING:
-        if (sensorvalue == true){
-          currentState = State.IDLE;
+      
+      case HOLDING:
+        intakeSpeed=0;
+        if (shooterbutton){
+          currentState = State.SPOOLING;
         }
-        intakeSpeed = intakeSpeedAxis.getAsDouble();
       break;
     }
     noteHandler.setIntakeSpeed(intakeSpeed);
