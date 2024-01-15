@@ -123,7 +123,11 @@ public class RobotContainer {
     }).ignoringDisable(true));
 
     noteHandler = new NoteHandler();
-    noteHandlerController = new NoteHandlerCommand(noteHandler, () -> operatorController.getLeftTriggerAxis());
+    noteHandlerController =
+      new NoteHandlerCommand(
+        noteHandler,
+        () -> operatorController.getLeftTriggerAxis(),
+        () -> driverController.button(1).getAsBoolean());
   }
 
   /**
