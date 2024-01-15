@@ -29,7 +29,7 @@ public class NoteHandler extends SubsystemBase {
     shooter = new CANSparkMax(NoteHandlerConstants.SHOOTER_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(NoteHandlerConstants.LOADER_MOTOR_CONTROLLER_ID,  MotorType.kBrushless);
     shooterPID = shooter.getPIDController();
-    feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS,NoteHandlerConstants.LOADER_KV,NoteHandlerConstants.LOADER_KA)
+    feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS,NoteHandlerConstants.LOADER_KV,NoteHandlerConstants.LOADER_KA);
     loaderSensor = new DigitalInput(NoteHandlerConstants.LOADERSENSOR_ID);
 
     Intake_Roller.restoreFactoryDefaults();
