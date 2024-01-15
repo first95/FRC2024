@@ -57,6 +57,11 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    // Test code field:
+    if (SmartDashboard.getNumber("ShooterSpeed", 123456789) == 123456789) {
+      SmartDashboard.putNumber("ShooterSpeed", 0);
+    }
+
     absoluteDrive = new AbsoluteDrive(
       drivebase,
       // Applies deadbands and inverts controls because joysticks are back-right positive while robot
@@ -128,6 +133,15 @@ public class RobotContainer {
         noteHandler,
         () -> operatorController.getLeftTriggerAxis(),
         () -> driverController.button(1).getAsBoolean());
+    
+    Command shooterTester = new RepeatCommand(
+      new InstantCommand(() -> {
+        noteHandler.setShooterSpeed(
+          operatorController.start().getAsBoolean() ? SmartDashboard.getNumber("ShooterSpeed", 0) : 0
+        );
+        SmartDashboard.putNumber("RealShooterRPM", noteHandler.getShooterRPM());
+      })
+    );
   }
 
   /**

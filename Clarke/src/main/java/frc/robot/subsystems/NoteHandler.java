@@ -31,7 +31,7 @@ public class NoteHandler extends SubsystemBase {
     shooter = new CANSparkMax(NoteHandlerConstants.SHOOTER_MOTOR_CONTROLLER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(NoteHandlerConstants.LOADER_MOTOR_CONTROLLER_ID,  MotorType.kBrushless);
     shooterPID = shooter.getPIDController();
-    feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS,NoteHandlerConstants.LOADER_KV,NoteHandlerConstants.LOADER_KA);
+    feedforward = new SimpleMotorFeedforward(NoteHandlerConstants.LOADER_KS, NoteHandlerConstants.LOADER_KV, NoteHandlerConstants.LOADER_KA);
     loaderSensor = new DigitalInput(NoteHandlerConstants.LOADERSENSOR_ID);
     shooterEncoder = shooter.getEncoder();
 
@@ -98,6 +98,9 @@ public class NoteHandler extends SubsystemBase {
   }
   public void setShooterRPM(double RPM){
     shooterPID.setReference(RPM, ControlType.kVelocity , 0, feedforward.calculate(RPM));
+  }
+  public void setShooterSpeed(double speed) {
+    shooter.set(speed);
   }
   public boolean getLoaderSensor(){
     return loaderSensor.get();
