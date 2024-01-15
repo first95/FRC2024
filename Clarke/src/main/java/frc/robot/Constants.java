@@ -286,8 +286,8 @@ public final class Constants {
         public static final double SHOOTER_KD = 0;
         public static final double SHOOTER_KFF = 0;
     
-        public static final double SHOOTER_KS = 0;
-        public static final double SHOOTER_KV = 12 / NEO_FREE_SPEED;
+        public static final double SHOOTER_KS = 0.017; //Measured on 2024-01-15
+        public static final double SHOOTER_KV = 1 / 470.124;
         public static final double SHOOTER_KA = 0;
 
         public static final double SHOOTER_SPEED = 4000;
