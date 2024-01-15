@@ -11,6 +11,7 @@ import frc.robot.subsystems.NoteHandler;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
@@ -55,7 +56,6 @@ public class NoteHandlerCommand extends Command {
       intakeSpeed = commandedIntakeSpeed;
       loaderSpeed = commandedIntakeSpeed;
       shootingSpeed = 0;
-
       if (sensorvalue){
         currentState = State.HOLDING;
       }
@@ -97,6 +97,12 @@ public class NoteHandlerCommand extends Command {
     noteHandler.setIntakeSpeed(intakeSpeed);
     noteHandler.setShooterRPM(shootingSpeed);
     noteHandler.setLoaderSpeed(loaderSpeed);
+    
+    SmartDashboard.putString("currentState",currentState.toString());
+    SmartDashboard.putNumber("intakeSpeed", intakeSpeed);
+    SmartDashboard.putNumber("shooterSpeed", shootingSpeed);
+    SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
+    SmartDashboard.putBoolean("sensor", sensorvalue);
   }
 
 
