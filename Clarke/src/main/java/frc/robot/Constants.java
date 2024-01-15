@@ -278,7 +278,7 @@ public final class Constants {
         public static final int SHOOTER_MOTOR_CONTROLLER_ID = 13;
         public static final int LOADER_SENSOR_ID = 0;
 
-        public static final boolean INVERT_INTAKE_ROLLER = false;
+        public static final boolean INVERT_INTAKE_ROLLER = true;
         public static final boolean INVERT_LOADER = false;
         public static final boolean INVERT_SHOOTER = false;
         public static final double SHOOTER_KP = 0;
