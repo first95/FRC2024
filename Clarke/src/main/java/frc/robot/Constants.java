@@ -26,7 +26,6 @@ import frc.lib.util.SwerveModuleConstants;
  */
 public final class Constants {
 
-    public static final int PNEUMATIC_HUB_ID = 60;
     public static final double KG_PER_LB = 0.453592;
     
     public static final double NEO_FREE_SPEED = 5676; // RPM
@@ -145,21 +144,21 @@ public final class Constants {
         public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 9;
             public static final int ANGLE_MOTOR_ID = 8;
-            public static final double ANGLE_OFFSET = 180 + 159.12; // 170.69 + 180;
+            public static final double ANGLE_OFFSET = 20;
             public static final SwerveModuleConstants CONSTANTS =
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_RIGHT_X, FRONT_RIGHT_Y);
         }
         public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 5;
             public static final int ANGLE_MOTOR_ID = 4;
-            public static final double ANGLE_OFFSET = 52.3 + 1.1; // 52.67;
+            public static final double ANGLE_OFFSET = 360 - 52;
             public static final SwerveModuleConstants CONSTANTS =
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_LEFT_X, BACK_LEFT_Y);
         }
         public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 3;
             public static final int ANGLE_MOTOR_ID = 2;
-            public static final double ANGLE_OFFSET =  127 + 8.5; // 224.08 - 90;
+            public static final double ANGLE_OFFSET = 225;
             public static final SwerveModuleConstants CONSTANTS =
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_RIGHT_X, BACK_RIGHT_Y);
         }
@@ -273,115 +272,30 @@ public final class Constants {
         public static final double RIGHT_Y_DEADBAND = 0.05;
     }
 
-    public static final class ArmConstants {
-        public static final int ARM_MOTOR_ID = 10; 
-        public static final int ARM_MOTOR_FOLLOWER_ID = 11; 
-        public static final int GRIPPER_SOLENOID_ID = 1;
-        public static final int CUBE_SENSOR_ID = 0;
+    public class NoteHandlerConstants {
+        public static final int LOADER_MOTOR_CONTROLLER_ID = 10;
+        public static final int INTAKE_MOTOR_CONTROLLER_ID = 11;
+        public static final int SHOOTER_MOTOR_CONTROLLER_ID = 13;
+        public static final int LOADER_SENSOR_ID = 0;
 
-        // Limits in degrees
-        public static final float ARM_LOWER_LIMIT = (float) -107.5;
-        public static final float ARM_UPPER_LIMIT = 24;
+        public static final boolean INVERT_INTAKE_ROLLER = true;
+        public static final boolean INVERT_LOADER = false;
+        public static final boolean INVERT_SHOOTER = false;
+        public static final double SHOOTER_KP = 0;
+        public static final double SHOOTER_KI = 0;
+        public static final double SHOOTER_KD = 0;
+        public static final double SHOOTER_KFF = 0;
+    
+        public static final double SHOOTER_KS = 0.017; //Measured on 2024-01-15
+        public static final double SHOOTER_KV = 1 / 470.124;
+        public static final double SHOOTER_KA = 0;
 
-        // 5 to 1 | 5 to 1 | 56 to 26
-        public static final double ARM_GEAR_RATIO = 0.0208;
-        public static final double ARM_DEGREES_PER_MOTOR_ROTATION = ARM_GEAR_RATIO * 360;
-
-        public enum PRESETS {
-            HIGH_SCORE (13),
-            MID_SCORE (-7),
-            LOW_SCORE (5.7 - 90),
-            HANDOFF (-89.3),
-            CUBE_COLLECT (-90.3),
-            STOWED (ARM_LOWER_LIMIT);
-            
-            private final double angle;
-            PRESETS(double angle) { this.angle = angle; }
-            public double angle() { return angle; }
-        }
-
-        public static final double ANGLE_TOLERANCE = 4; // degrees
-        public static final double RETURN_MIDPOINT = -45; // position for arm to seek before stowing
-
-        public enum GripState {GRIP_OFF, GRIP_ON}
-
-        public static final double MAX_CONTROL_EFFORT = 1;
-
-        public static final double THEORETICAL_MAX_ARM_SPEED = (NEO_FREE_SPEED / 60) * 2 * Math.PI * ARM_GEAR_RATIO; // rad/s
-        public static final double ARM_SPEED_LIMIT_DEG_PER_S = Math.toDegrees(THEORETICAL_MAX_ARM_SPEED * 0.1);
-
-        public static final double RETURN_TIME_STOWING = 0.4; // seconds
-
-        // Constants for PID
-        public static final double ARM_KP = 0.015;
-        public static final double ARM_KI = 0;
-        public static final double ARM_KD = 0.02;
-        public static final double ARM_KF = 0;
-
-        // Constants for feed forward
-        public static final double ARM_KS = 0;
-        public static final double ARM_KG = 0.05 * 12;
-        public static final double ARM_KV = 12 / THEORETICAL_MAX_ARM_SPEED;
-
-        public static final Translation3d SHOULDER_LOCATION = new Translation3d(
-            Units.inchesToMeters(9),
-            0,
-            Units.inchesToMeters(51.5));
+        public static final double SHOOTER_SPEED = 4000;
+        public static final double LOADER_SPEED = 0.1;
         
-        public static final double ARM_LENGTH = 1.1;
-     }
-
-    public static final class IntakeConstants {
-        public static final int BOTTOM_ROLLER_ID = 14;
-        public static final int TOP_ROLLER_ID = 12;
-        public static final int RACK_ID = 13;
-
-        public static final double GRABBED_CONE_ROLLER_CURRENT = 30; // Amps
-        public static final double TOP_ROLLER_IDLE = 0.05;
-
-        public static final boolean INVERT_ROLLERS = true;
-        public static final boolean INVERT_RACK = false;
-
-        public static final double PINION_PITCH_DIAMETER = Units.inchesToMeters(0.9);
-        public static final double RACK_DRIVE_GEAR_RATIO = 0.2;
-        public static final double INTAKE_MASS = 9 * KG_PER_LB;
-        public static final double RACK_METERS_PER_MOTOR_ROTATION =
-            (PINION_PITCH_DIAMETER * Math.PI) * RACK_DRIVE_GEAR_RATIO;
-        public static final float RACK_LOWER_LIMIT = 0;
-        public static final float RACK_UPPER_LIMIT = (float)Units.inchesToMeters(14);
-        public static final double RACK_TRAVEL = RACK_UPPER_LIMIT - RACK_LOWER_LIMIT;
-
-        public static final double KP = 10;
-        public static final double KI = 0;
-        public static final double KD = 0;
-        public static final double KF = 0;
-        public static final double IZ = 0;
-
-        // motor max rpm --> m/s
-        public static final double MAX_LINEAR_SPEED = NEO_FREE_SPEED * RACK_METERS_PER_MOTOR_ROTATION / 60;
-        public static final double MAX_LINEAR_ACCELERATION =
-            (NEO_STALL_TORQUE / RACK_DRIVE_GEAR_RATIO) * (PINION_PITCH_DIAMETER / 2) / INTAKE_MASS;
-
-        // in case we ever want motion profiling
-        public static final double KV = 12 / MAX_LINEAR_SPEED;
-        public static final double KA = 12 / MAX_LINEAR_ACCELERATION;
-
-        public enum PRESETS {
-            STOWED (0),
-            HANDOFF (0),
-            CONE (0.15),
-            CUBE (Units.inchesToMeters(13.5));
-
-            private final double position;
-            PRESETS(double position) {
-                this.position = position;
-            }
-
-            public double position() {
-                return position;
-            }
-        }
+        public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }
+
     public static class Vision {
         public static final int APRILTAG_PIPELINE_NUMBER = 0;
         public static final String PORT_LIMELIGHT_NAME = "port";

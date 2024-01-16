@@ -6,10 +6,12 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.NoteHandlerCommand;
 import frc.robot.commands.MeasureMomentInertia;
 import frc.robot.drivebase.AbsoluteDrive;
 import frc.robot.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.NoteHandler;
 import frc.robot.subsystems.SwerveBase;
 
 import java.util.NoSuchElementException;
@@ -39,6 +41,9 @@ public class RobotContainer {
   private final AbsoluteDrive absoluteDrive, closedAbsoluteDrive;
   private final TeleopDrive openFieldRel, openRobotRel, closedFieldRel, closedRobotRel;
 
+  private final NoteHandlerCommand noteHandlerController;
+  private final NoteHandler noteHandler;
+
   private Alliance alliance;
 
   private SendableChooser<Command> driveModeSelector;
@@ -52,6 +57,11 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    // Test code field:
+    if (SmartDashboard.getNumber("ShooterSpeed", 123456789) == 123456789) {
+      SmartDashboard.putNumber("ShooterSpeed", 0);
+    }
 
     absoluteDrive = new AbsoluteDrive(
       drivebase,
@@ -117,7 +127,24 @@ public class RobotContainer {
       }
       
     }).ignoringDisable(true));
-      
+
+    noteHandler = new NoteHandler();
+    noteHandlerController =
+      new NoteHandlerCommand(
+        noteHandler,
+        () -> operatorController.getLeftTriggerAxis(),
+        () -> driverController.button(1).getAsBoolean());
+    
+    Command shooterTester = new RepeatCommand(
+      new InstantCommand(() -> {
+        noteHandler.setShooterSpeed(
+          operatorController.start().getAsBoolean() ? SmartDashboard.getNumber("ShooterSpeed", 0) : 0
+        );
+        SmartDashboard.putNumber("RealShooterRPM", noteHandler.getShooterRPM());
+      })
+    );
+    shooterTester.addRequirements(noteHandler);
+    noteHandler.setDefaultCommand(noteHandlerController);
   }
 
   /**
