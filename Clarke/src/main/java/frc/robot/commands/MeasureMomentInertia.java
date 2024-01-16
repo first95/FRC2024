@@ -5,11 +5,16 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveBase;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class MeasureMomentInertia extends Command {
   private final SwerveBase swerve;
+  private final Timer time;
+  private double lastOmega, lastTime, alpha, omega, currentTime;
   /**
    * Creates a new ExampleCommand.
    *
@@ -17,6 +22,7 @@ public class MeasureMomentInertia extends Command {
    */
   public MeasureMomentInertia(SwerveBase swerve) {
     this.swerve = swerve;
+    time = new Timer();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
   }
@@ -25,11 +31,21 @@ public class MeasureMomentInertia extends Command {
   @Override
   public void initialize() {
     swerve.constantForceSpin(2);
+    time.reset();
+    time.start();
+    lastTime = time.get();
+    lastOmega = swerve.getAngVelocity().getRadians();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    omega = swerve.getAngVelocity().getRadians();
+    currentTime = time.get();
+    alpha = (omega - lastOmega) / (currentTime - lastTime);
+    lastOmega = omega;
+    lastTime = currentTime;
+  }
 
   // Called once the command ends or is interrupted.
   @Override

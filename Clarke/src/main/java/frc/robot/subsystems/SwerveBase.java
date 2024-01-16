@@ -394,17 +394,17 @@ public class SwerveBase extends SubsystemBase {
 
   public void constantForceSpin(double amps) {
     for (SwerveModule module : swerveModules) {
-      /*module.setRawAngle(
+      module.setRawAngle(
           module.getPositionFromCenter().getAngle().plus(Rotation2d.fromDegrees(90))
         );
-      module.setDriveCurrent(amps);*/
-      module.setDesiredState(
-        new BetterSwerveModuleState(
-          SmartDashboard.getNumber("RotationSpeed", 0),
-          module.getPositionFromCenter().getAngle().plus(Rotation2d.fromDegrees(90)),
-          0
-        ), false, false);
+      module.setDriveCurrent(amps);
     }
+  }
+
+  public Rotation2d getAngVelocity() {
+    return Rotation2d.fromDegrees(
+      imu.getRate() * (Drivebase.INVERT_GYRO ? 1 : -1)
+    );
   }
 
   @Override
