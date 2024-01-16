@@ -392,10 +392,21 @@ public class SwerveBase extends SubsystemBase {
     );
   }
 
+  public void constantForceSpin(double amps) {
+    for (SwerveModule module : swerveModules) {
+      module.setDesiredState(
+        new BetterSwerveModuleState(
+          0,
+          module.getPositionFromCenter().getAngle(),
+          0
+        ), true, false);
+    }
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putString("Gyro", getYaw().toString());
-    SmartDashboard.putString("alliance", alliance.toString());
+    SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded) { 
