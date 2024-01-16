@@ -54,7 +54,7 @@ public class NoteHandlerCommand extends Command {
     switch(currentState){
       case IDLE:
       intakeSpeed = commandedIntakeSpeed;
-      loaderSpeed = commandedIntakeSpeed;
+      loaderSpeed = (commandedIntakeSpeed > 0) ? NoteHandlerConstants.LOADER_SPEED : 0;
       shootingSpeed = 0;
       if (sensorvalue){
         currentState = State.HOLDING;
