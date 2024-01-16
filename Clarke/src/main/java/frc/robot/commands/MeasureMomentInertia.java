@@ -24,7 +24,7 @@ public class MeasureMomentInertia extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    swerve.constantForceSpin(1);
+    swerve.constantForceSpin(2);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

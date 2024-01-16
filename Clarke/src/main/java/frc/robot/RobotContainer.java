@@ -62,6 +62,9 @@ public class RobotContainer {
     if (SmartDashboard.getNumber("ShooterSpeed", 123456789) == 123456789) {
       SmartDashboard.putNumber("ShooterSpeed", 0);
     }
+    if (SmartDashboard.getNumber("RotationSpeed", 123456789) == 123456789) {
+      SmartDashboard.putNumber("RotationSpeed", 0);
+    }
 
     absoluteDrive = new AbsoluteDrive(
       drivebase,

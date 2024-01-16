@@ -118,6 +118,11 @@ public final class Constants {
         public static final double VELOCITY_IZ = 0;
         public static final double VELOCITY_KF = 0;
 
+        public static final double CURRENT_KP = 0;
+        public static final double CURRENT_KI = 0;
+        public static final double CURRENT_KD = 0;
+        public static final double CURRENT_KF = 0;
+
         public static final int NUM_MODULES = 4;
 
         // Drive feedforward gains

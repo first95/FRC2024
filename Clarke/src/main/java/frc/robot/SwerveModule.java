@@ -78,6 +78,10 @@ public class SwerveModule {
         driveController.setI(Drivebase.VELOCITY_KI);
         driveController.setD(Drivebase.VELOCITY_KD);
         driveController.setFF(Drivebase.VELOCITY_KF);
+        driveController.setP(Drivebase.CURRENT_KP, 1);
+        driveController.setI(Drivebase.CURRENT_KI, 1);
+        driveController.setD(Drivebase.CURRENT_KD, 1);
+        driveController.setFF(Drivebase.CURRENT_KF, 1);
         driveController.setIZone(Drivebase.VELOCITY_IZ);
         driveMotor.setInverted(Drivebase.DRIVE_MOTOR_INVERT);
         driveMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -185,6 +189,15 @@ public class SwerveModule {
 
     public void setDriveCurrent(double amps) {
         driveController.setReference(amps, ControlType.kCurrent, 1);
+    }
+
+    public void setRawAngle(Rotation2d angle) {
+        angleController.setReference(angle.getDegrees(), ControlType.kPosition);
+    }
+
+    public void printDebug() {
+        SmartDashboard.putNumber("Module " + moduleNumber + " Volts:", (driveMotor.getAppliedOutput() * driveMotor.getBusVoltage()));
+        SmartDashboard.putNumber("Module " + moduleNumber + " Amps", driveMotor.getOutputCurrent());
     }
 
     public Translation2d getPositionFromCenter() {

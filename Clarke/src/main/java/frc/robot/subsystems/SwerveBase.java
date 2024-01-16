@@ -394,12 +394,16 @@ public class SwerveBase extends SubsystemBase {
 
   public void constantForceSpin(double amps) {
     for (SwerveModule module : swerveModules) {
+      /*module.setRawAngle(
+          module.getPositionFromCenter().getAngle().plus(Rotation2d.fromDegrees(90))
+        );
+      module.setDriveCurrent(amps);*/
       module.setDesiredState(
         new BetterSwerveModuleState(
-          0,
-          module.getPositionFromCenter().getAngle(),
+          SmartDashboard.getNumber("RotationSpeed", 0),
+          module.getPositionFromCenter().getAngle().plus(Rotation2d.fromDegrees(90)),
           0
-        ), true, false);
+        ), false, false);
     }
   }
 
@@ -503,6 +507,7 @@ public class SwerveBase extends SubsystemBase {
       SmartDashboard.putNumber("Module" + module.moduleNumber + "CANCoder", module.getAbsoluteEncoder());
       moduleStates[module.moduleNumber] = module.getState().angle.getDegrees();
       moduleStates[module.moduleNumber + 1] = module.getState().speedMetersPerSecond;
+      module.printDebug();
     }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
   }
