@@ -144,21 +144,21 @@ public final class Constants {
         public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 9;
             public static final int ANGLE_MOTOR_ID = 8;
-            public static final double ANGLE_OFFSET = 180 + 159.12; // 170.69 + 180;
+            public static final double ANGLE_OFFSET = 20;
             public static final SwerveModuleConstants CONSTANTS =
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
         }
         public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 5;
             public static final int ANGLE_MOTOR_ID = 4;
-            public static final double ANGLE_OFFSET = 52.3 + 1.1; // 52.67;
+            public static final double ANGLE_OFFSET = 360 - 52;
             public static final SwerveModuleConstants CONSTANTS =
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
         }
         public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 3;
             public static final int ANGLE_MOTOR_ID = 2;
-            public static final double ANGLE_OFFSET =  127 + 8.5; // 224.08 - 90;
+            public static final double ANGLE_OFFSET = 225;
             public static final SwerveModuleConstants CONSTANTS =
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
         }
@@ -273,7 +273,27 @@ public final class Constants {
     }
 
     public class NoteHandlerConstants {
-        public static final int INTAKE_MOTOR_CONTROLLER_ID = 10;
+        public static final int LOADER_MOTOR_CONTROLLER_ID = 10;
+        public static final int INTAKE_MOTOR_CONTROLLER_ID = 11;
+        public static final int SHOOTER_MOTOR_CONTROLLER_ID = 13;
+        public static final int LOADER_SENSOR_ID = 0;
+
+        public static final boolean INVERT_INTAKE_ROLLER = true;
+        public static final boolean INVERT_LOADER = false;
+        public static final boolean INVERT_SHOOTER = false;
+        public static final double SHOOTER_KP = 0;
+        public static final double SHOOTER_KI = 0;
+        public static final double SHOOTER_KD = 0;
+        public static final double SHOOTER_KFF = 0;
+    
+        public static final double SHOOTER_KS = 0.017; //Measured on 2024-01-15
+        public static final double SHOOTER_KV = 1 / 470.124;
+        public static final double SHOOTER_KA = 0;
+
+        public static final double SHOOTER_SPEED = 4000;
+        public static final double LOADER_SPEED = 0.1;
+        
+        public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }
 
     public static class Vision {
