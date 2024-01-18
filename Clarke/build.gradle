@@ -83,10 +83,29 @@ wpi.sim.addDriverstation()
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
+// jar {
+//     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+//     from sourceSets.main.allSource
+//     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+//     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+// }
+
+// GradleRIOPlugin.javaManifest just creates the manifest with a single attribute of Main-Class 
+// set to the contents of ROBOT_MAIN_CLASS
+// we want to set a couple more standard JAR attributes to hold the hostname of the computer that compiled the code, 
+// the git branchname and version and build timestamp
+// so they can be read by the robot code and placed on network tables for viewing on the driver station computer's dashboard
+
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     from sourceSets.main.allSource
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    manifest {
+        attributes(
+            'Main-Class': ROBOT_MAIN_CLASS,
+            'Implementation-Title': InetAddress.getLocalHost().getHostName() + ":" + gitDetails.branchName,
+            'Implementation-Version': gitVersion() + " built on " + new java.text.SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss").format(new Date())
+            )
+    }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
