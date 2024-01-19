@@ -85,6 +85,7 @@ public class NoteHandler extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("ShooterVolts", shooter.get() * shooter.getBusVoltage());
+    SmartDashboard.putNumber("RealRPM", getShooterRPM());
   }
 
   @Override

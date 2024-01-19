@@ -96,7 +96,7 @@ public final class Constants {
         public static final double MAX_MODULE_ANGULAR_SPEED = Units.rotationsToDegrees(NEO_550_FREE_SPEED * 7 / 372) / 60; // deg/s
 
         // Robot heading control gains
-        public static final double HEADING_KP = 0.5 * (MAX_ANGULAR_VELOCITY / Math.PI);
+        public static final double HEADING_KP = 0.4 * (MAX_ANGULAR_VELOCITY / Math.PI);
         public static final double HEADING_KI = 0;
         public static final double HEADING_KD = 0.01 * (MAX_ANGULAR_VELOCITY / Math.PI);
         
@@ -118,8 +118,8 @@ public final class Constants {
         public static final double VELOCITY_IZ = 0;
         public static final double VELOCITY_KF = 0;
 
-        public static final double CURRENT_KP = 0.001;
-        public static final double CURRENT_KI = 0;
+        public static final double CURRENT_KP = 0;
+        public static final double CURRENT_KI = 0.01;
         public static final double CURRENT_KD = 0;
         public static final double CURRENT_KF = 0;
 
@@ -295,7 +295,7 @@ public final class Constants {
         public static final double SHOOTER_KV = 1 / 470.124;
         public static final double SHOOTER_KA = 0;
 
-        public static final double SHOOTER_SPEED = 4000;
+        public static final double SHOOTER_SPEED = 5000;
         public static final double LOADER_SPEED = 0.1;
         
         public static final double SHOOTER_SPEED_TOLERANCE = 100;

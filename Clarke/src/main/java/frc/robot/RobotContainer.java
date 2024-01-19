@@ -136,7 +136,7 @@ public class RobotContainer {
       new NoteHandlerCommand(
         noteHandler,
         () -> operatorController.getLeftTriggerAxis(),
-        () -> driverController.button(1).getAsBoolean());
+        () -> operatorController.y().getAsBoolean());
     
     Command shooterTester = new RepeatCommand(
       new InstantCommand(() -> {

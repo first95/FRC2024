@@ -5,6 +5,10 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveBase;
+
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +19,7 @@ public class MeasureMomentInertia extends Command {
   private final SwerveBase swerve;
   private final Timer time;
   private double lastOmega, lastTime, alpha, omega, currentTime;
+  private PrintWriter logger;
   /**
    * Creates a new ExampleCommand.
    *
@@ -25,12 +30,22 @@ public class MeasureMomentInertia extends Command {
     time = new Timer();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
+    try {
+      FileWriter fileWriter = new FileWriter("/U/accelData/log.txt");
+      logger = new PrintWriter(fileWriter);
+    } catch (Exception e) {
+      DriverStation.reportError("Log File Cannot Be Opened!", true);
+    }
+    if (SmartDashboard.getNumber("Amps", 123456789) == 123456789) {
+      SmartDashboard.putNumber("Amps", 0);
+    }
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    swerve.constantForceSpin(2);
+    double amps = SmartDashboard.getNumber("Amps", 0);
+    swerve.constantForceSpin(amps);
     time.reset();
     time.start();
     lastTime = time.get();
@@ -43,13 +58,17 @@ public class MeasureMomentInertia extends Command {
     omega = swerve.getAngVelocity().getRadians();
     currentTime = time.get();
     alpha = (omega - lastOmega) / (currentTime - lastTime);
+    logger.print(Double.toString(alpha) + "\\n");
     lastOmega = omega;
     lastTime = currentTime;
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    logger.close();
+    time.stop();
+  }
 
   // Returns true when the command should end.
   @Override
