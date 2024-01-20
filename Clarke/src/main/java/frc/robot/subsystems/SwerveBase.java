@@ -401,6 +401,14 @@ public class SwerveBase extends SubsystemBase {
     }
   }
 
+  public double getTotalDriveCurrent() {
+    double sum = 0;
+    for (SwerveModule module : swerveModules) {
+      sum += module.getAppliedDriveCurrent();
+    }
+    return sum;
+  }
+
   public Rotation2d getAngVelocity() {
     return Rotation2d.fromDegrees(
       imu.getRate() * (Drivebase.INVERT_GYRO ? 1 : -1)
@@ -507,7 +515,7 @@ public class SwerveBase extends SubsystemBase {
       SmartDashboard.putNumber("Module" + module.moduleNumber + "CANCoder", module.getAbsoluteEncoder());
       moduleStates[module.moduleNumber] = module.getState().angle.getDegrees();
       moduleStates[module.moduleNumber + 1] = module.getState().speedMetersPerSecond;
-      module.printDebug();
+      module.periodic();
     }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
   }

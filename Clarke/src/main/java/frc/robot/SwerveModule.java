@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -8,11 +11,13 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.BetterSwerveModuleState;
@@ -28,7 +33,10 @@ public class SwerveModule {
     private final SparkPIDController angleController, driveController;
     private final Timer time;
     private final SwerveModuleConstants constants;
+    private final PIDController currentController;
     private double angle, lastAngle, omega, speed, fakePos, lastTime, dt;
+    private boolean currentControl;
+    private ArrayList<Double> ampSamples = new ArrayList<Double>();
 
     private SimpleMotorFeedforward feedforward;
 
@@ -78,10 +86,6 @@ public class SwerveModule {
         driveController.setI(Drivebase.VELOCITY_KI);
         driveController.setD(Drivebase.VELOCITY_KD);
         driveController.setFF(Drivebase.VELOCITY_KF);
-        driveController.setP(Drivebase.CURRENT_KP, 1);
-        driveController.setI(Drivebase.CURRENT_KI, 1);
-        driveController.setD(Drivebase.CURRENT_KD, 1);
-        driveController.setFF(Drivebase.CURRENT_KF, 1);
         driveController.setIZone(Drivebase.VELOCITY_IZ);
         driveMotor.setInverted(Drivebase.DRIVE_MOTOR_INVERT);
         driveMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -97,6 +101,9 @@ public class SwerveModule {
         lastTime = time.get();
         
         lastAngle = getState().angle.getDegrees();
+
+        currentController = new PIDController(Drivebase.CURRENT_KP, Drivebase.CURRENT_KI, Drivebase.CURRENT_KD);
+        currentControl = false;
     }
 
     public void setDesiredState(BetterSwerveModuleState desiredState, boolean isOpenLoop) {
@@ -111,6 +118,7 @@ public class SwerveModule {
     }*/
     
     public void setDesiredState(BetterSwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
+        currentControl = false;
         SwerveModuleState simpleState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         simpleState = SwerveModuleState.optimize(simpleState, getState().angle);
         desiredState = new BetterSwerveModuleState(simpleState.speedMetersPerSecond, simpleState.angle, desiredState.omegaRadPerSecond);
@@ -182,22 +190,44 @@ public class SwerveModule {
     }
 
     public void turnModule(double speed) {
+        currentControl = false;
         angleMotor.set(speed);
         SmartDashboard.putNumber("AbsoluteEncoder" + moduleNumber, absoluteEncoder.getVelocity());
         SmartDashboard.putNumber("ControlEffort" + moduleNumber, angleMotor.getAppliedOutput());
     }
 
     public void setDriveCurrent(double amps) {
-        driveController.setReference(amps, ControlType.kCurrent, 1);
+        currentControl = true;
+        currentController.setSetpoint(amps);
     }
 
     public void setRawAngle(Rotation2d angle) {
         angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     }
 
-    public void printDebug() {
+    public void periodic() {
+        double currentAmps = driveMotor.getOutputCurrent();
         SmartDashboard.putNumber("Module " + moduleNumber + " Volts:", (driveMotor.getAppliedOutput() * driveMotor.getBusVoltage()));
-        SmartDashboard.putNumber("Module " + moduleNumber + " Amps", driveMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Module " + moduleNumber + " Amps", currentAmps);
+        if (ampSamples.size() == Drivebase.CURRENT_MOVING_AVERAGE_SAMPLES) {
+            ampSamples.remove(0);
+        }
+        ampSamples.add(currentAmps);
+        double sum = 0;
+        for (double value : ampSamples) {
+            sum += value;
+        }
+        double average = sum / Drivebase.CURRENT_MOVING_AVERAGE_SAMPLES;
+        SmartDashboard.putNumber("Module " + moduleNumber + " Avg. Amps", average);
+        if (currentControl && DriverStation.isEnabled()) {
+            double controlEffort = currentController.calculate(average);
+            driveMotor.set(controlEffort);
+            SmartDashboard.putNumber("Module " + moduleNumber + " ControlEffort", controlEffort);
+        }
+    }
+
+    public double getAppliedDriveCurrent() {
+        return driveMotor.getOutputCurrent();
     }
 
     public Translation2d getPositionFromCenter() {

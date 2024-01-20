@@ -57,8 +57,11 @@ public class MeasureMomentInertia extends Command {
   public void execute() {
     omega = swerve.getAngVelocity().getRadians();
     currentTime = time.get();
-    alpha = (omega - lastOmega) / (currentTime - lastTime);
-    logger.print(Double.toString(alpha) + "\\n");
+    double dt = currentTime - lastTime;
+    alpha = (omega - lastOmega) / (dt);
+    if (alpha != 0) {
+      logger.print(Double.toString(alpha) + ", " + swerve.getTotalDriveCurrent() + "\n");
+    }
     lastOmega = omega;
     lastTime = currentTime;
   }

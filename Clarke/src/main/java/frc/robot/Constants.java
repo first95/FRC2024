@@ -34,6 +34,7 @@ public final class Constants {
     
     public static final double MANIPULATOR_MASS = 1.11;
     public static final double ROBOT_MASS = (108 * KG_PER_LB);
+    public static final double Z_AXIS_MOI = 0.3676;
     public static final double CHASSIS_MASS = ROBOT_MASS - MANIPULATOR_MASS;
     public static final Translation3d CHASSIS_CG = new Translation3d(
         -0.035,
@@ -119,9 +120,9 @@ public final class Constants {
         public static final double VELOCITY_KF = 0;
 
         public static final double CURRENT_KP = 0;
-        public static final double CURRENT_KI = 0.01;
+        public static final double CURRENT_KI = 0.2;
         public static final double CURRENT_KD = 0;
-        public static final double CURRENT_KF = 0;
+        public static final double CURRENT_MOVING_AVERAGE_SAMPLES = 1;
 
         public static final int NUM_MODULES = 4;
 
