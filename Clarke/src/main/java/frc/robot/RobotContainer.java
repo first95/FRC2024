@@ -16,6 +16,10 @@ import frc.robot.subsystems.SwerveBase;
 
 import java.util.NoSuchElementException;
 
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
+import com.choreo.lib.ChoreoTrajectoryState.ChoreoTrajectoryStateBuilder;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -174,7 +178,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new MeasureMomentInertia(drivebase);
+    return drivebase.getTrajectoryFollowerCommand(Choreo.getTrajectory("Loop"), true, true);
   }
 
   public void setDriveMode() {

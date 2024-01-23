@@ -174,15 +174,15 @@ public final class Constants {
 
     public static final class Auton {
         public static final double X_KP = 1.5;
-        public static final double X_KI = 0;
-        public static final double X_KD = 0;
+        public static final double X_KI = 0.2;
+        public static final double X_KD = 0.2;
 
         public static final double Y_KP = 1.5;
-        public static final double Y_KI = 0;
-        public static final double Y_KD = 0;
+        public static final double Y_KI = 0.2;
+        public static final double Y_KD = 0.2;
 
         public static final double ANG_KP = Drivebase.HEADING_KP;
-        public static final double ANG_KI = 0;
+        public static final double ANG_KI = 0.01;
         public static final double ANG_KD = 0;
 
         public static final double MAX_SPEED = 3;
@@ -297,7 +297,7 @@ public final class Constants {
         public static final double SHOOTER_KA = 0;
 
         public static final double SHOOTER_SPEED = 5000;
-        public static final double LOADER_SPEED = 0.1;
+        public static final double LOADER_SPEED = 0.3;
         
         public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }
