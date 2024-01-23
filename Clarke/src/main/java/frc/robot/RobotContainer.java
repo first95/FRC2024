@@ -178,7 +178,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return drivebase.getTrajectoryFollowerCommand(Choreo.getTrajectory("Loop"), true, true);
+    return drivebase.getTrajectoryFollowerCommand(Choreo.getTrajectory("LoopAndSpin"), true, true);
   }
 
   public void setDriveMode() {
