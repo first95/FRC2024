@@ -150,7 +150,13 @@ public final class Constants {
 
     public static final int PIGEON = 30;
 }
-
+    public static class Vision {
+        public static final int APRILTAG_PIPELINE_NUMBER = 0;
+        public static final String PORT_LIMELIGHT_NAME = "port";
+        public static final String STARBOARD_LIMELIGHT_NAME = "sboard";
+        public static final double POSE_ERROR_TOLERANCE = 0.5;
+        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
+}
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
