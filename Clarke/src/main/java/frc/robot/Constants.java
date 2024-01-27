@@ -34,6 +34,7 @@ public final class Constants {
     
     public static final double MANIPULATOR_MASS = 1.11;
     public static final double ROBOT_MASS = (108 * KG_PER_LB);
+    public static final double Z_AXIS_MOI = 0.3676;
     public static final double CHASSIS_MASS = ROBOT_MASS - MANIPULATOR_MASS;
     public static final Translation3d CHASSIS_CG = new Translation3d(
         -0.035,
@@ -96,7 +97,7 @@ public final class Constants {
         public static final double MAX_MODULE_ANGULAR_SPEED = Units.rotationsToDegrees(NEO_550_FREE_SPEED * 7 / 372) / 60; // deg/s
 
         // Robot heading control gains
-        public static final double HEADING_KP = 0.5 * (MAX_ANGULAR_VELOCITY / Math.PI);
+        public static final double HEADING_KP = 0.4 * (MAX_ANGULAR_VELOCITY / Math.PI);
         public static final double HEADING_KI = 0;
         public static final double HEADING_KD = 0.01 * (MAX_ANGULAR_VELOCITY / Math.PI);
         
@@ -117,6 +118,11 @@ public final class Constants {
         public static final double VELOCITY_KD = 0;
         public static final double VELOCITY_IZ = 0;
         public static final double VELOCITY_KF = 0;
+
+        public static final double CURRENT_KP = 0;
+        public static final double CURRENT_KI = 0.2;
+        public static final double CURRENT_KD = 0;
+        public static final double CURRENT_MOVING_AVERAGE_SAMPLES = 1;
 
         public static final int NUM_MODULES = 4;
 
@@ -139,28 +145,28 @@ public final class Constants {
             public static final int ANGLE_MOTOR_ID = 6;
             public static final double ANGLE_OFFSET = 111.9 + 90 - 161.4; // 231.48 + 90;
             public static final SwerveModuleConstants CONSTANTS =
-                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
+                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_LEFT_X, FRONT_LEFT_Y);
         }
         public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 9;
             public static final int ANGLE_MOTOR_ID = 8;
             public static final double ANGLE_OFFSET = 20;
             public static final SwerveModuleConstants CONSTANTS =
-                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
+                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_RIGHT_X, FRONT_RIGHT_Y);
         }
         public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 5;
             public static final int ANGLE_MOTOR_ID = 4;
             public static final double ANGLE_OFFSET = 360 - 52;
             public static final SwerveModuleConstants CONSTANTS =
-                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
+                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_LEFT_X, BACK_LEFT_Y);
         }
         public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 3;
             public static final int ANGLE_MOTOR_ID = 2;
             public static final double ANGLE_OFFSET = 225;
             public static final SwerveModuleConstants CONSTANTS =
-                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET);
+                new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_RIGHT_X, BACK_RIGHT_Y);
         }
 
         public static final int PIGEON = 30;
@@ -168,15 +174,15 @@ public final class Constants {
 
     public static final class Auton {
         public static final double X_KP = 1.5;
-        public static final double X_KI = 0;
-        public static final double X_KD = 0;
+        public static final double X_KI = 0.2;
+        public static final double X_KD = 0.2;
 
         public static final double Y_KP = 1.5;
-        public static final double Y_KI = 0;
-        public static final double Y_KD = 0;
+        public static final double Y_KI = 0.2;
+        public static final double Y_KD = 0.2;
 
         public static final double ANG_KP = Drivebase.HEADING_KP;
-        public static final double ANG_KI = 0;
+        public static final double ANG_KI = 0.01;
         public static final double ANG_KD = 0;
 
         public static final double MAX_SPEED = 3;
@@ -290,8 +296,8 @@ public final class Constants {
         public static final double SHOOTER_KV = 1 / 470.124;
         public static final double SHOOTER_KA = 0;
 
-        public static final double SHOOTER_SPEED = 4000;
-        public static final double LOADER_SPEED = 0.1;
+        public static final double SHOOTER_SPEED = 5000;
+        public static final double LOADER_SPEED = 0.3;
         
         public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }

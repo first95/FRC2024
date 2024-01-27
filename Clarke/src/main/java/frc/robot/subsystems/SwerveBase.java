@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems;
 
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -24,11 +27,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.BetterSwerveKinematics;
 import frc.lib.util.BetterSwerveModuleState;
 import frc.robot.Robot;
 import frc.robot.SwerveModule;
+import frc.robot.Constants.Auton;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.Vision;
 
@@ -361,6 +367,54 @@ public class SwerveBase extends SubsystemBase {
     }
   }*/
 
+  public Command getTrajectoryFollowerCommand(ChoreoTrajectory trajectory, boolean resetOdometry, boolean stopAtEnd) {
+    PIDController thetaController = new PIDController(Auton.ANG_KP, Auton.ANG_KI, Auton.ANG_KD);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    
+    if (resetOdometry) {
+      resetOdometry(trajectory.getInitialPose());
+    }
+
+    Command swerveCommand = Choreo.choreoSwerveCommand(
+      trajectory,
+      this::getPose,
+      new PIDController(Auton.X_KP, Auton.X_KI, Auton.X_KD),
+      new PIDController(Auton.Y_KP, Auton.Y_KI, Auton.Y_KD),
+      thetaController,
+      (ChassisSpeeds speeds) -> this.setChassisSpeeds(speeds),
+      () -> (alliance == Alliance.Red),
+      this);
+    
+    return Commands.sequence(
+      Commands.runOnce(() -> {if (resetOdometry) {resetOdometry(trajectory.getInitialPose());}}),
+      swerveCommand,
+      this.runOnce(() -> {if (stopAtEnd) {setChassisSpeeds(new ChassisSpeeds(0, 0, 0));}})
+    );
+  }
+
+  public void constantForceSpin(double amps) {
+    for (SwerveModule module : swerveModules) {
+      module.setRawAngle(
+          module.getPositionFromCenter().getAngle().plus(Rotation2d.fromDegrees(90))
+        );
+      module.setDriveCurrent(amps);
+    }
+  }
+
+  public double getTotalDriveCurrent() {
+    double sum = 0;
+    for (SwerveModule module : swerveModules) {
+      sum += module.getAppliedDriveCurrent();
+    }
+    return sum;
+  }
+
+  public Rotation2d getAngVelocity() {
+    return Rotation2d.fromDegrees(
+      imu.getRate() * (Drivebase.INVERT_GYRO ? 1 : -1)
+    );
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putString("Gyro", getYaw().toString());
@@ -461,6 +515,7 @@ public class SwerveBase extends SubsystemBase {
       SmartDashboard.putNumber("Module" + module.moduleNumber + "CANCoder", module.getAbsoluteEncoder());
       moduleStates[module.moduleNumber] = module.getState().angle.getDegrees();
       moduleStates[module.moduleNumber + 1] = module.getState().speedMetersPerSecond;
+      module.periodic();
     }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
   }
