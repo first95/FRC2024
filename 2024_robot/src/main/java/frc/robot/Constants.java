@@ -42,14 +42,14 @@ public final class Constants {
 
     // Module locations, in meters, as distances to the center of the robot.
     // Positive x is torwards the robot front, and +y is torwards robot left.
-    public static final double FRONT_LEFT_X = Units.inchesToMeters(10.25);
-    public static final double FRONT_LEFT_Y = Units.inchesToMeters(10.25);
-    public static final double FRONT_RIGHT_X = Units.inchesToMeters(10.25);
-    public static final double FRONT_RIGHT_Y = Units.inchesToMeters(-10.25);
-    public static final double BACK_LEFT_X = Units.inchesToMeters(-10.25);
-    public static final double BACK_LEFT_Y = Units.inchesToMeters(10.25);
-    public static final double BACK_RIGHT_X = Units.inchesToMeters(-10.25);
-    public static final double BACK_RIGHT_Y = Units.inchesToMeters(-10.25);
+    public static final double FRONT_LEFT_X = Units.inchesToMeters(7.875);
+    public static final double FRONT_LEFT_Y = Units.inchesToMeters(12.25);
+    public static final double FRONT_RIGHT_X = Units.inchesToMeters(7.875);
+    public static final double FRONT_RIGHT_Y = Units.inchesToMeters(-12.25);
+    public static final double BACK_LEFT_X = Units.inchesToMeters(-14.625);
+    public static final double BACK_LEFT_Y = Units.inchesToMeters(12.25);
+    public static final double BACK_RIGHT_X = Units.inchesToMeters(-14.625);
+    public static final double BACK_RIGHT_Y = Units.inchesToMeters(-12.25);
 
     public static final Translation2d[] MODULE_LOCATIONS = {
         new Translation2d(Drivebase.FRONT_LEFT_X, Drivebase.FRONT_LEFT_Y),
@@ -120,29 +120,29 @@ public final class Constants {
 
         // Module specific constants
     public static final class Mod0 {
-        public static final int DRIVE_MOTOR_ID = 7;
-        public static final int ANGLE_MOTOR_ID = 6;
+        public static final int DRIVE_MOTOR_ID = 3;
+        public static final int ANGLE_MOTOR_ID = 2;
         public static final double ANGLE_OFFSET = 111.9 + 90 - 161.4; // 231.48 + 90;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_LEFT_X, FRONT_LEFT_Y);
     }
     public static final class Mod1 {
-        public static final int DRIVE_MOTOR_ID = 9;
-        public static final int ANGLE_MOTOR_ID = 8;
+        public static final int DRIVE_MOTOR_ID = 5;
+        public static final int ANGLE_MOTOR_ID = 4;
         public static final double ANGLE_OFFSET = 20;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_RIGHT_X, FRONT_RIGHT_Y);
     }
     public static final class Mod2 {
-        public static final int DRIVE_MOTOR_ID = 5;
-        public static final int ANGLE_MOTOR_ID = 4;
+        public static final int DRIVE_MOTOR_ID = 7;
+        public static final int ANGLE_MOTOR_ID = 6;
         public static final double ANGLE_OFFSET = 360 - 52;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_LEFT_X, BACK_LEFT_Y);
     }
     public static final class Mod3 {
-        public static final int DRIVE_MOTOR_ID = 3;
-        public static final int ANGLE_MOTOR_ID = 2;
+        public static final int DRIVE_MOTOR_ID = 9;
+        public static final int ANGLE_MOTOR_ID = 8;
         public static final double ANGLE_OFFSET = 225;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_RIGHT_X, BACK_RIGHT_Y);
