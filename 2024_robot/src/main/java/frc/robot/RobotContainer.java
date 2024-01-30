@@ -35,6 +35,7 @@ public class RobotContainer {
       new InstantCommand(
         () -> {m_exampleSubsystem.runRoller(m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis());}
       ));
+    rollerer.addRequirements(m_exampleSubsystem);
     m_exampleSubsystem.setDefaultCommand(rollerer);
     // Configure the trigger bindings
     configureBindings();

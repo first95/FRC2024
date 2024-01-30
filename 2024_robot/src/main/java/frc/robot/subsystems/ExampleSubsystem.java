@@ -18,7 +18,6 @@ public class ExampleSubsystem extends SubsystemBase {
     bottomIntakeRoller = new CANSparkMax(11, MotorType.kBrushless);
     topintakeRoller.restoreFactoryDefaults();
     bottomIntakeRoller.restoreFactoryDefaults();
-    bottomIntakeRoller.follow(topintakeRoller, true);
     topintakeRoller.burnFlash();
     bottomIntakeRoller.burnFlash();
   }
@@ -49,6 +48,7 @@ public class ExampleSubsystem extends SubsystemBase {
 
   public void runRoller(double speed) {
     topintakeRoller.set(speed);
+    bottomIntakeRoller.set(-speed);
   }
 
   @Override
