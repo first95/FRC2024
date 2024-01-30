@@ -157,6 +157,10 @@ public class SwerveBase extends SubsystemBase {
    * Gets the current pose (position and rotation) of the robot, as reported by odometry.
    * @return The robot's pose
    */
+  public Pose2d getPose() {
+    // ADD ODOMETRY!!
+    return new Pose2d();
+  }
 
   /**
    * Gets the current field-relative velocity (x, y and omega) of the robot
@@ -176,14 +180,6 @@ public class SwerveBase extends SubsystemBase {
   public ChassisSpeeds getRobotVelocity() {
     return Drivebase.KINEMATICS.toChassisSpeeds(getStates());
   }
-
-  
-  /**
-   * Resets odometry to the given pose. Gyro angle and module positions do not need to 
-   * be reset when calling this method.  However, if either gyro angle or module position
-   * is reset, this must be called in order for odometry to keep working.
-   * @param pose The pose to set the odometry to
-   */
 
   /**
    * Gets the current module states (azimuth and velocity)
@@ -279,30 +275,6 @@ public class SwerveBase extends SubsystemBase {
     this.alliance = alliance;
   }
 
-  public Pose3d getVisionPose(NetworkTable visionData) {
-    if ((visionData.getEntry("tv").getDouble(0) == 0 ||
-      visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
-      return null;
-    }
-    double[] poseComponents;
-    if (alliance == Alliance.Blue) {
-      poseComponents = visionData.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
-    } else if (alliance == Alliance.Red) {
-      poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
-    } else {
-      return null;
-    }
-    visionLatency = poseComponents[6];
-    return new Pose3d(
-        poseComponents[0],
-        poseComponents[1],
-        poseComponents[2],
-        new Rotation3d(
-          Math.toRadians(poseComponents[3]),
-          Math.toRadians(poseComponents[4]),
-          Math.toRadians(poseComponents[5])));
-  }
-
   /*public void setVelocityModuleGains() {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.setGains(
@@ -330,8 +302,6 @@ public class SwerveBase extends SubsystemBase {
       lasttime = timer.get();
       
     }
-    field.setRobotPose(pose);
-    SmartDashboard.putData("Field", field);
 
     double[] moduleStates = new double[8];
     for (SwerveModule module : swerveModules) {
