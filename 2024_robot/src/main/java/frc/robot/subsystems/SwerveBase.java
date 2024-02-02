@@ -46,6 +46,8 @@ public class SwerveBase extends SubsystemBase {
 
   private boolean wasGyroReset;
 
+  private SwerveDrivePoseEstimator odometry;
+
   private Alliance alliance = null;
 
   /** Creates a new swerve drivebase subsystem.  Robot is controlled via the drive() method,
@@ -78,6 +80,8 @@ public class SwerveBase extends SubsystemBase {
       new SwerveModule(2, Drivebase.Mod2.CONSTANTS),
       new SwerveModule(3, Drivebase.Mod3.CONSTANTS),
     };
+
+    odometry = new SwerveDrivePoseEstimator(Drivebase.KINEMATICS, getYaw(), getModulePositions(), new Pose2d());
 
   }
 
@@ -159,7 +163,7 @@ public class SwerveBase extends SubsystemBase {
    */
   public Pose2d getPose() {
     // ADD ODOMETRY!!
-    return new Pose2d();
+    return odometry.getEstimatedPosition();
   }
 
   /**
@@ -289,6 +293,8 @@ public class SwerveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
+    odometry.update(getYaw(), getModulePositions());
+
     SmartDashboard.putString("Gyro", getYaw().toString());
     SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
     /*ChassisSpeeds robotVelocity = getRobotVelocity();

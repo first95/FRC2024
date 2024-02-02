@@ -26,7 +26,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveBase drivebase = new SwerveBase();
-  private final TeleopDrive openRobotRel;
+  private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -48,6 +48,23 @@ public class RobotContainer {
       () -> (Math.abs(m_driverController.getLeftX()) > 0.01) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> false, true);
     
+    closedRobotRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.01) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.01) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> false, false);
+    
+    openFieldRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.01) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.01) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, true);
+    
+    closedFieldRel = new TeleopDrive(
+      drivebase,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.01) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.01) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, false);
       drivebase.setDefaultCommand(openRobotRel);
     // Configure the trigger bindings
     configureBindings();
