@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.BetterSwerveKinematics;
@@ -173,6 +174,9 @@ public final class Constants {
 
     public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14 / (44 * 5 * 5));
     public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
+
+    public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
+    public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
     public static final double SHOULDER_KP = 0;
     public static final double SHOULDER_KI = 0;

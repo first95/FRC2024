@@ -4,32 +4,53 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shooter;
+
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class ExampleCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
+  private final Shooter shooter;
+  private Rotation2d ang;
+  private BooleanSupplier upSup, downSup;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(ExampleSubsystem subsystem) {
-    m_subsystem = subsystem;
+  public ExampleCommand(Shooter shooter, BooleanSupplier upSup, BooleanSupplier downSup) {
+    this.shooter = shooter;
+    this.upSup = upSup;
+    this.downSup = downSup;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    ang = ShooterConstants.ARM_LOWER_LIMIT;
+    shooter.setArmAngle(ang);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (upSup.getAsBoolean()) {
+      ang = ang.plus(Rotation2d.fromDegrees(5));
+      shooter.setArmAngle(ang);
+    } else if (downSup.getAsBoolean()) {
+      ang = ang.minus(Rotation2d.fromDegrees(5));
+      shooter.setArmAngle(ang);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

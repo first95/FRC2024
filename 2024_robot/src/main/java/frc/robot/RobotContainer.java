@@ -5,12 +5,15 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
+import frc.robot.Constants.ShooterConstants;
+//import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,6 +29,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveBase drivebase = new SwerveBase();
+  private final Shooter shooter = new Shooter();
   private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -66,6 +70,9 @@ public class RobotContainer {
       () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, false);
       drivebase.setDefaultCommand(closedFieldRel);
+
+      shooter.setDefaultCommand(new ExampleCommand(shooter, () -> m_driverController.y().getAsBoolean(), () -> m_driverController.a().getAsBoolean()));
+
     // Configure the trigger bindings
     configureBindings();
   }
@@ -80,9 +87,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -96,6 +100,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return null;//Autos.exampleAuto(m_exampleSubsystem);
   }
 }
