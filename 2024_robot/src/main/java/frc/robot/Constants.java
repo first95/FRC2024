@@ -26,6 +26,8 @@ public final class Constants {
   public static final double NEO_550_FREE_SPEED = 11000; // RPM
   
   public static final double GRAVITY = 9.81; // m/s/s
+
+  public static final double LOOP_CYCLE = 0.02; // 20ms
   
   public static final class Drivebase {
     // Hold time on motor brakes when disabled

@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -28,6 +29,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.BetterSwerveKinematics;
 import frc.lib.util.BetterSwerveModuleState;
+import frc.lib.util.GeometryUtils;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.Drivebase;
@@ -112,6 +115,17 @@ public class SwerveBase extends SubsystemBase {
       translation.getY(),
       rotation
     );
+
+    // Skew correction from 254
+    Pose2d nextPose = new Pose2d(
+      velocity.vxMetersPerSecond * Constants.LOOP_CYCLE,
+      velocity.vyMetersPerSecond * Constants.LOOP_CYCLE,
+      Rotation2d.fromRadians(velocity.omegaRadiansPerSecond * Constants.LOOP_CYCLE));
+    Twist2d poseDelta = GeometryUtils.log(nextPose);
+    velocity = new ChassisSpeeds(
+      poseDelta.dx / Constants.LOOP_CYCLE,
+      poseDelta.dy / Constants.LOOP_CYCLE,
+      poseDelta.dtheta / Constants.LOOP_CYCLE);
 
     // Display commanded speed for testing
     SmartDashboard.putString("RobotVelocity", velocity.toString());
