@@ -24,6 +24,7 @@ public final class Constants {
   public static final double NEO_FREE_SPEED = 5676; // RPM
   public static final double NEO_STALL_TORQUE = 3.75; // N * m
   public static final double NEO_550_FREE_SPEED = 11000; // RPM
+  public static final double SPARK_MAX_RESPONSE_LOOP = 0.13; // 130ms
   
   public static final double GRAVITY = 9.81; // m/s/s
 

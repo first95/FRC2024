@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.BetterSwerveKinematics;
 import frc.lib.util.BetterSwerveModuleState;
-import frc.lib.util.GeometryUtils;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.SwerveModule;
@@ -103,6 +102,7 @@ public class SwerveBase extends SubsystemBase {
    * @param isOpenLoop  Whether or not to use closed-loop velocity control.  Set to true to disable closed-loop.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+    
     // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if necessary.
     ChassisSpeeds velocity = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
       translation.getX(), 
@@ -116,16 +116,7 @@ public class SwerveBase extends SubsystemBase {
       rotation
     );
 
-    // Skew correction from 254
-    Pose2d nextPose = new Pose2d(
-      velocity.vxMetersPerSecond * Constants.LOOP_CYCLE,
-      velocity.vyMetersPerSecond * Constants.LOOP_CYCLE,
-      Rotation2d.fromRadians(velocity.omegaRadiansPerSecond * Constants.LOOP_CYCLE));
-    Twist2d poseDelta = GeometryUtils.log(nextPose);
-    velocity = new ChassisSpeeds(
-      poseDelta.dx / Constants.LOOP_CYCLE,
-      poseDelta.dy / Constants.LOOP_CYCLE,
-      poseDelta.dtheta / Constants.LOOP_CYCLE);
+    velocity = correctForDynamics(velocity, Constants.LOOP_CYCLE, 1);
 
     // Display commanded speed for testing
     SmartDashboard.putString("RobotVelocity", velocity.toString());
@@ -336,6 +327,15 @@ public class SwerveBase extends SubsystemBase {
   }
 
 
+  private ChassisSpeeds correctForDynamics(ChassisSpeeds initial, double dt, double magicFactor) {
+    Pose2d futureRobotPose = new Pose2d(
+      initial.vxMetersPerSecond * dt,
+      initial.vyMetersPerSecond * dt,
+      Rotation2d.fromRadians(initial.omegaRadiansPerSecond * dt * magicFactor));
+    Twist2d twistForPose = new Pose2d().log(futureRobotPose);
+    return new ChassisSpeeds(twistForPose.dx / dt, twistForPose.dy / dt, initial.omegaRadiansPerSecond);
+  }
+  
   public void turnModules(double speed) {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.turnModule(speed);

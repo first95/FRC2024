@@ -65,7 +65,7 @@ public class RobotContainer {
       () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
       () -> 0,
       () -> (Math.abs(m_driverController.getRightX()) > 0.05) ? Math.pow(m_driverController.getRightX(), 3) * 0.5 : 0, () -> true, false);
-      drivebase.setDefaultCommand(closedFieldRel);
+      drivebase.setDefaultCommand(openFieldRel);
     // Configure the trigger bindings
     configureBindings();
   }
