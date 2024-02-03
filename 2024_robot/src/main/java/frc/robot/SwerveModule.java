@@ -104,8 +104,8 @@ public class SwerveModule {
     }*/
     
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
-        SwerveModuleState simpleState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
-        simpleState = SwerveModuleState.optimize(simpleState, getState().angle);
+        //SwerveModuleState simpleState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         //desiredState = new BetterSwerveModuleState(simpleState.speedMetersPerSecond, simpleState.angle, desiredState.omegaRadPerSecond);
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Speed Setpoint: ", desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
@@ -136,7 +136,7 @@ public class SwerveModule {
         }
     }
 
-    public BetterSwerveModuleState getState() {
+    public SwerveModuleState getState() {
         double velocity;
         Rotation2d azimuth;
         double omega;
@@ -149,7 +149,7 @@ public class SwerveModule {
             azimuth = Rotation2d.fromDegrees(this.angle);
             omega = this.omega;
         }
-        return new BetterSwerveModuleState(velocity, azimuth, omega);
+        return new SwerveModuleState(velocity, azimuth);
     }
 
     public SwerveModulePosition getPosition() {

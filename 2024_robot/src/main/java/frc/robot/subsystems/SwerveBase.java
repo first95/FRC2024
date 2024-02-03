@@ -163,7 +163,6 @@ public class SwerveBase extends SubsystemBase {
    * @return The robot's pose
    */
   public Pose2d getPose() {
-    // ADD ODOMETRY!!
     return odometry.getEstimatedPosition();
   }
 
@@ -190,8 +189,8 @@ public class SwerveBase extends SubsystemBase {
    * Gets the current module states (azimuth and velocity)
    * @return A list of SwerveModuleStates containing the current module states
    */
-  public BetterSwerveModuleState[] getStates() {
-    BetterSwerveModuleState[] states = new BetterSwerveModuleState[Drivebase.NUM_MODULES];
+  public SwerveModuleState[] getStates() {
+    SwerveModuleState[] states = new SwerveModuleState[Drivebase.NUM_MODULES];
     for (SwerveModule module : swerveModules) {
       states[module.moduleNumber] = module.getState();
     }
@@ -267,10 +266,9 @@ public class SwerveBase extends SubsystemBase {
   public void setDriveBrake() {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.setDesiredState(
-        new BetterSwerveModuleState(
+        new SwerveModuleState(
           0,
-          Drivebase.MODULE_LOCATIONS[swerveModule.moduleNumber].getAngle(),
-          0),
+          Drivebase.MODULE_LOCATIONS[swerveModule.moduleNumber].getAngle()),
         true,
         false);
     }

@@ -82,7 +82,7 @@ public final class Constants {
     public static final double HEADING_KD = 0.01 * (MAX_ANGULAR_VELOCITY / Math.PI);
     
     // Swerve base kinematics object
-    public static final SwerveDriveKinematics KINEMATICS = new BetterSwerveKinematics(MODULE_LOCATIONS);
+    public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
     // Module PIDF gains
     public static final double MODULE_KP = 0.01;
