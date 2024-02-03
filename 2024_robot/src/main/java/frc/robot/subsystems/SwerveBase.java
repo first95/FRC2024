@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -116,7 +117,7 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putString("RobotVelocity", velocity.toString());
 
     // Calculate required module states via kinematics
-    BetterSwerveModuleState[] swerveModuleStates = 
+    SwerveModuleState[] swerveModuleStates = 
       Drivebase.KINEMATICS.toSwerveModuleStates(
         velocity
       );
@@ -137,7 +138,7 @@ public class SwerveBase extends SubsystemBase {
    * pathing.
    * @param desiredStates  A list of SwerveModuleStates to send to the modules.
    */
-  public void setModuleStates(BetterSwerveModuleState[] desiredStates) {
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
     // Desaturates wheel speeds
     BetterSwerveKinematics.desaturateWheelSpeeds(desiredStates, Drivebase.MAX_SPEED);
 

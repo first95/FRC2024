@@ -92,7 +92,7 @@ public class SwerveModule {
         lastAngle = getState().angle.getDegrees();
     }
 
-    public void setDesiredState(BetterSwerveModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         setDesiredState(desiredState, isOpenLoop, true);
     }
 
@@ -103,13 +103,13 @@ public class SwerveModule {
         driveController.setD(kd);
     }*/
     
-    public void setDesiredState(BetterSwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
         SwerveModuleState simpleState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         simpleState = SwerveModuleState.optimize(simpleState, getState().angle);
-        desiredState = new BetterSwerveModuleState(simpleState.speedMetersPerSecond, simpleState.angle, desiredState.omegaRadPerSecond);
+        //desiredState = new BetterSwerveModuleState(simpleState.speedMetersPerSecond, simpleState.angle, desiredState.omegaRadPerSecond);
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Speed Setpoint: ", desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
-        SmartDashboard.putNumber("Module " + moduleNumber + " Omega: ", Math.toDegrees(desiredState.omegaRadPerSecond));
+        //SmartDashboard.putNumber("Module " + moduleNumber + " Omega: ", Math.toDegrees(desiredState.omegaRadPerSecond));
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Drivebase.MAX_SPEED;
@@ -122,11 +122,11 @@ public class SwerveModule {
         double angle = ((Math.abs(desiredState.speedMetersPerSecond) <= (Drivebase.MAX_SPEED * 0.01)) && antijitter ? 
             lastAngle :
             desiredState.angle.getDegrees()); // Prevents module rotation if speed is less than 1%
-        angleController.setReference(angle, ControlType.kPosition, 0, Math.toDegrees(desiredState.omegaRadPerSecond) * Drivebase.MODULE_KV);
+        angleController.setReference(angle, ControlType.kPosition, 0, 0);//Math.toDegrees(desiredState.omegaRadPerSecond) * Drivebase.MODULE_KV);
         lastAngle = angle;
 
         this.angle = desiredState.angle.getDegrees();
-        omega = desiredState.omegaRadPerSecond;
+        //omega = desiredState.omegaRadPerSecond;
         speed = desiredState.speedMetersPerSecond;
 
         if (!Robot.isReal()) {
