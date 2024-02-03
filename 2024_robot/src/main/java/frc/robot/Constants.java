@@ -25,7 +25,7 @@ public final class Constants {
   public static final double NEO_550_FREE_SPEED = 11000; // RPM
   
   public static final double GRAVITY = 9.81; // m/s/s
-  
+
   public static final class Drivebase {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
@@ -150,14 +150,51 @@ public final class Constants {
 
     public static final int PIGEON = 30;
 }
-    public static class Vision {
-        public static final int APRILTAG_PIPELINE_NUMBER = 0;
-        public static final String PORT_LIMELIGHT_NAME = "port";
-        public static final String STARBOARD_LIMELIGHT_NAME = "sboard";
-        public static final double POSE_ERROR_TOLERANCE = 0.5;
-        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
+  public static final class Vision {
+    public static final int APRILTAG_PIPELINE_NUMBER = 0;
+    public static final String PORT_LIMELIGHT_NAME = "port";
+    public static final String STARBOARD_LIMELIGHT_NAME = "sboard";
+    public static final double POSE_ERROR_TOLERANCE = 0.5;
+    public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
 }
-  public static class OperatorConstants {
+  
+  public static final class ShooterConstants {
+    public static final int LEFT_SHOOTER_ID = 12;
+    public static final int RIGHT_SHOOTER_ID = 13;
+    public static final int LOADER_ID = 14;
+    public static final int SHOULDER_ID = 15;
+    public static final int SHOULDER_2_ID = 16;
+    public static final int NOTE_SENSOR_ID = 0;
+
+    public static final boolean INVERT_LEFT_SHOOTER = false;
+    public static final boolean INVERT_RIGHT_SHOOTER = false;
+    public static final boolean INVERT_LOADER = false;
+    public static final boolean INVERT_SHOULDER = false;
+
+    public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14 / (44 * 5 * 5));
+    public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
+
+    public static final double SHOULDER_KP = 0;
+    public static final double SHOULDER_KI = 0;
+    public static final double SHOULDER_KD = 0;
+    public static final double SHOULDER_KF = 0;
+    public static final double SHOULDER_KS = 0;
+    public static final double SHOULDER_KG = 1.26; // Volts
+    public static final double SHOULDER_KV = 1.52; // V * s / rad
+    public static final double SHOULDER_KA = 0.13; // V * s^2 / rad
+
+    public static final double FLYWHEEL_KP = 0;
+    public static final double FLYWHEEL_KI = 0;
+    public static final double FLYWHEEL_KD = 0;
+    public static final double FLYWHEEL_KF = 0;
+    public static final double FLYWHEEL_KS = 0;
+    public static final double FLYWHEEL_KV = 0;
+    public static final double FLYWHEEL_KA = 0;
+
+    public static final double MAX_ACCELERATION = 0.5;
+    public static final double MAX_SPEED = 0.5;
+  }
+public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
 }
