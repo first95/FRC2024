@@ -140,6 +140,10 @@ public class Shooter extends SubsystemBase {
     timer.reset();
   }
 
+  public Rotation2d getArmAngle() {
+    return Rotation2d.fromRadians(shoulderEncoder.getPosition());
+  }
+
   @Override
   public void periodic() {
     if (bottomLimitSwitch.isPressed()) {

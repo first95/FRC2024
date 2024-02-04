@@ -36,7 +36,7 @@ public class ExampleCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ang = ShooterConstants.ARM_LOWER_LIMIT;
+    ang = shooter.getArmAngle();
     shooter.setArmAngle(ang);
   }
 
