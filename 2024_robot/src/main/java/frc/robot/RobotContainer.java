@@ -71,7 +71,14 @@ public class RobotContainer {
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, false);
       drivebase.setDefaultCommand(closedFieldRel);
 
-      shooter.setDefaultCommand(new ExampleCommand(shooter, () -> m_driverController.y().getAsBoolean(), () -> m_driverController.a().getAsBoolean()));
+      shooter.setDefaultCommand(new ExampleCommand(
+        shooter,
+        () -> m_driverController.rightBumper().getAsBoolean(),
+        () -> m_driverController.leftBumper().getAsBoolean(),
+        () -> m_driverController.povUp().getAsBoolean(),
+        () -> m_driverController.povDown().getAsBoolean(),
+        () -> m_driverController.y().getAsBoolean(),
+        () -> m_driverController.a().getAsBoolean()));
 
     // Configure the trigger bindings
     configureBindings();
