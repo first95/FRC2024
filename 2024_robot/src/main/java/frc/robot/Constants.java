@@ -160,15 +160,15 @@ public final class Constants {
 }
   
   public static final class ShooterConstants {
-    public static final int LEFT_SHOOTER_ID = 12;
-    public static final int RIGHT_SHOOTER_ID = 13;
+    public static final int PORT_SHOOTER_ID = 12;
+    public static final int STARBOARD_SHOOTER_ID = 13;
     public static final int LOADER_ID = 14;
     public static final int SHOULDER_ID = 15;
     public static final int SHOULDER_2_ID = 16;
     public static final int NOTE_SENSOR_ID = 0;
 
-    public static final boolean INVERT_LEFT_SHOOTER = false;
-    public static final boolean INVERT_RIGHT_SHOOTER = false;
+    public static final boolean INVERT_PORT_SHOOTER = false;
+    public static final boolean INVERT_STARBOARD_SHOOTER = true;
     public static final boolean INVERT_LOADER = false;
     public static final boolean INVERT_SHOULDER = false;
 

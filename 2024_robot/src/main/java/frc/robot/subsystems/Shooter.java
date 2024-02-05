@@ -25,10 +25,10 @@ import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   
-  private final CANSparkFlex leftShooter, rightShooter;
+  private final CANSparkFlex portShooter, starboardShooter;
   private final CANSparkMax loader, shoulder, shoulder2;
-  private final RelativeEncoder leftShooterEncoder, rightShooterEncoder, shoulderEncoder;
-  private final SparkPIDController leftShooterPID, rightShooterPID, shoulderPID;
+  private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
+  private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
   private final SparkLimitSwitch bottomLimitSwitch;
   private final DigitalInput noteSensor;
@@ -40,51 +40,51 @@ public class Shooter extends SubsystemBase {
   private TrapezoidProfile.State armSetpoint;
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
-    leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_ID, MotorType.kBrushless);
-    rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_ID, MotorType.kBrushless);
+    portShooter = new CANSparkFlex(ShooterConstants.PORT_SHOOTER_ID, MotorType.kBrushless);
+    starboardShooter = new CANSparkFlex(ShooterConstants.STARBOARD_SHOOTER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(ShooterConstants.LOADER_ID, MotorType.kBrushless);
     shoulder = new CANSparkMax(ShooterConstants.SHOULDER_ID, MotorType.kBrushless);
     shoulder2 = new CANSparkMax(ShooterConstants.SHOULDER_2_ID, MotorType.kBrushless);
 
-    leftShooter.restoreFactoryDefaults();
-    rightShooter.restoreFactoryDefaults();
+    portShooter.restoreFactoryDefaults();
+    starboardShooter.restoreFactoryDefaults();
     loader.restoreFactoryDefaults();
     shoulder.restoreFactoryDefaults();
     shoulder2.restoreFactoryDefaults();
 
     shoulder2.follow(shoulder, true);
 
-    leftShooter.setInverted(ShooterConstants.INVERT_LEFT_SHOOTER);
-    rightShooter.setInverted(ShooterConstants.INVERT_RIGHT_SHOOTER);
+    portShooter.setInverted(ShooterConstants.INVERT_PORT_SHOOTER);
+    starboardShooter.setInverted(ShooterConstants.INVERT_STARBOARD_SHOOTER);
     loader.setInverted(ShooterConstants.INVERT_LOADER);
     shoulder.setInverted(ShooterConstants.INVERT_SHOULDER);
 
-    leftShooter.setIdleMode(IdleMode.kCoast);
-    rightShooter.setIdleMode(IdleMode.kCoast);
+    portShooter.setIdleMode(IdleMode.kCoast);
+    starboardShooter.setIdleMode(IdleMode.kCoast);
     loader.setIdleMode(IdleMode.kBrake);
     shoulder.setIdleMode(IdleMode.kBrake);
     shoulder2.setIdleMode(IdleMode.kBrake);
 
-    leftShooterEncoder = leftShooter.getEncoder();
-    rightShooterEncoder = rightShooter.getEncoder();
+    portShooterEncoder = portShooter.getEncoder();
+    starboardShooterEncoder = starboardShooter.getEncoder();
     shoulderEncoder = shoulder.getEncoder();
 
     shoulderEncoder.setPositionConversionFactor(ShooterConstants.ARM_RADIANS_PER_MOTOR_ROTATION);
     shoulderEncoder.setVelocityConversionFactor(ShooterConstants.ARM_RADIANS_PER_MOTOR_ROTATION / 60);
 
-    leftShooterPID = leftShooter.getPIDController();
-    rightShooterPID = rightShooter.getPIDController();
+    portShooterPID = portShooter.getPIDController();
+    starboardShooterPID = starboardShooter.getPIDController();
     shoulderPID = shoulder.getPIDController();
 
-    leftShooterPID.setP(ShooterConstants.FLYWHEEL_KP);
-    leftShooterPID.setI(ShooterConstants.FLYWHEEL_KI);
-    leftShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
-    leftShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
+    portShooterPID.setP(ShooterConstants.FLYWHEEL_KP);
+    portShooterPID.setI(ShooterConstants.FLYWHEEL_KI);
+    portShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
+    portShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
 
-    rightShooterPID.setP(ShooterConstants.FLYWHEEL_KP);
-    rightShooterPID.setI(ShooterConstants.FLYWHEEL_KI);
-    rightShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
-    rightShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
+    starboardShooterPID.setP(ShooterConstants.FLYWHEEL_KP);
+    starboardShooterPID.setI(ShooterConstants.FLYWHEEL_KI);
+    starboardShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
+    starboardShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
 
     shoulderPID.setP(ShooterConstants.SHOULDER_KP);
     shoulderPID.setI(ShooterConstants.SHOULDER_KI);
@@ -116,8 +116,8 @@ public class Shooter extends SubsystemBase {
 
     noteSensor = new DigitalInput(ShooterConstants.NOTE_SENSOR_ID);
 
-    leftShooter.burnFlash();
-    rightShooter.burnFlash();
+    portShooter.burnFlash();
+    starboardShooter.burnFlash();
     loader.burnFlash();
     shoulder.burnFlash();
     shoulder2.burnFlash();
@@ -130,9 +130,9 @@ public class Shooter extends SubsystemBase {
     loader.set(speed);
   }
 
-  public void setShooterSpeed(double leftRPM, double rightRPM) {
-    leftShooterPID.setReference(leftRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(leftRPM));
-    rightShooterPID.setReference(rightRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(rightRPM));
+  public void setShooterSpeed(double portRPM, double starboardRPM) {
+    portShooterPID.setReference(portRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(portRPM));
+    starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(starboardRPM));
   }
 
   public void setArmAngle(Rotation2d angle) {
@@ -142,6 +142,18 @@ public class Shooter extends SubsystemBase {
 
   public Rotation2d getArmAngle() {
     return Rotation2d.fromRadians(shoulderEncoder.getPosition());
+  }
+
+  public double getPortShooterSpeed() {
+    return portShooterEncoder.getVelocity();
+  }
+
+  public double getStarboardShooterSpeed() {
+    return starboardShooterEncoder.getVelocity();
+  }
+
+  public boolean getNoteSensor() {
+    return noteSensor.get();
   }
 
   @Override
@@ -157,6 +169,11 @@ public class Shooter extends SubsystemBase {
       new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity()),
       new TrapezoidProfile.State(armGoal.getRadians(), 0)
     );
+    // This really shouldn't be necessary
+    armSetpoint = (armSetpoint.position >= ShooterConstants.ARM_UPPER_LIMIT.getRadians())
+      ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
+      : armSetpoint;
+
     shoulderPID.setReference(
       armSetpoint.position,
       ControlType.kPosition,
