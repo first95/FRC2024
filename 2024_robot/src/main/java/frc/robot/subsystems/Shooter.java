@@ -12,6 +12,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -65,8 +66,8 @@ public class Shooter extends SubsystemBase {
     shoulder.setIdleMode(IdleMode.kBrake);
     shoulder2.setIdleMode(IdleMode.kBrake);
 
-    portShooter.setSmartCurrentLimit(ShooterConstants.PORT_SHOOTER_CURRENT_LIMIT);
-    starboardShooter.setSmartCurrentLimit(ShooterConstants.STARBOARD_SHOOTER_CURRENT_LIMIT);
+    portShooter.setSmartCurrentLimit(ShooterConstants.SHOOTER_CURRENT_LIMIT);
+    starboardShooter.setSmartCurrentLimit(ShooterConstants.SHOOTER_CURRENT_LIMIT);
     loader.setSmartCurrentLimit(ShooterConstants.LOADER_CURRENT_LIMIT);
     shoulder.setSmartCurrentLimit(ShooterConstants.SHOULDER_CURRENT_LIMIT);
     shoulder2.setSmartCurrentLimit(ShooterConstants.SHOULDER_CURRENT_LIMIT);
@@ -137,8 +138,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterSpeed(double portRPM, double starboardRPM) {
-    portShooterPID.setReference(portRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(portRPM));
-    starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(starboardRPM));
+    portShooterPID.setReference(portRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(portRPM), ArbFFUnits.kVoltage);
+    starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(starboardRPM), ArbFFUnits.kVoltage);
+  }
+
+  public void setPortShooterRaw(double speed) {
+    portShooter.set(speed);
+  }
+
+  public void setStarboardShooterRaw(double speed) {
+    starboardShooter.set(speed);
   }
 
   public void setArmAngle(Rotation2d angle) {
@@ -184,12 +193,17 @@ public class Shooter extends SubsystemBase {
       armSetpoint.position,
       ControlType.kPosition,
       0,
-      shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity)
+      shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity),
+      ArbFFUnits.kVoltage
     );
 
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", armSetpoint.position);
     SmartDashboard.putNumber("ShooterShoulderSetpointVel", armSetpoint.velocity);
+    SmartDashboard.putNumber("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
+    SmartDashboard.putNumber("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
+    SmartDashboard.putNumber("PortRPM", portShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("StarboardRPM", starboardShooterEncoder.getVelocity());
   }
 
   @Override

@@ -20,7 +20,7 @@ public class ExampleCommand extends Command {
   private final Shooter shooter;
   private Rotation2d ang;
   private double portSpeed, starboardSpeed;
-  private BooleanSupplier upSup, downSup, portUpSup, portDownSup, sboardUpSup, sboardDownSup;
+  private BooleanSupplier upSup, downSup, portUpSup, portDownSup, sboardUpSup, sboardDownSup, loader;
   private boolean lastUp, lastDown, lastPortUp, lastPortDown, lastSboardUp, lastSboardDown;
 
   /**
@@ -28,7 +28,7 @@ public class ExampleCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(Shooter shooter, BooleanSupplier upSup, BooleanSupplier downSup, BooleanSupplier portUpSup, BooleanSupplier portDownSup, BooleanSupplier sboardUpSup, BooleanSupplier sboardDownSup) {
+  public ExampleCommand(Shooter shooter, BooleanSupplier upSup, BooleanSupplier downSup, BooleanSupplier portUpSup, BooleanSupplier portDownSup, BooleanSupplier sboardUpSup, BooleanSupplier sboardDownSup, BooleanSupplier loader) {
     this.shooter = shooter;
     this.upSup = upSup;
     this.downSup = downSup;
@@ -36,6 +36,7 @@ public class ExampleCommand extends Command {
     this.portUpSup = portUpSup;
     this.sboardDownSup = sboardDownSup;
     this.sboardUpSup = sboardUpSup;
+    this.loader = loader;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
   }
@@ -67,20 +68,26 @@ public class ExampleCommand extends Command {
     }
 
     if (portUpSup.getAsBoolean() && !lastPortUp) {
-      portSpeed += 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      portSpeed += 0.05;
+      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      shooter.setPortShooterRaw(portSpeed);
     } else if (portDownSup.getAsBoolean() && !lastPortDown && portSpeed > 0) {
-      portSpeed -= 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      portSpeed -= 0.05;
+      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      shooter.setPortShooterRaw(portSpeed);
     }
 
     if (sboardUpSup.getAsBoolean() && !lastSboardUp) {
-      starboardSpeed += 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      starboardSpeed += 0.05;
+      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      shooter.setStarboardShooterRaw(starboardSpeed);
     } else if (sboardDownSup.getAsBoolean() && !lastSboardDown && starboardSpeed > 0) {
-      starboardSpeed -= 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      starboardSpeed -= 0.05;
+      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
+      shooter.setStarboardShooterRaw(starboardSpeed);
     }
+
+    shooter.runLoader(loader.getAsBoolean() ? 0.8 : 0);
 
     lastDown = downSup.getAsBoolean();
     lastUp = upSup.getAsBoolean();

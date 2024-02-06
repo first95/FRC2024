@@ -78,7 +78,8 @@ public class RobotContainer {
         () -> m_driverController.povUp().getAsBoolean(),
         () -> m_driverController.povDown().getAsBoolean(),
         () -> m_driverController.y().getAsBoolean(),
-        () -> m_driverController.a().getAsBoolean()));
+        () -> m_driverController.a().getAsBoolean(),
+        () -> m_driverController.b().getAsBoolean()));
 
     // Configure the trigger bindings
     configureBindings();

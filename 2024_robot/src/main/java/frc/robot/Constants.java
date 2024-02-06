@@ -169,11 +169,10 @@ public final class Constants {
 
     public static final boolean INVERT_PORT_SHOOTER = false;
     public static final boolean INVERT_STARBOARD_SHOOTER = true;
-    public static final boolean INVERT_LOADER = false;
+    public static final boolean INVERT_LOADER = true;
     public static final boolean INVERT_SHOULDER = false;
 
-    public static final int PORT_SHOOTER_CURRENT_LIMIT = 20; // A
-    public static final int STARBOARD_SHOOTER_CURRENT_LIMIT = 20; // A
+    public static final int SHOOTER_CURRENT_LIMIT = 40; // A
     public static final int LOADER_CURRENT_LIMIT = 20; // A
     public static final int SHOULDER_CURRENT_LIMIT = 40; // A
 
@@ -196,8 +195,8 @@ public final class Constants {
     public static final double FLYWHEEL_KI = 0;
     public static final double FLYWHEEL_KD = 0;
     public static final double FLYWHEEL_KF = 0;
-    public static final double FLYWHEEL_KS = 0;
-    public static final double FLYWHEEL_KV = 0;
+    public static final double FLYWHEEL_KS = 0.18; // Volts -- Measured 2024-02-05
+    public static final double FLYWHEEL_KV = 0.00183; // V * min / rotation
     public static final double FLYWHEEL_KA = 0;
 
     public static final double MAX_ACCELERATION = 0.5;
