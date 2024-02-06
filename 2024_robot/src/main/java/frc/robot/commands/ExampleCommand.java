@@ -68,23 +68,19 @@ public class ExampleCommand extends Command {
     }
 
     if (portUpSup.getAsBoolean() && !lastPortUp) {
-      portSpeed += 0.05;
-      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
-      shooter.setPortShooterRaw(portSpeed);
+      portSpeed += 100;
+      shooter.setShooterSpeed(portSpeed, starboardSpeed);
     } else if (portDownSup.getAsBoolean() && !lastPortDown && portSpeed > 0) {
-      portSpeed -= 0.05;
-      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
-      shooter.setPortShooterRaw(portSpeed);
+      portSpeed -= 100;
+      shooter.setShooterSpeed(portSpeed, starboardSpeed);
     }
 
     if (sboardUpSup.getAsBoolean() && !lastSboardUp) {
-      starboardSpeed += 0.05;
-      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
-      shooter.setStarboardShooterRaw(starboardSpeed);
+      starboardSpeed += 100;
+      shooter.setShooterSpeed(portSpeed, starboardSpeed);
     } else if (sboardDownSup.getAsBoolean() && !lastSboardDown && starboardSpeed > 0) {
-      starboardSpeed -= 0.05;
-      //shooter.setShooterSpeed(portSpeed, starboardSpeed);
-      shooter.setStarboardShooterRaw(starboardSpeed);
+      starboardSpeed -= 100;
+      shooter.setShooterSpeed(portSpeed, starboardSpeed);
     }
 
     shooter.runLoader(loader.getAsBoolean() ? 0.8 : 0);
