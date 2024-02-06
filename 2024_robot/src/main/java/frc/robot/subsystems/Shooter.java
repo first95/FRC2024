@@ -65,6 +65,12 @@ public class Shooter extends SubsystemBase {
     shoulder.setIdleMode(IdleMode.kBrake);
     shoulder2.setIdleMode(IdleMode.kBrake);
 
+    portShooter.setSmartCurrentLimit(ShooterConstants.PORT_SHOOTER_CURRENT_LIMIT);
+    starboardShooter.setSmartCurrentLimit(ShooterConstants.STARBOARD_SHOOTER_CURRENT_LIMIT);
+    loader.setSmartCurrentLimit(ShooterConstants.LOADER_CURRENT_LIMIT);
+    shoulder.setSmartCurrentLimit(ShooterConstants.SHOULDER_CURRENT_LIMIT);
+    shoulder2.setSmartCurrentLimit(ShooterConstants.SHOULDER_CURRENT_LIMIT);
+
     portShooterEncoder = portShooter.getEncoder();
     starboardShooterEncoder = starboardShooter.getEncoder();
     shoulderEncoder = shoulder.getEncoder();

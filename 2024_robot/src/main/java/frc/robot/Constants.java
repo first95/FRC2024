@@ -172,6 +172,11 @@ public final class Constants {
     public static final boolean INVERT_LOADER = false;
     public static final boolean INVERT_SHOULDER = false;
 
+    public static final int PORT_SHOOTER_CURRENT_LIMIT = 20; // A
+    public static final int STARBOARD_SHOOTER_CURRENT_LIMIT = 20; // A
+    public static final int LOADER_CURRENT_LIMIT = 20; // A
+    public static final int SHOULDER_CURRENT_LIMIT = 40; // A
+
     public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14 / (44 * 5 * 5));
     public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
 
