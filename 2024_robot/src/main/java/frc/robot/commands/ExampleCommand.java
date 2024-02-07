@@ -45,6 +45,8 @@ public class ExampleCommand extends Command {
   @Override
   public void initialize() {
     ang = shooter.getArmAngle();
+    portSpeed = 0;
+    starboardSpeed = 0;
     shooter.setArmAngle(ang);
     starboardSpeed = 0;
     portSpeed = 0;
@@ -54,6 +56,7 @@ public class ExampleCommand extends Command {
     lastPortUp = false;
     lastSboardDown = false;
     lastSboardUp = false;
+    shooter.setShooterSpeed(portSpeed, starboardSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
