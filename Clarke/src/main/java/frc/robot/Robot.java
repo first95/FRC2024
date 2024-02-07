@@ -12,6 +12,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Drivebase;
 
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.jar.JarFile;
+import java.io.IOException;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -47,6 +52,9 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("KV", Drivebase.KV);
       SmartDashboard.putNumber("KA", Drivebase.KA);
     }
+
+    String[] versions = this.getJarManifest();
+    SmartDashboard.putString("Version", versions[0] + "\n" + versions[1]); // Sends version to dashboard -- Not sure where you want this
   }
 
   /**
@@ -132,4 +140,33 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+
+  public static String[] getJarManifest(){
+    // gets the version from jar manifest and prints to smartdashboard
+    // I don't know how this should be organized?
+    
+    String title = "";
+    String version = "";
+      try{
+    JarFile jarFile = new JarFile("/build/libs/Clarke.jar");
+    Manifest manifest = jarFile.getManifest();
+    Attributes attributes = manifest.getMainAttributes();
+    
+    title = attributes.getValue("Implementation-Title");
+    version = attributes.getValue("Implementation-Version");
+    jarFile.close();
+    
+    String[] returns = {title, version};
+    return returns;
+         
+      } catch(IOException e){
+        
+        String[] nones = {"", ""};
+        return nones;
+      }
+      
+        
+        
+    }
 }
