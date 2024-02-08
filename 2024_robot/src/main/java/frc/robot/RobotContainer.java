@@ -5,10 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-//import frc.robot.commands.Autos;
+import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.NoteHandlerCommand;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveBase;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Intake intake = new Intake();
   private final SwerveBase drivebase = new SwerveBase();
   private final Shooter shooter = new Shooter();
   private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
@@ -36,13 +38,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    Command rollerer = new RepeatCommand(
-      new InstantCommand(
-        () -> {m_exampleSubsystem.runRoller(m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis());}
-      ));
-    rollerer.addRequirements(m_exampleSubsystem);
-    m_exampleSubsystem.setDefaultCommand(rollerer);
 
     openRobotRel = new TeleopDrive(
       drivebase,
@@ -69,15 +64,19 @@ public class RobotContainer {
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, false);
       drivebase.setDefaultCommand(closedFieldRel);
 
-      shooter.setDefaultCommand(new ExampleCommand(
-        shooter,
-        () -> m_driverController.rightBumper().getAsBoolean(),
-        () -> m_driverController.leftBumper().getAsBoolean(),
-        () -> m_driverController.povUp().getAsBoolean(),
-        () -> m_driverController.povDown().getAsBoolean(),
-        () -> m_driverController.y().getAsBoolean(),
-        () -> m_driverController.a().getAsBoolean(),
-        () -> m_driverController.b().getAsBoolean()));
+    NoteHandlerCommand noteManager = new NoteHandlerCommand(
+      shooter,
+      intake,
+      () -> (m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()),
+      () -> m_driverController.b().getAsBoolean(),
+      () -> m_driverController.rightBumper().getAsBoolean(),
+      () -> m_driverController.leftBumper().getAsBoolean(),
+      () -> m_driverController.povUp().getAsBoolean(),
+      () -> m_driverController.povDown().getAsBoolean(),
+      () -> m_driverController.y().getAsBoolean(),
+      () -> m_driverController.a().getAsBoolean());
+    
+    noteManager.schedule();
 
     // Configure the trigger bindings
     configureBindings();
@@ -93,10 +92,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
   /**

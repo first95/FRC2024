@@ -199,8 +199,17 @@ public final class Constants {
     public static final double FLYWHEEL_KV = 0.00183; // V * min / rotation
     public static final double FLYWHEEL_KA = 0;
 
+    public static final double SHOOTER_SPEED_TOLERANCE = 50;
+
     public static final double MAX_ACCELERATION = 0.5;
     public static final double MAX_SPEED = 0.5;
+
+    public static final double LOADER_SPEED = 0.8;
+  }
+
+  public static final class IntakeConstants {
+    public static final int TOP_ROLLER_ID = 10;
+    public static final int BOTTOM_ROLLER_ID = 11;
   }
 public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;

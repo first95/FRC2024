@@ -4,101 +4,33 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
 
-import java.util.function.BooleanSupplier;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class ExampleCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Shooter shooter;
-  private Rotation2d ang;
-  private double portSpeed, starboardSpeed;
-  private BooleanSupplier upSup, downSup, portUpSup, portDownSup, sboardUpSup, sboardDownSup, loader;
-  private boolean lastUp, lastDown, lastPortUp, lastPortDown, lastSboardUp, lastSboardDown;
+  private final ExampleSubsystem m_exampleSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(Shooter shooter, BooleanSupplier upSup, BooleanSupplier downSup, BooleanSupplier portUpSup, BooleanSupplier portDownSup, BooleanSupplier sboardUpSup, BooleanSupplier sboardDownSup, BooleanSupplier loader) {
-    this.shooter = shooter;
-    this.upSup = upSup;
-    this.downSup = downSup;
-    this.portDownSup = portDownSup;
-    this.portUpSup = portUpSup;
-    this.sboardDownSup = sboardDownSup;
-    this.sboardUpSup = sboardUpSup;
-    this.loader = loader;
+  public ExampleCommand(ExampleSubsystem exampleSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter);
+    m_exampleSubsystem = exampleSubsystem;
+    addRequirements(exampleSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    ang = shooter.getArmAngle();
-    portSpeed = 0;
-    starboardSpeed = 0;
-    shooter.setArmAngle(ang);
-    starboardSpeed = 0;
-    portSpeed = 0;
-    lastDown = false;
-    lastUp = false;
-    lastPortDown = false;
-    lastPortUp = false;
-    lastSboardDown = false;
-    lastSboardUp = false;
-    shooter.setShooterSpeed(portSpeed, starboardSpeed);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (upSup.getAsBoolean() && !lastUp && (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
-      ang = ang.plus(Rotation2d.fromDegrees(5));
-      shooter.setArmAngle(ang);
-    } else if (downSup.getAsBoolean() && !lastDown) {
-      ang = ang.minus(Rotation2d.fromDegrees(5));
-      shooter.setArmAngle(ang);
-    }
-
-    if (portUpSup.getAsBoolean() && !lastPortUp) {
-      portSpeed += 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    } else if (portDownSup.getAsBoolean() && !lastPortDown && portSpeed > 0) {
-      portSpeed -= 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    }
-
-    if (sboardUpSup.getAsBoolean() && !lastSboardUp) {
-      starboardSpeed += 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    } else if (sboardDownSup.getAsBoolean() && !lastSboardDown && starboardSpeed > 0) {
-      starboardSpeed -= 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    }
-
-    shooter.runLoader(loader.getAsBoolean() ? 0.8 : 0);
-
-    lastDown = downSup.getAsBoolean();
-    lastUp = upSup.getAsBoolean();
-    lastPortDown = portDownSup.getAsBoolean();
-    lastPortUp = portUpSup.getAsBoolean();
-    lastSboardDown = sboardDownSup.getAsBoolean();
-    lastSboardUp = sboardUpSup.getAsBoolean();
-
-    SmartDashboard.putNumber("PortSpeed", portSpeed);
-    SmartDashboard.putNumber("StarboardSpeed", starboardSpeed);
-    SmartDashboard.putString("AngleCommand", ang.toString());
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
