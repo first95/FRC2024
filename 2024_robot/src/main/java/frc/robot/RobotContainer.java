@@ -76,7 +76,7 @@ public class RobotContainer {
       () -> m_driverController.y().getAsBoolean(),
       () -> m_driverController.a().getAsBoolean());
     
-    noteManager.schedule();
+    shooter.setDefaultCommand(noteManager);
 
     // Configure the trigger bindings
     configureBindings();

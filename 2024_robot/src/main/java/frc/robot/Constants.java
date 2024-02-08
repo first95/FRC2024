@@ -176,6 +176,8 @@ public final class Constants {
     public static final int LOADER_CURRENT_LIMIT = 40; // A
     public static final int SHOULDER_CURRENT_LIMIT = 40; // A
 
+    public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
+
     public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14 / (44 * 5 * 5));
     public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
 
@@ -199,12 +201,16 @@ public final class Constants {
     public static final double FLYWHEEL_KV = 0.00183; // V * min / rotation
     public static final double FLYWHEEL_KA = 0;
 
-    public static final double SHOOTER_SPEED_TOLERANCE = 50;
+    public static final double SHOOTER_SPEED_TOLERANCE = 200;
 
     public static final double MAX_ACCELERATION = 0.5;
     public static final double MAX_SPEED = 0.5;
 
-    public static final double LOADER_SPEED = 0.8;
+    public static final double LOADER_INTAKE_SPEED = 0.6;
+    public static final double LOADER_FIRING_SPEED = 1;
+
+    public static final double PORT_SHOOTER_SPEED = 5000;
+    public static final double STARBOARD_SHOOTER_SPEED = 3000;
   }
 
   public static final class IntakeConstants {

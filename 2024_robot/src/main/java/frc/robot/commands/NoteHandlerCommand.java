@@ -62,18 +62,16 @@ public class NoteHandlerCommand extends Command {
 
     // For testing
     ang = shooter.getArmAngle();
-    portSpeed = 0;
-    starboardSpeed = 0;
+    portSpeed = ShooterConstants.PORT_SHOOTER_SPEED;
+    starboardSpeed = ShooterConstants.STARBOARD_SHOOTER_SPEED;
     shooter.setArmAngle(ang);
-    starboardSpeed = 0;
-    portSpeed = 0;
     lastDown = false;
     lastUp = false;
     lastPortDown = false;
     lastPortUp = false;
     lastSboardDown = false;
     lastSboardUp = false;
-    shooter.setShooterSpeed(portSpeed, starboardSpeed);
+    shooter.setShooterSpeed(0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -116,7 +114,7 @@ public class NoteHandlerCommand extends Command {
     switch(currentState){
       case IDLE:
       intakeSpeed = commandedIntakeSpeed;
-      loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_SPEED : 0;
+      loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_INTAKE_SPEED : 0;
       portShootingSpeed = 0;
       starboardShootingSpeed = 0;
       if (sensorvalue){
@@ -140,11 +138,11 @@ public class NoteHandlerCommand extends Command {
 
       case SHOOTING:
         intakeSpeed = 0;
-        loaderSpeed = ShooterConstants.LOADER_SPEED;
+        loaderSpeed = ShooterConstants.LOADER_FIRING_SPEED;
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
 
-        if (sensorvalue == false){
+        if (!shooterbutton){
           currentState = State.IDLE;
         }
       break;
@@ -153,6 +151,7 @@ public class NoteHandlerCommand extends Command {
         intakeSpeed = 0;
         loaderSpeed = 0;
         portShootingSpeed = 0;
+        starboardShootingSpeed = 0;
         if (shooterbutton){
           currentState = State.SPOOLING;
         }
