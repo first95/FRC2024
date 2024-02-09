@@ -105,9 +105,11 @@ public class SwerveBase extends SubsystemBase {
     
     // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if necessary.
     ChassisSpeeds velocity = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-      translation.getX(), 
-      translation.getY(), 
-      rotation, 
+      ChassisSpeeds.discretize(
+        translation.getX(),
+        translation.getY(),
+        rotation,
+        Constants.LOOP_CYCLE),
       getPose().getRotation()
     )
     : new ChassisSpeeds(
@@ -116,7 +118,7 @@ public class SwerveBase extends SubsystemBase {
       rotation
     );
 
-    velocity = correctForDynamics(velocity, Constants.LOOP_CYCLE, 1);
+    //velocity = correctForDynamics(velocity, Constants.LOOP_CYCLE, 1);
 
     // Display commanded speed for testing
     SmartDashboard.putString("RobotVelocity", velocity.toString());
