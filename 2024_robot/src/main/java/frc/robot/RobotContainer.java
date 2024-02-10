@@ -56,8 +56,8 @@ public class RobotContainer {
     
     openFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
-      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? 1 : 0,//Math.pow(m_driverController.getLeftY(), 3) : 0,
+      () -> 0,//(Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, true);
     
     closedFieldRel = new TeleopDrive(

@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
@@ -102,6 +103,8 @@ public class SwerveBase extends SubsystemBase {
    * @param isOpenLoop  Whether or not to use closed-loop velocity control.  Set to true to disable closed-loop.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+
+    SmartDashboard.putString("InputCommands", translation.toString() + ", Omega: " + rotation);
     
     // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if necessary.
     ChassisSpeeds velocity = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -130,7 +133,7 @@ public class SwerveBase extends SubsystemBase {
       );
     
     // Desaturate calculated speeds
-    BetterSwerveKinematics.desaturateWheelSpeeds(swerveModuleStates, Drivebase.MAX_SPEED);
+    //SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Drivebase.MAX_SPEED);
 
     // Command and display desired states
     for (SwerveModule module : swerveModules) {
@@ -303,6 +306,7 @@ public class SwerveBase extends SubsystemBase {
 
     SmartDashboard.putString("Gyro", getYaw().toString());
     SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
+    SmartDashboard.putString("OdometryPos", getPose().toString());
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
