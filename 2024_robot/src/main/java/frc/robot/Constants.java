@@ -25,6 +25,8 @@ public final class Constants {
   public static final double NEO_STALL_TORQUE = 3.75; // N * m
   public static final double NEO_550_FREE_SPEED = 11000; // RPM
   public static final double SPARK_MAX_RESPONSE_LOOP = 0.13; // 130ms
+  public static final double VORTEX_FREE_SPEED = 6784; // RPM
+  public static final double VORTEX_STALL_TORQUE = 3.6; // N * m
   
   public static final double GRAVITY = 9.81; // m/s/s
 
@@ -68,7 +70,7 @@ public final class Constants {
     public static final double IMU_MOUNT_ROLL = 0;
 
     // Drivetrain limitations
-    public static final double MAX_SPEED = Units.feetToMeters(15.76); // meters per second NOT A LIMIT!!! DO NOT TOUCH!!!
+    public static final double MAX_SPEED = (VORTEX_FREE_SPEED * Units.inchesToMeters(3 * Math.PI)) / (60 * 4.71); // meters per second NOT A LIMIT!!! DO NOT TOUCH!!!
     public static final double MAX_ANGULAR_VELOCITY = MAX_SPEED / Math.hypot(FRONT_LEFT_X, FRONT_LEFT_Y); // rad/s
     // Theoretical max acceleration should be as follows:
     // (NEO stall torque * module gearing * number of modules) / (wheel radius * robot mass) = m/s/s

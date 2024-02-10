@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -21,7 +22,8 @@ import frc.robot.Constants.Drivebase;
 public class SwerveModule {
     public final int moduleNumber;
     private final double angleOffset;
-    private final CANSparkMax angleMotor, driveMotor;
+    private final CANSparkMax angleMotor;
+    private final CANSparkFlex driveMotor;
     private final AbsoluteEncoder absoluteEncoder;
     private final RelativeEncoder driveEncoder;
     private final SparkPIDController angleController, driveController;
@@ -38,7 +40,7 @@ public class SwerveModule {
         angleOffset = moduleConstants.angleOffset;
 
         angleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
-        driveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
+        driveMotor = new CANSparkFlex(moduleConstants.driveMotorID, MotorType.kBrushless);
         angleMotor.restoreFactoryDefaults();
         driveMotor.restoreFactoryDefaults();
 
@@ -164,6 +166,7 @@ public class SwerveModule {
             azimuth = Rotation2d.fromDegrees(angle + (Math.toDegrees(omega) * dt));
         }
         SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
+        SmartDashboard.putNumber("Module " + moduleNumber + " Wheel Pos", position);
         return new SwerveModulePosition(position, azimuth);
     }
 
