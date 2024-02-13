@@ -288,7 +288,7 @@ public class SwerveBase extends SubsystemBase {
     this.alliance = alliance;
   }
 
-  /*public void setVelocityModuleGains() {
+  public void setVelocityModuleGains() {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.setGains(
         SmartDashboard.getNumber("KP", Drivebase.VELOCITY_KP),
@@ -298,7 +298,7 @@ public class SwerveBase extends SubsystemBase {
         SmartDashboard.getNumber("KV", Drivebase.KV),
         SmartDashboard.getNumber("KA", Drivebase.KA));
     }
-  }*/
+  }
 
   @Override
   public void periodic() {

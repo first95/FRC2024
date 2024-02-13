@@ -98,7 +98,7 @@ public final class Constants {
     // Volt * seconds / degree.  Equal to (maxVolts) / ((degreesPerRotation) * (maxMotorSpeedRPM / gearRatio) * (minutesPerSecond))
     public static final double MODULE_KV = 12 / MAX_MODULE_ANGULAR_SPEED;
 
-    public static final double VELOCITY_KP = 0.1; // kp from SysId, eventually
+    public static final double VELOCITY_KP = 0.2; // kp from SysId, eventually
     public static final double VELOCITY_KI = 0; // Leave all of these zero to disable them
     public static final double VELOCITY_KD = 0;
     public static final double VELOCITY_IZ = 0;
@@ -112,7 +112,7 @@ public final class Constants {
     public static final int NUM_MODULES = 4;
 
     // Drive feedforward gains
-    public static final double KS = 0.25; // Volts
+    public static final double KS = 0.12; // Volts
     public static final double KV = 12 / MAX_SPEED; // Volt-seconds per meter (max voltage divided by max speed)
     public static final double KA = (12 / MAX_ACCELERATION) / NUM_MODULES; // Volt-seconds^2 per meter (max voltage divided by max accel)
     public static final double KG = (KA / KV);

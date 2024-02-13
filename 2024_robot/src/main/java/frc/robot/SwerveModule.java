@@ -98,12 +98,12 @@ public class SwerveModule {
         setDesiredState(desiredState, isOpenLoop, true);
     }
 
-    /*public void setGains(double kp, double ki, double kd, double ks, double kv, double ka) {
+    public void setGains(double kp, double ki, double kd, double ks, double kv, double ka) {
         feedforward = new SimpleMotorFeedforward(ks, kv, ka);
         driveController.setP(kp);
         driveController.setI(ki);
         driveController.setD(kd);
-    }*/
+    }
     
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
         //SwerveModuleState simpleState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
@@ -113,6 +113,8 @@ public class SwerveModule {
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
         //SmartDashboard.putNumber("Module " + moduleNumber + " Omega: ", Math.toDegrees(desiredState.omegaRadPerSecond));
         SmartDashboard.putNumber("Module " + moduleNumber + "CurrentDraw", driveMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Module " + moduleNumber + " Volts", driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
+        SmartDashboard.putNumber("Module " + moduleNumber + "Speed", driveEncoder.getVelocity());
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Drivebase.MAX_SPEED;

@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -56,8 +58,8 @@ public class RobotContainer {
     
     openFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? -0.5 : 0,//Math.pow(m_driverController.getLeftY(), 3) : 0,
-      () -> 0,//(Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, true);
     
     closedFieldRel = new TeleopDrive(
@@ -65,9 +67,16 @@ public class RobotContainer {
       () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
       () -> 0,
       () -> (Math.abs(m_driverController.getRightX()) > 0.05) ? Math.pow(m_driverController.getRightX(), 3) * 0.5 : 0, () -> true, false);
-      drivebase.setDefaultCommand(openFieldRel);
+      drivebase.setDefaultCommand(closedFieldRel);
     // Configure the trigger bindings
     configureBindings();
+    SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
+
+    SmartDashboard.putNumber("KV", Drivebase.KV);
+    SmartDashboard.putNumber("KA", Drivebase.KA);
+    SmartDashboard.putNumber("KP", 0);
+    SmartDashboard.putNumber("KI", 0);
+    SmartDashboard.putNumber("KD", 0);
   }
 
   /**
