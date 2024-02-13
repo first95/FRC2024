@@ -194,13 +194,13 @@ public class Shooter extends SubsystemBase {
       ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
       : armSetpoint;
 
-    shoulderPID.setReference(
+    /*shoulderPID.setReference(
       armSetpoint.position,
       ControlType.kPosition,
       0,
       shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity),
       ArbFFUnits.kVoltage
-    );
+    );*/
 
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", armSetpoint.position);
