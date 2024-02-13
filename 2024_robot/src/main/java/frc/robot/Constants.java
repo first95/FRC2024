@@ -178,7 +178,7 @@ public final class Constants {
 
     public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
 
-    public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14 / (44 * 5 * 5));
+    public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14.0 / (44 * 5 * 5));
     public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
 
     public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
@@ -189,7 +189,7 @@ public final class Constants {
     public static final double SHOULDER_KD = 0;
     public static final double SHOULDER_KF = 0;
     public static final double SHOULDER_KS = 0;
-    public static final double SHOULDER_KG = 1.26; // Volts
+    public static final double SHOULDER_KG = 0.5; // Volts
     public static final double SHOULDER_KV = 1.52; // V * s / rad
     public static final double SHOULDER_KA = 0.13; // V * s^2 / rad
 
@@ -203,8 +203,8 @@ public final class Constants {
 
     public static final double SHOOTER_SPEED_TOLERANCE = 200;
 
-    public static final double MAX_ACCELERATION = 0.5;
-    public static final double MAX_SPEED = 0.5;
+    public static final double MAX_ACCELERATION = 0.25;
+    public static final double MAX_SPEED = 0.25;
 
     public static final double LOADER_INTAKE_SPEED = 0.6;
     public static final double LOADER_FIRING_SPEED = 1;
