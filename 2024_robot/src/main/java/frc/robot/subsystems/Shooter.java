@@ -18,10 +18,21 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
@@ -35,6 +46,8 @@ public class Shooter extends SubsystemBase {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
+
+  private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
   private Rotation2d armGoal;
   private final Timer timer;
@@ -138,6 +151,48 @@ public class Shooter extends SubsystemBase {
 
     timer = new Timer();
     timer.start();
+
+    shoulderCharacterizer = new SysIdRoutine(
+      new SysIdRoutine.Config(),
+      new SysIdRoutine.Mechanism(
+        (Measure<Voltage> volts) -> {
+          shoulder.setVoltage(volts.in(Volts));
+        },
+        log -> {
+          log.motor("shoulder")
+            .voltage(Volts.of(shoulder.getAppliedOutput() * shoulder.getBusVoltage()))
+            .angularPosition(Radians.of(shoulderEncoder.getPosition()))
+            .angularVelocity(RadiansPerSecond.of(shoulderEncoder.getVelocity()));
+        },
+        this));
+      
+    portShootCharacterizer = new SysIdRoutine(
+      new SysIdRoutine.Config(),
+      new SysIdRoutine.Mechanism(
+        (Measure<Voltage> volts) -> {
+          portShooter.setVoltage(volts.in(Volts));
+        },
+        log -> {
+          log.motor("portShooter")
+            .voltage(Volts.of(portShooter.getAppliedOutput() * portShooter.getBusVoltage()))
+            .angularPosition(Rotations.of(portShooterEncoder.getPosition()))
+            .angularVelocity(RotationsPerSecond.of(portShooterEncoder.getVelocity()));
+        },
+        this));
+    
+    starboardShootCharacterizer = new SysIdRoutine(
+      new SysIdRoutine.Config(),
+      new SysIdRoutine.Mechanism(
+        (Measure<Voltage> volts) -> {
+          starboardShooter.setVoltage(volts.in(Volts));
+        },
+        log -> {
+          log.motor("starboardShooter")
+            .voltage(Volts.of(starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage()))
+            .angularPosition(Rotations.of(starboardShooterEncoder.getPosition()))
+            .angularVelocity(RotationsPerSecond.of(starboardShooterEncoder.getVelocity()));
+        },
+        this));
   }
 
   public void runLoader(double speed) {
@@ -196,13 +251,13 @@ public class Shooter extends SubsystemBase {
       ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
       : armSetpoint;
 
-    shoulderPID.setReference(
+    /*shoulderPID.setReference(
       armSetpoint.position,
       ControlType.kPosition,
       0,
       shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity),
       ArbFFUnits.kVoltage
-    );
+    );*/
 
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
@@ -212,6 +267,25 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
     SmartDashboard.putNumber("PortRPM", portShooterEncoder.getVelocity());
     SmartDashboard.putNumber("StarboardRPM", starboardShooterEncoder.getVelocity());
+  }
+
+  public Command sysIdQuasiShoulder(SysIdRoutine.Direction direction) {
+    return shoulderCharacterizer.quasistatic(direction);
+  }
+  public Command sysIdQuasiPortShooter(SysIdRoutine.Direction direction) {
+    return portShootCharacterizer.quasistatic(direction);
+  }
+  public Command sysIdQuasiStarShooter(SysIdRoutine.Direction direction) {
+    return starboardShootCharacterizer.quasistatic(direction);
+  }
+  public Command sysIdDynShoulder(SysIdRoutine.Direction direction) {
+    return shoulderCharacterizer.dynamic(direction);
+  }
+  public Command sysIdDynPortShooter(SysIdRoutine.Direction direction) {
+    return portShootCharacterizer.dynamic(direction);
+  }
+  public Command sysIdDynStarShooter(SysIdRoutine.Direction direction) {
+    return starboardShootCharacterizer.dynamic(direction);
   }
 
   @Override

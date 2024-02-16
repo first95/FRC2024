@@ -117,7 +117,9 @@ public class NoteHandlerCommand extends Command {
       loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_INTAKE_SPEED : 0;
       portShootingSpeed = 0;
       starboardShootingSpeed = 0;
-      if (sensorvalue){
+      if (shooterbutton) {
+        currentState = State.SPOOLING;
+      } else if (sensorvalue) {
         currentState = State.HOLDING;
       }
       break;

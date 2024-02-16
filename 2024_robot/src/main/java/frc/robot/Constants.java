@@ -164,7 +164,7 @@ public final class Constants {
     public static final int STARBOARD_SHOOTER_ID = 13;
     public static final int LOADER_ID = 14;
     public static final int SHOULDER_ID = 15;
-    public static final int SHOULDER_2_ID = 16;
+    //public static final int SHOULDER_2_ID = 16;
     public static final int NOTE_SENSOR_ID = 0;
 
     public static final boolean INVERT_PORT_SHOOTER = false;
@@ -193,13 +193,13 @@ public final class Constants {
     public static final double SHOULDER_KV = 1.52; // V * s / rad
     public static final double SHOULDER_KA = 0.13; // V * s^2 / rad
 
-    public static final double FLYWHEEL_KP = 0;
+    public static final double FLYWHEEL_KP = 2.6269E-8;
     public static final double FLYWHEEL_KI = 0;
     public static final double FLYWHEEL_KD = 0;
     public static final double FLYWHEEL_KF = 0;
-    public static final double FLYWHEEL_KS = 0.18; // Volts -- Measured 2024-02-05
-    public static final double FLYWHEEL_KV = 0.00183; // V * min / rotation
-    public static final double FLYWHEEL_KA = 0;
+    public static final double FLYWHEEL_KS = 0.1506; // Volts -- Measured 2024-02-15
+    public static final double FLYWHEEL_KV = 0.0018042; // V * min / rotation
+    public static final double FLYWHEEL_KA = 0.00028741;
 
     public static final double SHOOTER_SPEED_TOLERANCE = 200;
 
