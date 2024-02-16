@@ -127,8 +127,8 @@ public class NoteHandlerCommand extends Command {
       case SPOOLING:
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
-        intakeSpeed = 0;
-        loaderSpeed = 0;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
+        loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
 
         if (!shooterbutton){
           currentState = State.HOLDING;
@@ -139,7 +139,7 @@ public class NoteHandlerCommand extends Command {
       break;
 
       case SHOOTING:
-        intakeSpeed = 0;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
         loaderSpeed = ShooterConstants.LOADER_FIRING_SPEED;
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
@@ -150,8 +150,8 @@ public class NoteHandlerCommand extends Command {
       break;
       
       case HOLDING:
-        intakeSpeed = 0;
-        loaderSpeed = 0;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
+        loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
         portShootingSpeed = 0;
         starboardShootingSpeed = 0;
         if (shooterbutton){

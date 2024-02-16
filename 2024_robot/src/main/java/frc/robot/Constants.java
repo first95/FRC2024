@@ -206,7 +206,7 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.25;
     public static final double MAX_SPEED = 0.25;
 
-    public static final double LOADER_INTAKE_SPEED = 0.6;
+    public static final double LOADER_INTAKE_SPEED = 0.8;
     public static final double LOADER_FIRING_SPEED = 1;
 
     public static final double PORT_SHOOTER_SPEED = 5000;
