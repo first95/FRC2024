@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -148,20 +149,20 @@ public class Robot extends TimedRobot {
     
     String title = "";
     String version = "";
-      try{
-    JarFile jarFile = new JarFile("/build/libs/Clarke.jar");
-    Manifest manifest = jarFile.getManifest();
-    Attributes attributes = manifest.getMainAttributes();
+    try {
+      JarFile jarFile = new JarFile("/build/libs/Clarke.jar");
+      Manifest manifest = jarFile.getManifest();
+      Attributes attributes = manifest.getMainAttributes();
     
-    title = attributes.getValue("Implementation-Title");
-    version = attributes.getValue("Implementation-Version");
-    jarFile.close();
+      title = attributes.getValue("Implementation-Title");
+      version = attributes.getValue("Implementation-Version");
+      jarFile.close();
     
-    String[] returns = {title, version};
-    return returns;
+      String[] returns = {title, version};
+      return returns;
          
-      } catch(IOException e){
-        
+    } catch (IOException e) {
+        DriverStation.reportWarning("Failed to get jar version!", true);
         String[] nones = {"", ""};
         return nones;
       }
