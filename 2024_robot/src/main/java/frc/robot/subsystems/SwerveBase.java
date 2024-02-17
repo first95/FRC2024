@@ -48,14 +48,14 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 public class SwerveBase extends SubsystemBase {
 
   private final SwerveModule[] swerveModules;
-  private final Pigeon2 imu;
+  private Pigeon2 imu;
   private NetworkTable portLimelightData, starboardLimelightData;
   
   public Field2d field = new Field2d();
 
   private double angle, lasttime;
 
-  private final Timer timer;
+  private Timer timer;
 
   private boolean wasGyroReset;
 
@@ -120,9 +120,17 @@ public class SwerveBase extends SubsystemBase {
       new SysIdRoutine.Mechanism(
         (Measure<Voltage> volts) -> {
           for (SwerveModule module : this.swerveModules) {
-            module.setAzimuth(module.get);
+            module.setAzimuth(module.getModuleLocation().getAngle().plus(Rotation2d.fromDegrees(90)));
             module.setDriveVolts(volts.in(Volts));
-          }, null, null));
+          }
+        },
+        log -> {
+          log.motor("driveAngular")
+          .voltage(Volts.of(avgDriveVolts()))
+          .angularPosition(Radians.of(getPose().getRotation().getRadians()))
+          .angularVelocity(RadiansPerSecond.of(getRobotVelocity().omegaRadiansPerSecond));
+        },
+        this));
   }
 
   /**

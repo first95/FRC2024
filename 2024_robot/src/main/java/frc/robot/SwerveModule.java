@@ -11,6 +11,7 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,6 +29,7 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final SparkPIDController angleController, driveController;
     private final Timer time;
+    private final Translation2d moduleLocation;
     private double angle, lastAngle, omega, speed, fakePos, lastTime, dt;
 
     private SimpleMotorFeedforward feedforward;
@@ -36,8 +38,9 @@ public class SwerveModule {
         angle = 0;
         speed = 0;
         fakePos = 0;
-        this.moduleNumber = moduleConstants.moduleNumber;
+        moduleNumber = moduleConstants.moduleNumber;
         angleOffset = moduleConstants.angleOffset;
+        moduleLocation = new Translation2d(moduleConstants.xPos, moduleConstants.yPos);
 
         angleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
         driveMotor = new CANSparkFlex(moduleConstants.driveMotorID, MotorType.kBrushless);
@@ -151,6 +154,10 @@ public class SwerveModule {
 
     public double getDriveVolts() {
         return driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
+    }
+
+    public Translation2d getModuleLocation() {
+        return moduleLocation;
     }
 
     public SwerveModuleState getState() {
