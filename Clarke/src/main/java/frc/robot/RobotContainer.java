@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.NoteHandlerCommand;
+import frc.robot.commands.MeasureMomentInertia;
 import frc.robot.drivebase.AbsoluteDrive;
 import frc.robot.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -14,6 +15,10 @@ import frc.robot.subsystems.NoteHandler;
 import frc.robot.subsystems.SwerveBase;
 
 import java.util.NoSuchElementException;
+
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
+import com.choreo.lib.ChoreoTrajectoryState.ChoreoTrajectoryStateBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -60,6 +65,9 @@ public class RobotContainer {
     // Test code field:
     if (SmartDashboard.getNumber("ShooterSpeed", 123456789) == 123456789) {
       SmartDashboard.putNumber("ShooterSpeed", 0);
+    }
+    if (SmartDashboard.getNumber("RotationSpeed", 123456789) == 123456789) {
+      SmartDashboard.putNumber("RotationSpeed", 0);
     }
 
     absoluteDrive = new AbsoluteDrive(
@@ -132,7 +140,7 @@ public class RobotContainer {
       new NoteHandlerCommand(
         noteHandler,
         () -> operatorController.getLeftTriggerAxis(),
-        () -> driverController.button(1).getAsBoolean());
+        () -> operatorController.y().getAsBoolean());
     
     Command shooterTester = new RepeatCommand(
       new InstantCommand(() -> {
@@ -170,7 +178,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return drivebase.getTrajectoryFollowerCommand(Choreo.getTrajectory("LoopAndSpin"), true, true);
   }
 
   public void setDriveMode() {

@@ -4,12 +4,23 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ExampleSubsystem extends SubsystemBase {
+  private CANSparkMax topintakeRoller, bottomIntakeRoller;
   /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+  public ExampleSubsystem() {
+    topintakeRoller = new CANSparkMax(10, MotorType.kBrushless);
+    bottomIntakeRoller = new CANSparkMax(11, MotorType.kBrushless);
+    topintakeRoller.restoreFactoryDefaults();
+    bottomIntakeRoller.restoreFactoryDefaults();
+    topintakeRoller.burnFlash();
+    bottomIntakeRoller.burnFlash();
+  }
 
   /**
    * Example command factory method.
@@ -33,6 +44,11 @@ public class ExampleSubsystem extends SubsystemBase {
   public boolean exampleCondition() {
     // Query some boolean state, such as a digital sensor.
     return false;
+  }
+
+  public void runRoller(double speed) {
+    topintakeRoller.set(speed);
+    bottomIntakeRoller.set(-speed);
   }
 
   @Override
