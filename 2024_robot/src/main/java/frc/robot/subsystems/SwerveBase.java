@@ -375,12 +375,19 @@ public class SwerveBase extends SubsystemBase {
     }
 
     double[] moduleStates = new double[8];
+    double[] moduleSetpoints = new double[8];
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber("Module" + module.moduleNumber + "CANCoder", module.getAbsoluteEncoder());
-      moduleStates[module.moduleNumber] = module.getState().angle.getDegrees();
-      moduleStates[module.moduleNumber + 1] = module.getState().speedMetersPerSecond;
+      var state = module.getState();
+      var desState = module.getDesiredState();
+      moduleStates[module.moduleNumber] = state.angle.getRadians();
+      moduleSetpoints[module.moduleNumber] = desState.angle.getRadians();
+      moduleStates[module.moduleNumber + 1] = state.speedMetersPerSecond;
+      moduleSetpoints[module.moduleNumber + 1] = desState.speedMetersPerSecond;
     }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
+    SmartDashboard.putNumberArray("moduleSetpoints", moduleSetpoints);
+    SmartDashboard.putNumber("OdomHeading", getPose().getRotation().getRadians());
   }
 
   @Override

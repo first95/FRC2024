@@ -69,7 +69,7 @@ public class RobotContainer {
       () -> (Math.abs(driveController.getY()) > 0.05) ? driveController.getY() * 0.5 : 0,
       () -> (Math.abs(driveController.getX()) > 0.05) ? driveController.getX() * 0.5 : 0,
       () -> headingController.getTwist() * 0.5, () -> true, false);
-      //drivebase.setDefaultCommand(closedFieldRel);
+      drivebase.setDefaultCommand(closedRobotRel);
     // Configure the trigger bindings
     configureBindings();
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
@@ -91,10 +91,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    operatorController.y().whileTrue(drivebase.sysIdQuasiLinear(SysIdRoutine.Direction.kForward));
-    operatorController.b().whileTrue(drivebase.sysIdQuasiLinear(SysIdRoutine.Direction.kReverse));
-    operatorController.a().whileTrue(drivebase.sysIdDynLinear(SysIdRoutine.Direction.kForward));
-    operatorController.x().whileTrue(drivebase.sysIdDynLinear(SysIdRoutine.Direction.kReverse));
+    //operatorController.y().whileTrue(drivebase.sysIdQuasiLinear(SysIdRoutine.Direction.kForward));
+    //operatorController.b().whileTrue(drivebase.sysIdQuasiLinear(SysIdRoutine.Direction.kReverse));
+    //operatorController.a().whileTrue(drivebase.sysIdDynLinear(SysIdRoutine.Direction.kForward));
+    //operatorController.x().whileTrue(drivebase.sysIdDynLinear(SysIdRoutine.Direction.kReverse));
   }
 
   /**

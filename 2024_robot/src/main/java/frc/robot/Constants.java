@@ -90,15 +90,15 @@ public final class Constants {
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
     // Module PIDF gains
-    public static final double MODULE_KP = 0.01;
+    public static final double MODULE_KP = 0.06;
     public static final double MODULE_KI = 0;
-    public static final double MODULE_KD = 0;
+    public static final double MODULE_KD = 0.0005;
     public static final double MODULE_IZ = 0;
     public static final double MODULE_KF = 0;
     // Volt * seconds / degree.  Equal to (maxVolts) / ((degreesPerRotation) * (maxMotorSpeedRPM / gearRatio) * (minutesPerSecond))
     public static final double MODULE_KV = 12 / MAX_MODULE_ANGULAR_SPEED;
 
-    public static final double VELOCITY_KP = 0.2; // kp from SysId, eventually
+    public static final double VELOCITY_KP = 0.02; // kp from SysId, eventually
     public static final double VELOCITY_KI = 0; // Leave all of these zero to disable them
     public static final double VELOCITY_KD = 0;
     public static final double VELOCITY_IZ = 0;
@@ -112,9 +112,9 @@ public final class Constants {
     public static final int NUM_MODULES = 4;
 
     // Drive feedforward gains
-    public static final double KS = 0.12; // Volts
-    public static final double KV = 12 / MAX_SPEED; // Volt-seconds per meter (max voltage divided by max speed)
-    public static final double KA = (12 / MAX_ACCELERATION) / NUM_MODULES; // Volt-seconds^2 per meter (max voltage divided by max accel)
+    public static final double KS = 0.12392; // Volts
+    public static final double KV = 2.0891; // Volt-seconds per meter (max voltage divided by max speed)
+    public static final double KA = 0.26159; // Volt-seconds^2 per meter (max voltage divided by max accel)
     public static final double KG = (KA / KV);
 
     // Encoder conversion values.  Drive converts motor rotations to linear wheel distance
@@ -128,28 +128,28 @@ public final class Constants {
     public static final class Mod0 {
         public static final int DRIVE_MOTOR_ID = 3;
         public static final int ANGLE_MOTOR_ID = 2;
-        public static final double ANGLE_OFFSET = 360 - 20.3;
+        public static final double ANGLE_OFFSET = 360 - 20.7;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(0, DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_LEFT_X, FRONT_LEFT_Y);
     }
     public static final class Mod1 {
         public static final int DRIVE_MOTOR_ID = 5;
         public static final int ANGLE_MOTOR_ID = 4;
-        public static final double ANGLE_OFFSET = 360 - 128.5;
+        public static final double ANGLE_OFFSET = 360 - 126.8;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(1, DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_RIGHT_X, FRONT_RIGHT_Y);
     }
     public static final class Mod2 {
         public static final int DRIVE_MOTOR_ID = 7;
         public static final int ANGLE_MOTOR_ID = 6;
-        public static final double ANGLE_OFFSET = 360 - 58.6;
+        public static final double ANGLE_OFFSET = 360 - 58.65;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(2, DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_LEFT_X, BACK_LEFT_Y);
     }
     public static final class Mod3 {
         public static final int DRIVE_MOTOR_ID = 9;
         public static final int ANGLE_MOTOR_ID = 8;
-        public static final double ANGLE_OFFSET = 360 - 198.4;
+        public static final double ANGLE_OFFSET = 360 - 197.38;
         public static final SwerveModuleConstants CONSTANTS =
             new SwerveModuleConstants(3, DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_RIGHT_X, BACK_RIGHT_Y);
     }
