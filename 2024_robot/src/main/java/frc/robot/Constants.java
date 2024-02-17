@@ -164,6 +164,8 @@ public final class Constants {
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
 }
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static final int driveControllerPort = 0;
+    public static final int headingControllerPort = 1;
+    public static final int operatorControllerPort = 2;
   }
 }
