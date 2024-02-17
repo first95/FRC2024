@@ -46,27 +46,27 @@ public class RobotContainer {
 
     openRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
-      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? m_driverController.getLeftY() * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? m_driverController.getLeftX() * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> false, true);
     
     closedRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
-      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? m_driverController.getLeftY() * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? m_driverController.getLeftX() * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> false, false);
     
     openFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
-      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? Math.pow(m_driverController.getLeftX(),3) * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? m_driverController.getLeftY() * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? m_driverController.getLeftX() * 0.5 : 0,
       () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, true);
     
     closedFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? Math.pow(m_driverController.getLeftY(), 3) * 0.5 : 0,
-      () -> 0,
-      () -> (Math.abs(m_driverController.getRightX()) > 0.05) ? Math.pow(m_driverController.getRightX(), 3) * 0.5 : 0, () -> true, false);
+      () -> (Math.abs(m_driverController.getLeftY()) > 0.05) ? m_driverController.getLeftY() * 0.5 : 0,
+      () -> (Math.abs(m_driverController.getLeftX()) > 0.05) ? m_driverController.getLeftX() * 0.5 : 0,
+      () -> Math.pow(m_driverController.getRightX(), 3) * 0.5, () -> true, false);
       drivebase.setDefaultCommand(closedFieldRel);
     // Configure the trigger bindings
     configureBindings();
