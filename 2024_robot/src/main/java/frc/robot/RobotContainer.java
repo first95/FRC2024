@@ -8,6 +8,7 @@ import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveBase;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveBase drivebase = new SwerveBase();
   private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
+  private final AbsoluteDrive absoluteDrive;
 
   private final CommandJoystick driveController = new CommandJoystick(OperatorConstants.driveControllerPort);
   private final CommandJoystick headingController = new CommandJoystick(OperatorConstants.headingControllerPort);
@@ -48,14 +50,14 @@ public class RobotContainer {
 
     openRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? driveController.getX() * 0.5 : 0,
+      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
+      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
       () -> headingController.getTwist() * 0.5, () -> false, true);
     
     closedRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? driveController.getX() * 0.5 : 0,
+      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
+      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
       () -> headingController.getTwist() * 0.5, () -> false, false);
     
     openFieldRel = new TeleopDrive(
@@ -66,10 +68,18 @@ public class RobotContainer {
     
     closedFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? driveController.getX() * 0.5 : 0,
+      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
+      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
       () -> headingController.getTwist() * 0.5, () -> true, false);
-      drivebase.setDefaultCommand(closedRobotRel);
+    
+    absoluteDrive = new AbsoluteDrive(
+      drivebase,
+      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
+      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
+      () -> -headingController.getX(),
+      () -> -headingController.getY(), false);
+    
+    drivebase.setDefaultCommand(absoluteDrive);
     // Configure the trigger bindings
     configureBindings();
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));

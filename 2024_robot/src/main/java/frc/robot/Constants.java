@@ -52,7 +52,7 @@ public final class Constants {
 
     // Motor and encoder inversions
     public static final boolean ABSOLUTE_ENCODER_INVERT = true;
-    public static final boolean DRIVE_MOTOR_INVERT = true;
+    public static final boolean DRIVE_MOTOR_INVERT = false;
     public static final boolean ANGLE_MOTOR_INVERT = false;
     public static final boolean INVERT_GYRO = false;
 
@@ -91,13 +91,13 @@ public final class Constants {
     // max speed (RPM) / gear ratio, convert to deg/min, divide by 60 for deg/s
     public static final double MAX_MODULE_ANGULAR_SPEED = Units.rotationsToDegrees(NEO_550_FREE_SPEED * 7 / 372) / 60; // deg/s
 
-    public static final double ANGULAR_ACCELERATION_LIMIT = MAX_ANGULAR_ACCELERATION * 0.1;
-    public static final double ANGULAR_VELOCITY_LIMIT = MAX_ANGULAR_VELOCITY * 0.1;
+    public static final double ANGULAR_ACCELERATION_LIMIT = 100;
+    public static final double ANGULAR_VELOCITY_LIMIT = 5;
 
     // Robot heading control gains
-    public static final double HEADING_KP = 0.4 * (MAX_ANGULAR_VELOCITY / Math.PI);
+    public static final double HEADING_KP = 0.01;
     public static final double HEADING_KI = 0;
-    public static final double HEADING_KD = 0.01 * (MAX_ANGULAR_VELOCITY / Math.PI);
+    public static final double HEADING_KD = 0.0;
     
     // Swerve base kinematics object
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
