@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.BetterSwerveKinematics;
@@ -299,6 +300,19 @@ public class SwerveBase extends SubsystemBase {
     } else {
       return new Rotation2d();
     }
+  }
+
+  public Command sysIdQuasiLinear(SysIdRoutine.Direction direction) {
+    return driveCharacterizer.quasistatic(direction);
+  }
+  public Command sysIdQuasiAngular(SysIdRoutine.Direction direction) {
+    return angleCharacterizer.quasistatic(direction);
+  }
+  public Command sysIdDynLinear(SysIdRoutine.Direction direction) {
+    return driveCharacterizer.dynamic(direction);
+  }
+  public Command sysIdDynAngular(SysIdRoutine.Direction direction) {
+    return angleCharacterizer.dynamic(direction);
   }
 
   /**
