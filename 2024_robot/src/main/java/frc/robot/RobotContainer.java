@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -68,7 +69,7 @@ public class RobotContainer {
       () -> (Math.abs(driveController.getY()) > 0.05) ? driveController.getY() * 0.5 : 0,
       () -> (Math.abs(driveController.getX()) > 0.05) ? driveController.getX() * 0.5 : 0,
       () -> headingController.getTwist() * 0.5, () -> true, false);
-      drivebase.setDefaultCommand(closedFieldRel);
+      //drivebase.setDefaultCommand(closedFieldRel);
     // Configure the trigger bindings
     configureBindings();
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
@@ -90,6 +91,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    operatorController.y().whileTrue(drivebase.sysIdQuasiLinear(SysIdRoutine.Direction.kForward));
+    operatorController.b().whileTrue(drivebase.sysIdQuasiLinear(SysIdRoutine.Direction.kReverse));
+    operatorController.a().whileTrue(drivebase.sysIdDynLinear(SysIdRoutine.Direction.kForward));
+    operatorController.x().whileTrue(drivebase.sysIdDynLinear(SysIdRoutine.Direction.kReverse));
   }
 
   /**
