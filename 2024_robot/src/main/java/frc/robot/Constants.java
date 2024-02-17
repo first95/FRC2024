@@ -98,7 +98,7 @@ public final class Constants {
     // Volt * seconds / degree.  Equal to (maxVolts) / ((degreesPerRotation) * (maxMotorSpeedRPM / gearRatio) * (minutesPerSecond))
     public static final double MODULE_KV = 12 / MAX_MODULE_ANGULAR_SPEED;
 
-    public static final double VELOCITY_KP = 0.02; // kp from SysId, eventually
+    public static final double VELOCITY_KP = 0.07;
     public static final double VELOCITY_KI = 0; // Leave all of these zero to disable them
     public static final double VELOCITY_KD = 0;
     public static final double VELOCITY_IZ = 0;

@@ -104,9 +104,9 @@ public class SwerveModule {
 
     public void setGains(double kp, double ki, double kd, double ks, double kv, double ka) {
         //feedforward = new SimpleMotorFeedforward(ks, kv, ka);
-        angleController.setP(kp);
-        angleController.setI(ki);
-        angleController.setD(kd);
+        //driveController.setP(kp);
+        //driveController.setI(ki);
+        //driveController.setD(kd);
     }
     
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
