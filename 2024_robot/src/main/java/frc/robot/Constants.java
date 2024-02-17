@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.BetterSwerveKinematics;
@@ -24,13 +25,22 @@ public final class Constants {
   public static final double NEO_FREE_SPEED = 5676; // RPM
   public static final double NEO_STALL_TORQUE = 3.75; // N * m
   public static final double NEO_550_FREE_SPEED = 11000; // RPM
-  public static final double SPARK_MAX_RESPONSE_LOOP = 0.13; // 130ms
+  public static final double SPARK_VELOCITY_RESPONSE_LOOP = 0.11042; // 110.42ms
   public static final double VORTEX_FREE_SPEED = 6784; // RPM
   public static final double VORTEX_STALL_TORQUE = 3.6; // N * m
   
   public static final double GRAVITY = 9.81; // m/s/s
 
   public static final double LOOP_CYCLE = 0.02; // 20ms
+
+  public static final double ROBOT_MASS = 95 / 2.2;
+  public static final double MANIPULATOR_MASS = 0;
+  public static final double CHASSIS_MASS = ROBOT_MASS - MANIPULATOR_MASS;
+  public static final double ARM_Y_POS = 0;
+  public static final Translation3d CHASSIS_CG = new Translation3d(
+    0,
+    0,
+    0.15);
   
   public static final class Drivebase {
     // Hold time on motor brakes when disabled
@@ -80,6 +90,9 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = MAX_ACCELERATION / Math.hypot(FRONT_LEFT_X, FRONT_LEFT_Y);
     // max speed (RPM) / gear ratio, convert to deg/min, divide by 60 for deg/s
     public static final double MAX_MODULE_ANGULAR_SPEED = Units.rotationsToDegrees(NEO_550_FREE_SPEED * 7 / 372) / 60; // deg/s
+
+    public static final double ANGULAR_ACCELERATION_LIMIT = MAX_ANGULAR_ACCELERATION * 0.1;
+    public static final double ANGULAR_VELOCITY_LIMIT = MAX_ANGULAR_VELOCITY * 0.1;
 
     // Robot heading control gains
     public static final double HEADING_KP = 0.4 * (MAX_ANGULAR_VELOCITY / Math.PI);
