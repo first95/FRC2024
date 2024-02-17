@@ -22,12 +22,15 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.BetterSwerveKinematics;
 import frc.lib.util.BetterSwerveModuleState;
 import frc.robot.Constants;
@@ -36,23 +39,31 @@ import frc.robot.SwerveModule;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.Vision;
 
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 public class SwerveBase extends SubsystemBase {
 
-  private SwerveModule[] swerveModules;
-  private Pigeon2 imu;
+  private final SwerveModule[] swerveModules;
+  private final Pigeon2 imu;
   private NetworkTable portLimelightData, starboardLimelightData;
   
   public Field2d field = new Field2d();
 
   private double angle, lasttime;
 
-  private Timer timer;
+  private final Timer timer;
 
   private boolean wasGyroReset;
 
-  private SwerveDrivePoseEstimator odometry;
+  private final SwerveDrivePoseEstimator odometry;
 
   private Alliance alliance = null;
+
+  private final SysIdRoutine driveCharacterizer, angleCharacterizer;
 
   /** Creates a new swerve drivebase subsystem.  Robot is controlled via the drive() method,
    * or via the setModuleStates() method.  The drive() method incorporates kinematics— it takes a 
@@ -79,14 +90,39 @@ public class SwerveBase extends SubsystemBase {
     }
 
     this.swerveModules = new SwerveModule[] {
-      new SwerveModule(0, Drivebase.Mod0.CONSTANTS),
-      new SwerveModule(1, Drivebase.Mod1.CONSTANTS),
-      new SwerveModule(2, Drivebase.Mod2.CONSTANTS),
-      new SwerveModule(3, Drivebase.Mod3.CONSTANTS),
+      new SwerveModule(Drivebase.Mod0.CONSTANTS),
+      new SwerveModule(Drivebase.Mod1.CONSTANTS),
+      new SwerveModule(Drivebase.Mod2.CONSTANTS),
+      new SwerveModule(Drivebase.Mod3.CONSTANTS),
     };
 
     odometry = new SwerveDrivePoseEstimator(Drivebase.KINEMATICS, getYaw(), getModulePositions(), new Pose2d());
 
+    driveCharacterizer = new SysIdRoutine(
+      new SysIdRoutine.Config(),
+      new SysIdRoutine.Mechanism(
+        (Measure<Voltage> volts) -> {
+          for (SwerveModule module : this.swerveModules) {
+            module.setAzimuth(new Rotation2d());
+            module.setDriveVolts(volts.in(Volts));
+          }
+        },
+        log -> {
+          log.motor("driveLinear")
+          .voltage(Volts.of(avgDriveVolts()))
+          .linearPosition(Meters.of(odometry.getEstimatedPosition().getX()))
+          .linearVelocity(MetersPerSecond.of(getRobotVelocity().vxMetersPerSecond));
+        },
+        this));
+    
+    angleCharacterizer = new SysIdRoutine(
+      new SysIdRoutine.Config(),
+      new SysIdRoutine.Mechanism(
+        (Measure<Voltage> volts) -> {
+          for (SwerveModule module : this.swerveModules) {
+            module.setAzimuth(module.get);
+            module.setDriveVolts(volts.in(Volts));
+          }, null, null));
   }
 
   /**
@@ -181,10 +217,7 @@ public class SwerveBase extends SubsystemBase {
    * @return A ChassisSpeeds object of the current field-relative velocity
    */
   public ChassisSpeeds getFieldVelocity() {
-    // ChassisSpeeds has a method to convert from field-relative to robot-relative speeds,
-    // but not the reverse.  However, because this transform is a simple rotation, negating the angle
-    // given as the robot angle reverses the direction of rotation, and the conversion is reversed.
-    return ChassisSpeeds.fromFieldRelativeSpeeds(Drivebase.KINEMATICS.toChassisSpeeds(getStates()), getPose().getRotation().unaryMinus());
+    return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotVelocity(), getPose().getRotation());
   }
 
   /**
@@ -346,5 +379,13 @@ public class SwerveBase extends SubsystemBase {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.turnModule(speed);
     }
+  }
+
+  private double avgDriveVolts() {
+    double sum = 0;
+    for (SwerveModule module : swerveModules) {
+      sum += module.getDriveVolts();
+    }
+    return (sum / Drivebase.NUM_MODULES);
   }
 }

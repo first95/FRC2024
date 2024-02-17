@@ -32,11 +32,11 @@ public class SwerveModule {
 
     private SimpleMotorFeedforward feedforward;
 
-    public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
+    public SwerveModule(SwerveModuleConstants moduleConstants) {
         angle = 0;
         speed = 0;
         fakePos = 0;
-        this.moduleNumber = moduleNumber;
+        this.moduleNumber = moduleConstants.moduleNumber;
         angleOffset = moduleConstants.angleOffset;
 
         angleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
@@ -139,6 +139,18 @@ public class SwerveModule {
             fakePos += (speed * dt);
             lastTime = time.get();
         }
+    }
+
+    public void setAzimuth(Rotation2d azimuth) {
+        angleController.setReference(azimuth.getDegrees(), ControlType.kPosition);
+    }
+
+    public void setDriveVolts(double volts) {
+        driveMotor.setVoltage(volts);
+    }
+
+    public double getDriveVolts() {
+        return driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     }
 
     public SwerveModuleState getState() {
