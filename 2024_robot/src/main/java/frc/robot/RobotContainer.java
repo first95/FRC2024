@@ -69,14 +69,14 @@ public class RobotContainer {
     NoteHandlerCommand noteManager = new NoteHandlerCommand(
       shooter,
       intake,
-      () -> (m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()),
-      () -> m_driverController.b().getAsBoolean(),
-      () -> m_driverController.rightBumper().getAsBoolean(),
-      () -> m_driverController.leftBumper().getAsBoolean(),
-      () -> m_driverController.povUp().getAsBoolean(),
-      () -> m_driverController.povDown().getAsBoolean(),
-      () -> m_driverController.y().getAsBoolean(),
-      () -> m_driverController.a().getAsBoolean());
+      () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
+      () -> operatorController.b().getAsBoolean(),
+      () -> operatorController.rightBumper().getAsBoolean(),
+      () -> operatorController.leftBumper().getAsBoolean(),
+      () -> operatorController.povUp().getAsBoolean(),
+      () -> operatorController.povDown().getAsBoolean(),
+      () -> operatorController.y().getAsBoolean(),
+      () -> operatorController.a().getAsBoolean());
     
     shooter.setDefaultCommand(noteManager);
 
