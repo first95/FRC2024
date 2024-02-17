@@ -95,9 +95,9 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY_LIMIT = 5;
 
     // Robot heading control gains
-    public static final double HEADING_KP = 0.01;
+    public static final double HEADING_KP = 5.7766;
     public static final double HEADING_KI = 0;
-    public static final double HEADING_KD = 0.0;
+    public static final double HEADING_KD = 0.94272;
     
     // Swerve base kinematics object
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);

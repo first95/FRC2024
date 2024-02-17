@@ -136,6 +136,9 @@ public class AbsoluteDrive extends Command {
       Constants.LOOP_CYCLE,
       setpoint,
       new TrapezoidProfile.State(angle, 0));
+    
+    SmartDashboard.putNumber("AngSetpoint", setpoint.position);
+    SmartDashboard.putNumber("AngPos", currentHeading.getRadians());
 
     omega = thetaController.calculate(currentHeading.getRadians(), setpoint.position) + setpoint.velocity;
 
