@@ -37,8 +37,8 @@ import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   
-  private final CANSparkFlex portShooter, starboardShooter;
-  private final CANSparkMax loader, shoulder; //shoulder2;
+  private final CANSparkFlex portShooter, starboardShooter, shoulder;
+  private final CANSparkMax loader; //shoulder2;
   private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
     portShooter = new CANSparkFlex(ShooterConstants.PORT_SHOOTER_ID, MotorType.kBrushless);
     starboardShooter = new CANSparkFlex(ShooterConstants.STARBOARD_SHOOTER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(ShooterConstants.LOADER_ID, MotorType.kBrushless);
-    shoulder = new CANSparkMax(ShooterConstants.SHOULDER_ID, MotorType.kBrushless);
+    shoulder = new CANSparkFlex(ShooterConstants.SHOULDER_ID, MotorType.kBrushless);
     //shoulder2 = new CANSparkMax(ShooterConstants.SHOULDER_2_ID, MotorType.kBrushless);
 
     portShooter.restoreFactoryDefaults();
