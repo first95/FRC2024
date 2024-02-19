@@ -183,5 +183,7 @@ public final class Constants {
     public static final int driveControllerPort = 0;
     public static final int headingControllerPort = 1;
     public static final int operatorControllerPort = 2;
+    
+    public static final double joystickDeadband = 0.05;
   }
 }

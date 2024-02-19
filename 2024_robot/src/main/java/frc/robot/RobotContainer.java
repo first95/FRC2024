@@ -50,32 +50,32 @@ public class RobotContainer {
 
     openRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> false, true);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> headingController.getTwist() * 0.63, () -> false, true);
     
     closedRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> false, false);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> headingController.getTwist() * 0.63, () -> false, false);
     
     openFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> true, true);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? driveController.getX() * 0.63 : 0,
+      () -> headingController.getTwist() * 0.63, () -> true, true);
     
     closedFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> true, false);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> headingController.getTwist() * 0.63, () -> true, false);
     
     absoluteDrive = new AbsoluteDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
       () -> -headingController.getX(),
       () -> -headingController.getY(), false);
     
