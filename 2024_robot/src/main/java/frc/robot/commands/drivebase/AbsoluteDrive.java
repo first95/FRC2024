@@ -108,6 +108,7 @@ public class AbsoluteDrive extends Command {
 
     // Calculates an angular rate using a PIDController and the commanded angle.;
     omega = thetaController.calculate(swerve.getPose().getRotation().getRadians(), angle);
+    SmartDashboard.putNumber("HeadingSetpoint", angle);
 
     // Convert joystick inputs to m/s by scaling by max linear speed.  Also uses a cubic function
     // to allow for precise control and fast movement.

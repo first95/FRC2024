@@ -98,7 +98,7 @@ public final class Constants {
     // Robot heading control gains
     public static final double HEADING_KP = 5.7766;
     public static final double HEADING_KI = 0;
-    public static final double HEADING_KD = 0.94272;
+    public static final double HEADING_KD = 0.094;//0.94272;
     
     // Swerve base kinematics object
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
