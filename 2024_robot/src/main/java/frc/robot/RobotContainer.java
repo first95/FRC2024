@@ -52,25 +52,25 @@ public class RobotContainer {
       drivebase,
       () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
       () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
-      () -> headingController.getTwist() * 0.63, () -> false, true);
+      () -> -headingController.getTwist() * 0.63, () -> false, true);
     
     closedRobotRel = new TeleopDrive(
       drivebase,
       () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
       () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
-      () -> headingController.getTwist() * 0.63, () -> false, false);
+      () -> -headingController.getTwist() * 0.63, () -> false, false);
     
     openFieldRel = new TeleopDrive(
       drivebase,
       () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? driveController.getY() * 0.63 : 0,
       () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? driveController.getX() * 0.63 : 0,
-      () -> headingController.getTwist() * 0.63, () -> true, true);
+      () -> -headingController.getTwist() * 0.63, () -> true, true);
     
     closedFieldRel = new TeleopDrive(
       drivebase,
       () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
       () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
-      () -> headingController.getTwist() * 0.63, () -> true, false);
+      () -> -headingController.getTwist() * 0.63, () -> true, false);
     
     absoluteDrive = new AbsoluteDrive(
       drivebase,
@@ -79,7 +79,7 @@ public class RobotContainer {
       () -> -headingController.getX(),
       () -> -headingController.getY(), false);
     
-    drivebase.setDefaultCommand(absoluteDrive);
+    drivebase.setDefaultCommand(closedFieldRel);
     // Configure the trigger bindings
     configureBindings();
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));

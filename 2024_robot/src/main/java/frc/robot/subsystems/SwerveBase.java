@@ -153,11 +153,13 @@ public class SwerveBase extends SubsystemBase {
     
     // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if necessary.
     ChassisSpeeds velocity = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-      ChassisSpeeds.discretize(
-        translation.getX(),
-        translation.getY(),
-        rotation,
-        Constants.LOOP_CYCLE),
+      correctForDynamics(
+        new ChassisSpeeds(
+          translation.getX(),
+          translation.getY(),
+          rotation),
+        Constants.LOOP_CYCLE,
+        Drivebase.SKEW_CORRECTION_FACTOR),
       getPose().getRotation()
     )
     : new ChassisSpeeds(
@@ -405,7 +407,7 @@ public class SwerveBase extends SubsystemBase {
       final double radius;
       radius = tangentVel / initial.omegaRadiansPerSecond;
       final double skewVelocity = (radius * oneMinusCos) / dt;
-      var direction = linearVel.getAngle().plus(Rotation2d.fromDegrees(-Math.copySign(90, initial.omegaRadiansPerSecond)));
+      var direction = linearVel.getAngle().minus(Rotation2d.fromDegrees(90));
       var velocityCorrection = new Translation2d(skewVelocity, direction).times(magicFactor);
       var translationVel = linearVel.plus(velocityCorrection);
       return new ChassisSpeeds(

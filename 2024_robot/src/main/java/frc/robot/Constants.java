@@ -105,6 +105,8 @@ public final class Constants {
     // Swerve base kinematics object
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
+    public static final double SKEW_CORRECTION_FACTOR = 6;
+
     // Module PIDF gains
     public static final double MODULE_KP = 0.06;
     public static final double MODULE_KI = 0;
