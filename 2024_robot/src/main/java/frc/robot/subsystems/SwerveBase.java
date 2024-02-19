@@ -52,7 +52,7 @@ public class SwerveBase extends SubsystemBase {
   
   public Field2d field = new Field2d();
 
-  private double angle, lasttime;
+  private double angle, lasttime, visionLatency;
 
   private Timer timer;
 
@@ -377,6 +377,7 @@ public class SwerveBase extends SubsystemBase {
     } else {
       return null;
     }
+    visionLatency = poseComponents[6];
     return new Pose3d(
         poseComponents[0],
         poseComponents[1],
@@ -450,7 +451,7 @@ public class SwerveBase extends SubsystemBase {
     // Update odometry
     odometry.update(getYaw(), getModulePositions());
 
-    /*Pose2d estimatedPose = getPose();
+    Pose2d estimatedPose = getPose();
     double timestamp;
     Pose3d portPose3d = getVisionPose(portLimelightData);
     double portTime = visionLatency;
@@ -471,7 +472,7 @@ public class SwerveBase extends SubsystemBase {
         timestamp = Timer.getFPGATimestamp() - starboardTime / 1000;
         odometry.addVisionMeasurement(starboardPose, timestamp);
       }
-    }*/
+    }
 
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
