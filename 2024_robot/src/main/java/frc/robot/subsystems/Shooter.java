@@ -118,6 +118,8 @@ public class Shooter extends SubsystemBase {
     shoulderPID.setD(ShooterConstants.SHOULDER_KD);
     shoulderPID.setFF(ShooterConstants.SHOULDER_KF);
 
+    shoulderPID.setOutputRange(ShooterConstants.SHOULDER_MIN_CONTROL_EFFORT, ShooterConstants.SHOULDER_MAX_CONTROL_EFFORT);
+
     //bottomLimitSwitch = shoulder.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     //bottomLimitSwitch.enableLimitSwitch(true);
     bottomLimitSwitch = new DigitalInput(ShooterConstants.LIMIT_SWITCH_ID);
@@ -257,13 +259,13 @@ public class Shooter extends SubsystemBase {
       ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
       : armSetpoint;
 
-    /*shoulderPID.setReference(
+    shoulderPID.setReference(
       armSetpoint.position,
       ControlType.kPosition,
       0,
       shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity),
       ArbFFUnits.kVoltage
-    );*/
+    );
 
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
