@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
@@ -51,22 +52,18 @@ public class Shooter extends SubsystemBase {
 
   private Rotation2d armGoal;
   private final Timer timer;
-  private TrapezoidProfile.State armSetpoint;
+  private TrapezoidProfile.State armSetpoint, profileStart;
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
     portShooter = new CANSparkFlex(ShooterConstants.PORT_SHOOTER_ID, MotorType.kBrushless);
     starboardShooter = new CANSparkFlex(ShooterConstants.STARBOARD_SHOOTER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(ShooterConstants.LOADER_ID, MotorType.kBrushless);
     shoulder = new CANSparkFlex(ShooterConstants.SHOULDER_ID, MotorType.kBrushless);
-    //shoulder2 = new CANSparkMax(ShooterConstants.SHOULDER_2_ID, MotorType.kBrushless);
 
     portShooter.restoreFactoryDefaults();
     starboardShooter.restoreFactoryDefaults();
     loader.restoreFactoryDefaults();
     shoulder.restoreFactoryDefaults();
-    //shoulder2.restoreFactoryDefaults();
-
-    //shoulder2.follow(shoulder, true);
 
     portShooter.setInverted(ShooterConstants.INVERT_PORT_SHOOTER);
     starboardShooter.setInverted(ShooterConstants.INVERT_STARBOARD_SHOOTER);
@@ -77,13 +74,11 @@ public class Shooter extends SubsystemBase {
     starboardShooter.setIdleMode(IdleMode.kCoast);
     loader.setIdleMode(IdleMode.kBrake);
     shoulder.setIdleMode(IdleMode.kBrake);
-    //shoulder2.setIdleMode(IdleMode.kBrake);
 
     portShooter.setSmartCurrentLimit(ShooterConstants.SHOOTER_CURRENT_LIMIT);
     starboardShooter.setSmartCurrentLimit(ShooterConstants.SHOOTER_CURRENT_LIMIT);
     loader.setSmartCurrentLimit(ShooterConstants.LOADER_CURRENT_LIMIT);
     shoulder.setSmartCurrentLimit(ShooterConstants.SHOULDER_CURRENT_LIMIT);
-    //shoulder2.setSmartCurrentLimit(ShooterConstants.SHOULDER_CURRENT_LIMIT);
 
     portShooter.setOpenLoopRampRate(ShooterConstants.SHOOTER_RAMP_RATE);
     starboardShooter.setOpenLoopRampRate(ShooterConstants.SHOOTER_RAMP_RATE);
@@ -97,7 +92,7 @@ public class Shooter extends SubsystemBase {
     shoulderEncoder.setPositionConversionFactor(ShooterConstants.ARM_RADIANS_PER_MOTOR_ROTATION);
     shoulderEncoder.setVelocityConversionFactor(ShooterConstants.ARM_RADIANS_PER_MOTOR_ROTATION / 60);
 
-    shoulderEncoder.setPosition(Math.toRadians(28));
+    shoulderEncoder.setPosition(ShooterConstants.ARM_LOWER_LIMIT.getRadians());
 
     portShooterPID = portShooter.getPIDController();
     starboardShooterPID = starboardShooter.getPIDController();
@@ -120,8 +115,6 @@ public class Shooter extends SubsystemBase {
 
     shoulderPID.setOutputRange(ShooterConstants.SHOULDER_MIN_CONTROL_EFFORT, ShooterConstants.SHOULDER_MAX_CONTROL_EFFORT);
 
-    //bottomLimitSwitch = shoulder.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-    //bottomLimitSwitch.enableLimitSwitch(true);
     bottomLimitSwitch = new DigitalInput(ShooterConstants.LIMIT_SWITCH_ID);
 
     shoulderProfile = new TrapezoidProfile(
@@ -130,6 +123,7 @@ public class Shooter extends SubsystemBase {
         ShooterConstants.MAX_ACCELERATION)
     );
     armGoal = ShooterConstants.ARM_LOWER_LIMIT;
+    profileStart = new TrapezoidProfile.State(ShooterConstants.ARM_LOWER_LIMIT.getRadians(), 0);
 
     shoulderFeedforward = new ArmFeedforward(
       ShooterConstants.SHOULDER_KS,
@@ -150,7 +144,6 @@ public class Shooter extends SubsystemBase {
     starboardShooter.burnFlash();
     loader.burnFlash();
     shoulder.burnFlash();
-    //shoulder2.burnFlash();
 
     timer = new Timer();
     timer.start();
@@ -217,7 +210,10 @@ public class Shooter extends SubsystemBase {
 
   public void setArmAngle(Rotation2d angle) {
     armGoal = angle;
+    profileStart = new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity());
+    timer.stop();
     timer.reset();
+    timer.start();
   }
 
   public void setShoulderVolts(double volts) {
@@ -242,7 +238,6 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
     if (bottomLimitSwitch.get()) {
       shoulderEncoder.setPosition(ShooterConstants.ARM_LOWER_LIMIT.getRadians());
     }
@@ -251,7 +246,7 @@ public class Shooter extends SubsystemBase {
     }
     armSetpoint = shoulderProfile.calculate(
       timer.get(),
-      new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity()),
+      profileStart,
       new TrapezoidProfile.State(armGoal.getRadians(), 0)
     );
     // This really shouldn't be necessary
@@ -267,10 +262,14 @@ public class Shooter extends SubsystemBase {
       ArbFFUnits.kVoltage
     );
 
+    SmartDashboard.putNumber("ProportionalTerm", ShooterConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
+    SmartDashboard.putNumber("FeedforwardValue", shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity));
+    SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
     SmartDashboard.putNumber("ShooterShoulderSetpointVel", Math.toDegrees(armSetpoint.velocity));
     SmartDashboard.putNumber("ShooterShoulderPos", Math.toDegrees(shoulderEncoder.getPosition()));
+    SmartDashboard.putNumber("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
     SmartDashboard.putNumber("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
     SmartDashboard.putNumber("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
     SmartDashboard.putNumber("PortRPM", portShooterEncoder.getVelocity());

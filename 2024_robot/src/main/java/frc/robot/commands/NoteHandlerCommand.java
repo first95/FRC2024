@@ -87,12 +87,12 @@ public class NoteHandlerCommand extends Command {
 
     // This is for testing
     if (upSup.getAsBoolean() && !lastUp && (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
-      ang = ang.plus(Rotation2d.fromDegrees(5));
+      ang = ang.plus(Rotation2d.fromDegrees(30));
       volts += 0.05;
       //shooter.setShoulderVolts(volts);
       shooter.setArmAngle(ang);
     } else if (downSup.getAsBoolean() && !lastDown) {
-      ang = ang.minus(Rotation2d.fromDegrees(5));
+      ang = ang.minus(Rotation2d.fromDegrees(30));
       volts -= 0.05;
       //shooter.setShoulderVolts(volts);
       shooter.setArmAngle(ang);
