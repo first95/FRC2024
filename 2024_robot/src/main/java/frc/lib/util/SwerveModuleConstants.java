@@ -1,11 +1,11 @@
 package frc.lib.util;
 
 public class SwerveModuleConstants {
-    public final int driveMotorID;
-    public final int angleMotorID;
+    public final int moduleNumber, driveMotorID, angleMotorID;
     public final double angleOffset, xPos, yPos;
 
-    public SwerveModuleConstants(int driveMotorID, int angleMotorID, double angleOffset, double xPos, double yPos) {
+    public SwerveModuleConstants(int moduleNumber, int driveMotorID, int angleMotorID, double angleOffset, double xPos, double yPos) {
+        this.moduleNumber = moduleNumber;
         this.driveMotorID = driveMotorID;
         this.angleMotorID = angleMotorID;
         this.angleOffset = angleOffset;
