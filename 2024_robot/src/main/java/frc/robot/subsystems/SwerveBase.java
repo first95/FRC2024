@@ -56,7 +56,7 @@ public class SwerveBase extends SubsystemBase {
 
   private Timer timer;
 
-  private boolean wasGyroReset;
+  private boolean wasGyroReset, wasOdometrySeeded;
 
   private final SwerveDrivePoseEstimator odometry;
 
@@ -95,7 +95,12 @@ public class SwerveBase extends SubsystemBase {
       new SwerveModule(Drivebase.Mod3.CONSTANTS),
     };
 
+    portLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.PORT_LIMELIGHT_NAME);
+    starboardLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.STARBOARD_LIMELIGHT_NAME);
+    
     odometry = new SwerveDrivePoseEstimator(Drivebase.KINEMATICS, getYaw(), getModulePositions(), new Pose2d());
+    wasOdometrySeeded = false;
+    wasGyroReset = false;
 
     driveCharacterizer = new SysIdRoutine(
       new SysIdRoutine.Config(),
@@ -276,7 +281,7 @@ public class SwerveBase extends SubsystemBase {
    * Gets the current yaw angle of the robot, as reported by the imu.  CCW positive, not wrapped.
    * @return The yaw angle
    */
-  public Rotation2d getYaw() {
+  private Rotation2d getYaw() {
     // Read the imu if the robot is real or the accumulator if the robot is simulated.
     if (Robot.isReal()) {
       double yaw = imu.getYaw().getValueAsDouble();
@@ -343,6 +348,10 @@ public class SwerveBase extends SubsystemBase {
     this.alliance = alliance;
   }
 
+  public void resetOdometry(Pose2d pose) {
+    odometry.resetPosition(getYaw(), getModulePositions(), pose);
+  }
+
   public void setVelocityModuleGains() {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.setGains(
@@ -353,6 +362,29 @@ public class SwerveBase extends SubsystemBase {
         SmartDashboard.getNumber("KV", Drivebase.KV),
         SmartDashboard.getNumber("KA", Drivebase.KA));
     }
+  }
+
+  public Pose3d getVisionPose(NetworkTable visionData) {
+    if ((visionData.getEntry("tv").getDouble(0) == 0 ||
+      visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
+      return null;
+    }
+    double[] poseComponents;
+    if (alliance == Alliance.Blue) {
+      poseComponents = visionData.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
+    } else if (alliance == Alliance.Red) {
+      poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
+    } else {
+      return null;
+    }
+    return new Pose3d(
+        poseComponents[0],
+        poseComponents[1],
+        poseComponents[2],
+        new Rotation3d(
+          Math.toRadians(poseComponents[3]),
+          Math.toRadians(poseComponents[4]),
+          Math.toRadians(poseComponents[5])));
   }
 
   @Override
@@ -366,7 +398,7 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
     SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);*/
-    
+
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded) { 
