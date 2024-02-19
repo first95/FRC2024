@@ -25,7 +25,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -153,11 +152,7 @@ public class Shooter extends SubsystemBase {
     timer.start();
 
     shoulderCharacterizer = new SysIdRoutine(
-      new SysIdRoutine.Config(
-        Volts.per(Seconds).of(0.2),
-        Volts.of(2),
-        Seconds.of(10)
-      ),
+      new SysIdRoutine.Config(),
       new SysIdRoutine.Mechanism(
         (Measure<Voltage> volts) -> {
           shoulder.setVoltage(volts.in(Volts));
@@ -239,6 +234,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.isPressed());
     if (bottomLimitSwitch.isPressed()) {
       shoulderEncoder.setPosition(ShooterConstants.ARM_LOWER_LIMIT.getRadians());
     }

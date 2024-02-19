@@ -100,7 +100,7 @@ public class RobotContainer {
         () -> operatorController.rightBumper().getAsBoolean(),
         () -> operatorController.leftBumper().getAsBoolean());
 
-    shooter.setDefaultCommand(noteManager);
+    //shooter.setDefaultCommand(noteManager);
 
     drivebase.setDefaultCommand(closedFieldRel);
     // Configure the trigger bindings
@@ -129,6 +129,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    operatorController.y().whileTrue(shooter.sysIdQuasiShoulder(SysIdRoutine.Direction.kForward));
+    operatorController.b().whileTrue(shooter.sysIdQuasiShoulder(SysIdRoutine.Direction.kReverse));
+    operatorController.a().whileTrue(shooter.sysIdDynShoulder(SysIdRoutine.Direction.kForward));
+    operatorController.x().whileTrue(shooter.sysIdDynShoulder(SysIdRoutine.Direction.kReverse));
   }
 
   /**
