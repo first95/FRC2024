@@ -228,10 +228,10 @@ public final class Constants {
         public static final double SHOULDER_KI = 0;
         public static final double SHOULDER_KD = 0;
         public static final double SHOULDER_KF = 0;
-        public static final double SHOULDER_KS = 0;
-        public static final double SHOULDER_KG = 0.5; // Volts
-        public static final double SHOULDER_KV = 1.52; // V * s / rad
-        public static final double SHOULDER_KA = 0.13; // V * s^2 / rad
+        public static final double SHOULDER_KS = 0.186865;
+        public static final double SHOULDER_KG = 0.63945; // Volts
+        public static final double SHOULDER_KV = 0; // V * s / rad
+        public static final double SHOULDER_KA = 0; // V * s^2 / rad
 
         public static final double FLYWHEEL_KP = 2.6269E-8;
         public static final double FLYWHEEL_KI = 0;

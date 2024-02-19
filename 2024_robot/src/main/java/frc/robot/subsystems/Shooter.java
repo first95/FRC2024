@@ -218,6 +218,10 @@ public class Shooter extends SubsystemBase {
     timer.reset();
   }
 
+  public void setShoulderVolts(double volts) {
+    shoulder.setVoltage(volts);
+  }
+
   public Rotation2d getArmAngle() {
     return Rotation2d.fromRadians(shoulderEncoder.getPosition());
   }

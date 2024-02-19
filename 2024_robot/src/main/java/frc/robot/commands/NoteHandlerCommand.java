@@ -28,6 +28,7 @@ public class NoteHandlerCommand extends Command {
   private Rotation2d ang;
   private BooleanSupplier upSup, downSup;
   private boolean lastUp, lastDown;
+  private double volts;
 
   private enum State {
     SHOOTING, IDLE, HOLDING, SPOOLING
@@ -56,14 +57,16 @@ public class NoteHandlerCommand extends Command {
   @Override
   public void initialize() {
     currentState = State.IDLE;
-
-    // For testing
-    ang = shooter.getArmAngle();
     portSpeed = NoteHandlerSpeeds.PORT_SHOOTER_SPEED;
     starboardSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER_SPEED;
     SmartDashboard.putNumber("PortSpeed", portSpeed);
     SmartDashboard.putNumber("StarboardSpeed", starboardSpeed);
-    shooter.setArmAngle(ang);
+
+    // For testing
+    ang = shooter.getArmAngle();
+    volts = 0;
+    
+    //shooter.setArmAngle(ang);
     lastDown = false;
     lastUp = false;
     shooter.setShooterSpeed(0, 0);
@@ -83,13 +86,18 @@ public class NoteHandlerCommand extends Command {
     starboardSpeed = SmartDashboard.getNumber("StarboardSpeed", starboardSpeed);
 
     // This is for testing
-    if (upSup.getAsBoolean() && !lastUp && (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
+    if (upSup.getAsBoolean() && !lastUp ){//&& (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
       ang = ang.plus(Rotation2d.fromDegrees(5));
-      shooter.setArmAngle(ang);
+      volts += 0.05;
+      shooter.setShoulderVolts(volts);
+      //shooter.setArmAngle(ang);
     } else if (downSup.getAsBoolean() && !lastDown) {
       ang = ang.minus(Rotation2d.fromDegrees(5));
-      shooter.setArmAngle(ang);
+      volts -= 0.05;
+      shooter.setShoulderVolts(volts);
+      //shooter.setArmAngle(ang);
     }
+    SmartDashboard.putNumber("ShoulderVolts", volts);
 
     // Execute statemachine logic
     switch (currentState) {
