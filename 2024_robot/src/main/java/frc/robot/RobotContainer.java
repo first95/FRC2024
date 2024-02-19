@@ -70,13 +70,10 @@ public class RobotContainer {
       shooter,
       intake,
       () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
-      () -> operatorController.b().getAsBoolean(),
-      () -> operatorController.rightBumper().getAsBoolean(),
-      () -> operatorController.leftBumper().getAsBoolean(),
-      () -> operatorController.povUp().getAsBoolean(),
-      () -> operatorController.povDown().getAsBoolean(),
       () -> operatorController.y().getAsBoolean(),
-      () -> operatorController.a().getAsBoolean());
+      () -> operatorController.rightBumper().getAsBoolean(),
+      () -> operatorController.leftBumper().getAsBoolean()
+    );
     
     shooter.setDefaultCommand(noteManager);
 
