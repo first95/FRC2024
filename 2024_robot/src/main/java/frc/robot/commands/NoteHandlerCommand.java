@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -58,8 +59,8 @@ public class NoteHandlerCommand extends Command {
 
     // For testing
     ang = shooter.getArmAngle();
-    portSpeed = ShooterConstants.PORT_SHOOTER_SPEED;
-    starboardSpeed = ShooterConstants.STARBOARD_SHOOTER_SPEED;
+    portSpeed = NoteHandlerSpeeds.PORT_SHOOTER_SPEED;
+    starboardSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER_SPEED;
     SmartDashboard.putNumber("PortSpeed", portSpeed);
     SmartDashboard.putNumber("StarboardSpeed", starboardSpeed);
     shooter.setArmAngle(ang);
@@ -75,9 +76,9 @@ public class NoteHandlerCommand extends Command {
     sensorvalue = shooter.getNoteSensor();
     shooterbutton = shooterButtonSupplier.getAsBoolean();
     commandedIntakeSpeed = intakeSpeedAxis.getAsDouble();
-    shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed()) <= ShooterConstants.SHOOTER_SPEED_TOLERANCE)
+    shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_SPEED_TOLERANCE)
         &&
-        (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed()) <= ShooterConstants.SHOOTER_SPEED_TOLERANCE);
+        (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_SPEED_TOLERANCE);
     portSpeed = SmartDashboard.getNumber("PortSpeed", portSpeed);
     starboardSpeed = SmartDashboard.getNumber("StarboardSpeed", starboardSpeed);
 
@@ -95,9 +96,9 @@ public class NoteHandlerCommand extends Command {
       case IDLE:
         // Set desired outputs in this state
         intakeSpeed = commandedIntakeSpeed;
-        loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_INTAKE_SPEED : 0;
-        portShootingSpeed = 0;
-        starboardShootingSpeed = 0;
+        loaderSpeed = (commandedIntakeSpeed > 0) ? NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
 
         // Determine if we neeed to change state
         if (shooterbutton) {
@@ -112,8 +113,8 @@ public class NoteHandlerCommand extends Command {
       case SPOOLING:
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
-        loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
 
         if (!shooterbutton) {
           currentState = sensorvalue ? State.HOLDING : State.IDLE;
@@ -125,8 +126,8 @@ public class NoteHandlerCommand extends Command {
         break;
 
       case SHOOTING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
-        loaderSpeed = ShooterConstants.LOADER_FIRING_SPEED;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING_SPEED;
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
 
@@ -140,10 +141,10 @@ public class NoteHandlerCommand extends Command {
         break;
 
       case HOLDING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
-        loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
-        portShootingSpeed = 0;
-        starboardShootingSpeed = 0;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
 
         if (shooterbutton) {
           currentState = State.SPOOLING;
