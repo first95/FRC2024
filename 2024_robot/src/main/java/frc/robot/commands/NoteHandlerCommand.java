@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-
 /** An example command that uses an example subsystem. */
 public class NoteHandlerCommand extends Command {
   private final Shooter shooter;
@@ -26,19 +25,20 @@ public class NoteHandlerCommand extends Command {
 
   // Testing
   private Rotation2d ang;
-  private double portSpeed, starboardSpeed;
-  private BooleanSupplier upSup, downSup, portUpSup, portDownSup, sboardUpSup, sboardDownSup;
-  private boolean lastUp, lastDown, lastPortUp, lastPortDown, lastSboardUp, lastSboardDown;
+  private BooleanSupplier upSup, downSup;
+  private boolean lastUp, lastDown;
+
   private enum State {
     SHOOTING, IDLE, HOLDING, SPOOLING
   }
 
   // Real
   private State currentState;
-  private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed;
+  private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed, portSpeed, starboardSpeed;
   private boolean sensorvalue, shooterbutton, shooterAtSpeed;
-  
-  public NoteHandlerCommand(Shooter shooter, Intake intake, DoubleSupplier intakeSpeedAxis, BooleanSupplier shooterButtonSupplier, BooleanSupplier upSup, BooleanSupplier downSup, BooleanSupplier portUpSup, BooleanSupplier portDownSup, BooleanSupplier sboardUpSup, BooleanSupplier sboardDownSup) {
+
+  public NoteHandlerCommand(Shooter shooter, Intake intake, DoubleSupplier intakeSpeedAxis,
+      BooleanSupplier shooterButtonSupplier, BooleanSupplier upSup, BooleanSupplier downSup) {
     this.shooter = shooter;
     this.intake = intake;
     this.intakeSpeedAxis = intakeSpeedAxis;
@@ -47,12 +47,8 @@ public class NoteHandlerCommand extends Command {
     // Testing
     this.upSup = upSup;
     this.downSup = downSup;
-    this.portDownSup = portDownSup;
-    this.portUpSup = portUpSup;
-    this.sboardDownSup = sboardDownSup;
-    this.sboardUpSup = sboardUpSup;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter);
+    addRequirements(shooter, intake);
   }
 
   // Called when the command is initially scheduled.
@@ -64,26 +60,26 @@ public class NoteHandlerCommand extends Command {
     ang = shooter.getArmAngle();
     portSpeed = ShooterConstants.PORT_SHOOTER_SPEED;
     starboardSpeed = ShooterConstants.STARBOARD_SHOOTER_SPEED;
+    SmartDashboard.putNumber("PortSpeed", portSpeed);
+    SmartDashboard.putNumber("StarboardSpeed", starboardSpeed);
     shooter.setArmAngle(ang);
     lastDown = false;
     lastUp = false;
-    lastPortDown = false;
-    lastPortUp = false;
-    lastSboardDown = false;
-    lastSboardUp = false;
     shooter.setShooterSpeed(0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Read inputs
     sensorvalue = shooter.getNoteSensor();
     shooterbutton = shooterButtonSupplier.getAsBoolean();
     commandedIntakeSpeed = intakeSpeedAxis.getAsDouble();
-    shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed())
-    <= ShooterConstants.SHOOTER_SPEED_TOLERANCE) &&
-    (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed())
-    <= ShooterConstants.SHOOTER_SPEED_TOLERANCE);
+    shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed()) <= ShooterConstants.SHOOTER_SPEED_TOLERANCE)
+        &&
+        (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed()) <= ShooterConstants.SHOOTER_SPEED_TOLERANCE);
+    portSpeed = SmartDashboard.getNumber("PortSpeed", portSpeed);
+    starboardSpeed = SmartDashboard.getNumber("StarboardSpeed", starboardSpeed);
 
     // This is for testing
     if (upSup.getAsBoolean() && !lastUp && (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
@@ -94,35 +90,19 @@ public class NoteHandlerCommand extends Command {
       shooter.setArmAngle(ang);
     }
 
-    if (portUpSup.getAsBoolean() && !lastPortUp) {
-      portSpeed += 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    } else if (portDownSup.getAsBoolean() && !lastPortDown && portSpeed > 0) {
-      portSpeed -= 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    }
-
-    if (sboardUpSup.getAsBoolean() && !lastSboardUp) {
-      starboardSpeed += 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    } else if (sboardDownSup.getAsBoolean() && !lastSboardDown && starboardSpeed > 0) {
-      starboardSpeed -= 100;
-      shooter.setShooterSpeed(portSpeed, starboardSpeed);
-    }
-
-    // This is the FSM
-    switch(currentState){
+    // Execute statemachine logic
+    switch (currentState) {
       case IDLE:
-      intakeSpeed = commandedIntakeSpeed;
-      loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_INTAKE_SPEED : 0;
-      portShootingSpeed = 0;
-      starboardShootingSpeed = 0;
-      if (shooterbutton) {
-        currentState = State.SPOOLING;
-      } else if (sensorvalue) {
-        currentState = State.HOLDING;
-      }
-      break;
+        intakeSpeed = commandedIntakeSpeed;
+        loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_INTAKE_SPEED : 0;
+        portShootingSpeed = 0;
+        starboardShootingSpeed = 0;
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        } else if (sensorvalue) {
+          currentState = State.HOLDING;
+        }
+        break;
 
       case SPOOLING:
         portShootingSpeed = portSpeed;
@@ -130,13 +110,13 @@ public class NoteHandlerCommand extends Command {
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
         loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
 
-        if (!shooterbutton){
+        if (!shooterbutton) {
           currentState = State.HOLDING;
         }
-        if (shooterbutton && shooterAtSpeed){
+        if (shooterbutton && shooterAtSpeed) {
           currentState = State.SHOOTING;
         }
-      break;
+        break;
 
       case SHOOTING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
@@ -144,22 +124,23 @@ public class NoteHandlerCommand extends Command {
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
 
-        if (!shooterbutton){
+        if (!shooterbutton) {
           currentState = State.IDLE;
         }
-      break;
-      
+        break;
+
       case HOLDING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : 0;
         loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
         portShootingSpeed = 0;
         starboardShootingSpeed = 0;
-        if (shooterbutton){
+        if (shooterbutton) {
           currentState = State.SPOOLING;
         }
-      break;
+        break;
     }
-    
+
+    // Apply outputs
     intake.runRollers(intakeSpeed);
     shooter.setShooterSpeed(portShootingSpeed, starboardShootingSpeed);
     shooter.runLoader(loaderSpeed);
@@ -167,28 +148,21 @@ public class NoteHandlerCommand extends Command {
     // This is also for testing
     lastDown = downSup.getAsBoolean();
     lastUp = upSup.getAsBoolean();
-    lastPortDown = portDownSup.getAsBoolean();
-    lastPortUp = portUpSup.getAsBoolean();
-    lastSboardDown = sboardDownSup.getAsBoolean();
-    lastSboardUp = sboardUpSup.getAsBoolean();
 
-    SmartDashboard.putNumber("PortSpeed", portSpeed);
-    SmartDashboard.putNumber("StarboardSpeed", starboardSpeed);
     SmartDashboard.putString("AngleCommand", ang.toString());
-    
+
     // These are real
-    SmartDashboard.putString("currentState",currentState.toString());
+    SmartDashboard.putString("currentState", currentState.toString());
     SmartDashboard.putNumber("intakeSpeed", intakeSpeed);
     SmartDashboard.putNumber("shooterSpeed", portShootingSpeed);
     SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
     SmartDashboard.putBoolean("sensor", sensorvalue);
   }
 
-
-
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
