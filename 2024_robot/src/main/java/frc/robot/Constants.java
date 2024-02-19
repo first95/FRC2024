@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.PubSub;
 import frc.lib.util.BetterSwerveKinematics;
@@ -28,8 +30,22 @@ public final class Constants {
     public static final double NEO_FREE_SPEED = 5676; // RPM
     public static final double NEO_STALL_TORQUE = 3.75; // N * m
     public static final double NEO_550_FREE_SPEED = 11000; // RPM
+  public static final double SPARK_VELOCITY_RESPONSE_LOOP = 0.11042; // 110.42ms
+  public static final double VORTEX_FREE_SPEED = 6784; // RPM
+  public static final double VORTEX_STALL_TORQUE = 3.6; // N * m
 
     public static final double GRAVITY = 9.81; // m/s/s
+
+  public static final double LOOP_CYCLE = 0.02; // 20ms
+
+  public static final double ROBOT_MASS = 95 / 2.2;
+  public static final double MANIPULATOR_MASS = 0;
+  public static final double CHASSIS_MASS = ROBOT_MASS - MANIPULATOR_MASS;
+  public static final double ARM_Y_POS = 0;
+  public static final Translation3d CHASSIS_CG = new Translation3d(
+    0,
+    0,
+    0.15);
 
     public static final class Drivebase {
         // Hold time on motor brakes when disabled
@@ -41,7 +57,7 @@ public final class Constants {
 
         // Motor and encoder inversions
         public static final boolean ABSOLUTE_ENCODER_INVERT = true;
-        public static final boolean DRIVE_MOTOR_INVERT = true;
+        public static final boolean DRIVE_MOTOR_INVERT = false;
         public static final boolean ANGLE_MOTOR_INVERT = false;
         public static final boolean INVERT_GYRO = false;
 
@@ -69,7 +85,7 @@ public final class Constants {
         public static final double IMU_MOUNT_ROLL = 0;
 
         // Drivetrain limitations
-        public static final double MAX_SPEED = Units.feetToMeters(15.76); // meters per second NOT A LIMIT!!! DO NOT
+        public static final double MAX_SPEED = (VORTEX_FREE_SPEED * Units.inchesToMeters(3 * Math.PI)) / (60 * 4.71); // meters per second NOT A LIMIT!!! DO NOT
                                                                           // TOUCH!!!
         public static final double MAX_ANGULAR_VELOCITY = MAX_SPEED / Math.hypot(FRONT_LEFT_X, FRONT_LEFT_Y); // rad/s
         // Theoretical max acceleration should be as follows:
@@ -84,25 +100,33 @@ public final class Constants {
         public static final double MAX_MODULE_ANGULAR_SPEED = Units.rotationsToDegrees(NEO_550_FREE_SPEED * 7 / 372)
                 / 60; // deg/s
 
+    // Currently does nothing
+    public static final double ANGULAR_ACCELERATION_LIMIT = 100;
+    public static final double ANGULAR_VELOCITY_LIMIT = 5;
+
         // Robot heading control gains
-        public static final double HEADING_KP = 0.4 * (MAX_ANGULAR_VELOCITY / Math.PI);
+        public static final double HEADING_KP = 5.7766;
         public static final double HEADING_KI = 0;
-        public static final double HEADING_KD = 0.01 * (MAX_ANGULAR_VELOCITY / Math.PI);
+        public static final double HEADING_KD = 0.094;//0.94272;
+
+    public static final double HEADING_MIN_ANGULAR_CONTROL_EFFORT = 0.005; // rad/s— Prevent oscillation by cancelling rotational commands less than this
 
         // Swerve base kinematics object
-        public static final BetterSwerveKinematics KINEMATICS = new BetterSwerveKinematics(MODULE_LOCATIONS);
+        public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
+
+    public static final double SKEW_CORRECTION_FACTOR = 6;
 
         // Module PIDF gains
-        public static final double MODULE_KP = 0.01;
+        public static final double MODULE_KP = 0.06;
         public static final double MODULE_KI = 0;
-        public static final double MODULE_KD = 0;
+        public static final double MODULE_KD = 0.0005;
         public static final double MODULE_IZ = 0;
         public static final double MODULE_KF = 0;
         // Volt * seconds / degree. Equal to (maxVolts) / ((degreesPerRotation) *
         // (maxMotorSpeedRPM / gearRatio) * (minutesPerSecond))
         public static final double MODULE_KV = 12 / MAX_MODULE_ANGULAR_SPEED;
 
-        public static final double VELOCITY_KP = 0.1; // kp from SysId, eventually
+        public static final double VELOCITY_KP = 0.07;
         public static final double VELOCITY_KI = 0; // Leave all of these zero to disable them
         public static final double VELOCITY_KD = 0;
         public static final double VELOCITY_IZ = 0;
@@ -116,9 +140,9 @@ public final class Constants {
         public static final int NUM_MODULES = 4;
 
         // Drive feedforward gains
-        public static final double KS = 0.25; // Volts
-        public static final double KV = 12 / MAX_SPEED; // Volt-seconds per meter (max voltage divided by max speed)
-        public static final double KA = (12 / MAX_ACCELERATION) / NUM_MODULES; // Volt-seconds^2 per meter (max voltage
+        public static final double KS = 0.12392; // Volts
+        public static final double KV = 2.0891; // Volt-seconds per meter (max voltage divided by max speed)
+        public static final double KA = 0.26159; // Volt-seconds^2 per meter (max voltage
                                                                                // divided by max accel)
         public static final double KG = (KA / KV);
 
@@ -134,32 +158,32 @@ public final class Constants {
         public static final class Mod0 {
             public static final int DRIVE_MOTOR_ID = 3;
             public static final int ANGLE_MOTOR_ID = 2;
-            public static final double ANGLE_OFFSET = 360 - 20.3;
-            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_MOTOR_ID,
+            public static final double ANGLE_OFFSET = 360 - 20.7;
+            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(0, DRIVE_MOTOR_ID,
                     ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_LEFT_X, FRONT_LEFT_Y);
         }
 
         public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 5;
             public static final int ANGLE_MOTOR_ID = 4;
-            public static final double ANGLE_OFFSET = 360 - 128.5;
-            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_MOTOR_ID,
+            public static final double ANGLE_OFFSET = 360 - 126.8;
+            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(1, DRIVE_MOTOR_ID,
                     ANGLE_MOTOR_ID, ANGLE_OFFSET, FRONT_RIGHT_X, FRONT_RIGHT_Y);
         }
 
         public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 7;
             public static final int ANGLE_MOTOR_ID = 6;
-            public static final double ANGLE_OFFSET = 360 - 58.6;
-            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_MOTOR_ID,
+            public static final double ANGLE_OFFSET = 360 - 58.65;
+            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(2, DRIVE_MOTOR_ID,
                     ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_LEFT_X, BACK_LEFT_Y);
         }
 
         public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 9;
             public static final int ANGLE_MOTOR_ID = 8;
-            public static final double ANGLE_OFFSET = 360 - 198.4;
-            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_MOTOR_ID,
+            public static final double ANGLE_OFFSET = 360 - 197.38;
+            public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(3, DRIVE_MOTOR_ID,
                     ANGLE_MOTOR_ID, ANGLE_OFFSET, BACK_RIGHT_X, BACK_RIGHT_Y);
         }
 
@@ -244,5 +268,7 @@ public final class Constants {
         public static final int driveControllerPort = 0;
         public static final int headingControllerPort = 1;
         public static final int operatorControllerPort = 2;
+    
+    public static final double joystickDeadband = 0.05;
     }
 }

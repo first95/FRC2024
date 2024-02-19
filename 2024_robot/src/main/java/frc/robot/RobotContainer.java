@@ -4,15 +4,18 @@
 
 package frc.robot;
 
+import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.NoteHandlerCommand;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -33,6 +36,7 @@ public class RobotContainer {
   private final SwerveBase drivebase = new SwerveBase();
   private final Shooter shooter = new Shooter();
   private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
+  private final AbsoluteDrive absoluteDrive;
 
   private final CommandJoystick driveController = new CommandJoystick(OperatorConstants.driveControllerPort);
   private final CommandJoystick headingController = new CommandJoystick(OperatorConstants.headingControllerPort);
@@ -43,42 +47,45 @@ public class RobotContainer {
 
     openRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> false, true);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> -headingController.getTwist() * 0.63, () -> false, true);
     
     closedRobotRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> false, false);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> -headingController.getTwist() * 0.63, () -> false, false);
     
     openFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> true, true);
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? driveController.getX() * 0.63 : 0,
+      () -> -headingController.getTwist() * 0.63, () -> true, true);
     
     closedFieldRel = new TeleopDrive(
       drivebase,
-      () -> (Math.abs(driveController.getY()) > 0.05) ? -driveController.getY() * 0.5 : 0,
-      () -> (Math.abs(driveController.getX()) > 0.05) ? -driveController.getX() * 0.5 : 0,
-      () -> headingController.getTwist() * 0.5, () -> true, false);
-      drivebase.setDefaultCommand(closedFieldRel);
-
-    NoteHandlerCommand noteManager = new NoteHandlerCommand(
-      shooter,
-      intake,
-      () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
-      () -> operatorController.y().getAsBoolean(),
-      () -> operatorController.rightBumper().getAsBoolean(),
-      () -> operatorController.leftBumper().getAsBoolean()
-    );
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> -headingController.getTwist() * 0.63, () -> true, false);
     
-    shooter.setDefaultCommand(noteManager);
-
+    absoluteDrive = new AbsoluteDrive(
+      drivebase,
+      () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband) ? -driveController.getY() * 0.63 : 0,
+      () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband) ? -driveController.getX() * 0.63 : 0,
+      () -> -headingController.getX(),
+      () -> -headingController.getY(), false);
+    
+    drivebase.setDefaultCommand(closedFieldRel);
     // Configure the trigger bindings
     configureBindings();
+    SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
+
+    SmartDashboard.putNumber("KV", Drivebase.KV);
+    SmartDashboard.putNumber("KA", Drivebase.KA);
+    SmartDashboard.putNumber("KP", 0);
+    SmartDashboard.putNumber("KI", 0);
+    SmartDashboard.putNumber("KD", 0);
   }
 
   /**
