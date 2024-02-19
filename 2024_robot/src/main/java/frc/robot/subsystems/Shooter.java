@@ -41,7 +41,8 @@ public class Shooter extends SubsystemBase {
   private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
-  private final SparkLimitSwitch bottomLimitSwitch;
+  //private final SparkLimitSwitch bottomLimitSwitch;
+  private final DigitalInput bottomLimitSwitch;
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
@@ -117,8 +118,9 @@ public class Shooter extends SubsystemBase {
     shoulderPID.setD(ShooterConstants.SHOULDER_KD);
     shoulderPID.setFF(ShooterConstants.SHOULDER_KF);
 
-    bottomLimitSwitch = shoulder.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-    bottomLimitSwitch.enableLimitSwitch(true);
+    //bottomLimitSwitch = shoulder.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    //bottomLimitSwitch.enableLimitSwitch(true);
+    bottomLimitSwitch = new DigitalInput(ShooterConstants.LIMIT_SWITCH_ID);
 
     shoulderProfile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(
@@ -234,8 +236,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.isPressed());
-    if (bottomLimitSwitch.isPressed()) {
+    SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
+    if (bottomLimitSwitch.get()) {
       shoulderEncoder.setPosition(ShooterConstants.ARM_LOWER_LIMIT.getRadians());
     }
     if (armGoal.getRadians() >= ShooterConstants.ARM_UPPER_LIMIT.getRadians()) {

@@ -205,6 +205,7 @@ public final class Constants {
         public static final int SHOULDER_ID = 15;
         // public static final int SHOULDER_2_ID = 16;
         public static final int NOTE_SENSOR_ID = 0;
+        public static final int LIMIT_SWITCH_ID = 1;
 
         public static final boolean INVERT_PORT_SHOOTER = false;
         public static final boolean INVERT_STARBOARD_SHOOTER = true;
