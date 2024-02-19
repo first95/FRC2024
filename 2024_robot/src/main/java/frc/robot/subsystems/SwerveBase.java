@@ -366,6 +366,85 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
     SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);*/
+    
+    SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
+    // Seed odometry if this has not been done
+    if (!wasOdometrySeeded) { 
+      Pose3d portSeed3d = getVisionPose(portLimelightData);
+      Pose3d starboardSeed3d = getVisionPose(starboardLimelightData);
+      if ((portSeed3d != null) && (starboardSeed3d != null)) {
+        // Average position, pick a camera for rotation
+        Pose2d portSeed = portSeed3d.toPose2d();
+        Pose2d starboardSeed = starboardSeed3d.toPose2d();
+        Translation2d translation = portSeed.getTranslation().plus(starboardSeed.getTranslation()).div(2);
+        //Rotation2d rotation = starboardSeed.getRotation();
+        // Rotation average:
+        Rotation2d rotation = 
+          new Translation2d(
+            (portSeed.getRotation().getCos() + starboardSeed.getRotation().getCos()) / 2,
+            (portSeed.getRotation().getSin() + starboardSeed.getRotation().getSin()) / 2)
+          .getAngle();
+        imu.setYaw(rotation.getDegrees());
+        resetOdometry(new Pose2d(translation, rotation));
+        wasOdometrySeeded = true;
+        wasGyroReset = true;
+      }
+      else if (starboardSeed3d != null) {
+        Pose2d starboardSeed = new Pose2d(
+          new Translation2d(
+            starboardSeed3d.getX(),
+            starboardSeed3d.getY()),
+          new Rotation2d(starboardSeed3d.getRotation().getZ()));
+        imu.setYaw(starboardSeed.getRotation().getDegrees());
+        resetOdometry(starboardSeed);
+        wasOdometrySeeded = true;
+        wasGyroReset = true;
+      }
+      else if (portSeed3d != null) {
+        Pose2d portSeed = new Pose2d(
+          new Translation2d(
+            portSeed3d.getX(),
+            portSeed3d.getY()),
+          new Rotation2d(portSeed3d.getRotation().getZ()));
+        imu.setYaw(portSeed.getRotation().getDegrees());
+        resetOdometry(portSeed);
+        wasOdometrySeeded = true;
+        wasGyroReset = true;
+      } else {
+        DriverStation.reportWarning("Alliance not set or tag not visible", false);
+      }
+    }
+    
+    // Update odometry
+    odometry.update(getYaw(), getModulePositions());
+
+    /*Pose2d estimatedPose = getPose();
+    double timestamp;
+    Pose3d portPose3d = getVisionPose(portLimelightData);
+    double portTime = visionLatency;
+    if (portPose3d != null) {
+      Pose2d portPose = portPose3d.toPose2d();
+      if ((portPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
+      portPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
+        timestamp = Timer.getFPGATimestamp() - portTime / 1000;
+        odometry.addVisionMeasurement(portPose, timestamp);
+      }
+    }
+    Pose3d starboardPose3d = getVisionPose(starboardLimelightData);
+    double starboardTime = visionLatency;
+    if (starboardPose3d != null) {
+      Pose2d starboardPose = starboardPose3d.toPose2d();
+      if ((starboardPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
+      starboardPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
+        timestamp = Timer.getFPGATimestamp() - starboardTime / 1000;
+        odometry.addVisionMeasurement(starboardPose, timestamp);
+      }
+    }*/
+
+    /*ChassisSpeeds robotVelocity = getRobotVelocity();
+    SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
+    SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
+    SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);*/
 
     // Update angle accumulator if the robot is simulated
     if (!Robot.isReal()) {
