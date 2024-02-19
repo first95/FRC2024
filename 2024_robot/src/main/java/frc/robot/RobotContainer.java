@@ -91,10 +91,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //m_driverController.y().whileTrue(shooter.sysIdQuasiStarShooter(SysIdRoutine.Direction.kForward));
-    //m_driverController.b().whileTrue(shooter.sysIdQuasiStarShooter(SysIdRoutine.Direction.kReverse));
-    //m_driverController.a().whileTrue(shooter.sysIdDynStarShooter(SysIdRoutine.Direction.kForward));
-    //m_driverController.x().whileTrue(shooter.sysIdDynStarShooter(SysIdRoutine.Direction.kReverse));
   }
 
   /**
