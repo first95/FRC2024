@@ -396,12 +396,24 @@ public class SwerveBase extends SubsystemBase {
 
 
   private ChassisSpeeds correctForDynamics(ChassisSpeeds initial, double dt, double magicFactor) {
-    Pose2d futureRobotPose = new Pose2d(
-      initial.vxMetersPerSecond * dt,
-      initial.vyMetersPerSecond * dt,
-      Rotation2d.fromRadians(initial.omegaRadiansPerSecond * dt * magicFactor));
-    Twist2d twistForPose = new Pose2d().log(futureRobotPose);
-    return new ChassisSpeeds(twistForPose.dx / dt, twistForPose.dy / dt, initial.omegaRadiansPerSecond);
+    final double oneMinusCos = 1 - Math.cos(initial.omegaRadiansPerSecond * dt);
+    if (Math.abs(oneMinusCos) < 1E-9) {
+      return initial;
+    } else {
+      final var linearVel = new Translation2d(initial.vxMetersPerSecond, initial.vyMetersPerSecond);
+      final double tangentVel = linearVel.getNorm();
+      final double radius;
+      radius = tangentVel / initial.omegaRadiansPerSecond;
+      final double skewVelocity = (radius * oneMinusCos) / dt;
+      var direction = linearVel.getAngle().plus(Rotation2d.fromDegrees(-Math.copySign(90, initial.omegaRadiansPerSecond)));
+      var velocityCorrection = new Translation2d(skewVelocity, direction).times(magicFactor);
+      var translationVel = linearVel.plus(velocityCorrection);
+      return new ChassisSpeeds(
+        translationVel.getX(),
+        translationVel.getY(),
+        initial.omegaRadiansPerSecond
+      );
+    }
   }
   
   public void turnModules(double speed) {
