@@ -4,19 +4,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Drivebase;
-
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-import java.util.jar.JarFile;
-import java.io.IOException;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -156,33 +149,4 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
-
-
-  public static String[] getJarManifest(){
-    // gets the version from jar manifest and prints to smartdashboard
-    // I don't know how this should be organized?
-    
-    String title = "";
-    String version = "";
-    try {
-      JarFile jarFile = new JarFile("/build/libs/Clarke.jar");
-      Manifest manifest = jarFile.getManifest();
-      Attributes attributes = manifest.getMainAttributes();
-    
-      title = attributes.getValue("Implementation-Title");
-      version = attributes.getValue("Implementation-Version");
-      jarFile.close();
-    
-      String[] returns = {title, version};
-      return returns;
-         
-    } catch (IOException e) {
-        DriverStation.reportWarning("Failed to get jar version!", true);
-        String[] nones = {"", ""};
-        return nones;
-      }
-      
-        
-        
-    }
 }
