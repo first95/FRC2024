@@ -99,6 +99,8 @@ public final class Constants {
     public static final double HEADING_KP = 5.7766;
     public static final double HEADING_KI = 0;
     public static final double HEADING_KD = 0.094;//0.94272;
+
+    public static final double HEADING_MIN_ANGULAR_CONTROL_EFFORT = 0.005; // rad/s— Prevent oscillation by cancelling rotational commands less than this
     
     // Swerve base kinematics object
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
