@@ -93,15 +93,20 @@ public class NoteHandlerCommand extends Command {
     // Execute statemachine logic
     switch (currentState) {
       case IDLE:
+        // Set desired outputs in this state
         intakeSpeed = commandedIntakeSpeed;
         loaderSpeed = (commandedIntakeSpeed > 0) ? ShooterConstants.LOADER_INTAKE_SPEED : 0;
         portShootingSpeed = 0;
         starboardShootingSpeed = 0;
+
+        // Determine if we neeed to change state
         if (shooterbutton) {
           currentState = State.SPOOLING;
         } else if (sensorvalue) {
           currentState = State.HOLDING;
         }
+
+        // Don't forget this-- things get real weird when every successive case can execute
         break;
 
       case SPOOLING:
@@ -111,11 +116,12 @@ public class NoteHandlerCommand extends Command {
         loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
 
         if (!shooterbutton) {
-          currentState = State.HOLDING;
+          currentState = sensorvalue ? State.HOLDING : State.IDLE;
         }
         if (shooterbutton && shooterAtSpeed) {
           currentState = State.SHOOTING;
         }
+
         break;
 
       case SHOOTING:
@@ -124,9 +130,13 @@ public class NoteHandlerCommand extends Command {
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
 
+        // This could (should) have a special case to go back to holding if the sensor
+        // is still tripped, but 1) that's really rare, and 2) it doesn't matter if that
+        // happens; it will get fixed on the next cycle.
         if (!shooterbutton) {
           currentState = State.IDLE;
         }
+
         break;
 
       case HOLDING:
@@ -134,9 +144,11 @@ public class NoteHandlerCommand extends Command {
         loaderSpeed = commandedIntakeSpeed < 0 ? -ShooterConstants.LOADER_INTAKE_SPEED : 0;
         portShootingSpeed = 0;
         starboardShootingSpeed = 0;
+
         if (shooterbutton) {
           currentState = State.SPOOLING;
         }
+
         break;
     }
 
