@@ -224,17 +224,17 @@ public final class Constants {
         public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
-        public static final double SHOULDER_MAX_CONTROL_EFFORT = 0.25;
-        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.25;
+        public static final double SHOULDER_MAX_CONTROL_EFFORT = 1;
+        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.1;
 
-        public static final double SHOULDER_KP = 1;
+        public static final double SHOULDER_KP = 10;
         public static final double SHOULDER_KI = 0;
-        public static final double SHOULDER_KD = 0;
+        public static final double SHOULDER_KD = 1;
         public static final double SHOULDER_KF = 0;
         public static final double SHOULDER_KS = 0.186865;
         public static final double SHOULDER_KG = 0.63945; // Volts
         public static final double SHOULDER_KV = (12 * 60) / (ARM_RADIANS_PER_MOTOR_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
-        public static final double SHOULDER_KA = 0; // V * s^2 / rad
+        public static final double SHOULDER_KA = 0.5; // V * s^2 / rad
 
         public static final double FLYWHEEL_KP = 2.6269E-8;
         public static final double FLYWHEEL_KI = 0;
@@ -244,8 +244,8 @@ public final class Constants {
         public static final double FLYWHEEL_KV = 0.0018042; // V * min / rotation
         public static final double FLYWHEEL_KA = 0.00028741;
 
-        public static final double MAX_ACCELERATION = 0.25;
-        public static final double MAX_SPEED = 0.25;
+        public static final double MAX_ACCELERATION = 40;
+        public static final double MAX_SPEED = 10;
     }
 
     public static final class IntakeConstants {
