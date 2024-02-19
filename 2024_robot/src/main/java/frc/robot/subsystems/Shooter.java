@@ -36,13 +36,13 @@ import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
-  
+
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
-  private final CANSparkMax loader; //shoulder2;
+  private final CANSparkMax loader; // shoulder2;
   private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
-  //private final SparkLimitSwitch bottomLimitSwitch;
+  // private final SparkLimitSwitch bottomLimitSwitch;
   private final DigitalInput bottomLimitSwitch;
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
@@ -53,6 +53,7 @@ public class Shooter extends SubsystemBase {
   private Rotation2d armGoal;
   private final Timer timer;
   private TrapezoidProfile.State armSetpoint, profileStart;
+
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
     portShooter = new CANSparkFlex(ShooterConstants.PORT_SHOOTER_ID, MotorType.kBrushless);
@@ -113,30 +114,28 @@ public class Shooter extends SubsystemBase {
     shoulderPID.setD(ShooterConstants.SHOULDER_KD);
     shoulderPID.setFF(ShooterConstants.SHOULDER_KF);
 
-    shoulderPID.setOutputRange(ShooterConstants.SHOULDER_MIN_CONTROL_EFFORT, ShooterConstants.SHOULDER_MAX_CONTROL_EFFORT);
+    shoulderPID.setOutputRange(ShooterConstants.SHOULDER_MIN_CONTROL_EFFORT,
+        ShooterConstants.SHOULDER_MAX_CONTROL_EFFORT);
 
     bottomLimitSwitch = new DigitalInput(ShooterConstants.LIMIT_SWITCH_ID);
 
     shoulderProfile = new TrapezoidProfile(
-      new TrapezoidProfile.Constraints(
-        ShooterConstants.MAX_SPEED,
-        ShooterConstants.MAX_ACCELERATION)
-    );
+        new TrapezoidProfile.Constraints(
+            ShooterConstants.MAX_SPEED,
+            ShooterConstants.MAX_ACCELERATION));
     armGoal = ShooterConstants.ARM_LOWER_LIMIT;
     profileStart = new TrapezoidProfile.State(ShooterConstants.ARM_LOWER_LIMIT.getRadians(), 0);
 
     shoulderFeedforward = new ArmFeedforward(
-      ShooterConstants.SHOULDER_KS,
-      ShooterConstants.SHOULDER_KG,
-      ShooterConstants.SHOULDER_KV,
-      ShooterConstants.SHOULDER_KA
-    );
-    
+        ShooterConstants.SHOULDER_KS,
+        ShooterConstants.SHOULDER_KG,
+        ShooterConstants.SHOULDER_KV,
+        ShooterConstants.SHOULDER_KA);
+
     flywheelFeedforward = new SimpleMotorFeedforward(
-      ShooterConstants.FLYWHEEL_KS,
-      ShooterConstants.FLYWHEEL_KV,
-      ShooterConstants.FLYWHEEL_KA
-    );
+        ShooterConstants.FLYWHEEL_KS,
+        ShooterConstants.FLYWHEEL_KV,
+        ShooterConstants.FLYWHEEL_KA);
 
     noteSensor = new DigitalInput(ShooterConstants.NOTE_SENSOR_ID);
 
@@ -149,46 +148,46 @@ public class Shooter extends SubsystemBase {
     timer.start();
 
     shoulderCharacterizer = new SysIdRoutine(
-      new SysIdRoutine.Config(),
-      new SysIdRoutine.Mechanism(
-        (Measure<Voltage> volts) -> {
-          shoulder.setVoltage(volts.in(Volts));
-        },
-        log -> {
-          log.motor("shoulder")
-            .voltage(Volts.of(shoulder.getAppliedOutput() * shoulder.getBusVoltage()))
-            .angularPosition(Radians.of(shoulderEncoder.getPosition()))
-            .angularVelocity(RadiansPerSecond.of(shoulderEncoder.getVelocity()));
-        },
-        this));
-      
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+              shoulder.setVoltage(volts.in(Volts));
+            },
+            log -> {
+              log.motor("shoulder")
+                  .voltage(Volts.of(shoulder.getAppliedOutput() * shoulder.getBusVoltage()))
+                  .angularPosition(Radians.of(shoulderEncoder.getPosition()))
+                  .angularVelocity(RadiansPerSecond.of(shoulderEncoder.getVelocity()));
+            },
+            this));
+
     portShootCharacterizer = new SysIdRoutine(
-      new SysIdRoutine.Config(),
-      new SysIdRoutine.Mechanism(
-        (Measure<Voltage> volts) -> {
-          portShooter.setVoltage(volts.in(Volts));
-        },
-        log -> {
-          log.motor("portShooter")
-            .voltage(Volts.of(portShooter.getAppliedOutput() * portShooter.getBusVoltage()))
-            .angularPosition(Rotations.of(portShooterEncoder.getPosition()))
-            .angularVelocity(RotationsPerSecond.of(portShooterEncoder.getVelocity()));
-        },
-        this));
-    
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+              portShooter.setVoltage(volts.in(Volts));
+            },
+            log -> {
+              log.motor("portShooter")
+                  .voltage(Volts.of(portShooter.getAppliedOutput() * portShooter.getBusVoltage()))
+                  .angularPosition(Rotations.of(portShooterEncoder.getPosition()))
+                  .angularVelocity(RotationsPerSecond.of(portShooterEncoder.getVelocity()));
+            },
+            this));
+
     starboardShootCharacterizer = new SysIdRoutine(
-      new SysIdRoutine.Config(),
-      new SysIdRoutine.Mechanism(
-        (Measure<Voltage> volts) -> {
-          starboardShooter.setVoltage(volts.in(Volts));
-        },
-        log -> {
-          log.motor("starboardShooter")
-            .voltage(Volts.of(starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage()))
-            .angularPosition(Rotations.of(starboardShooterEncoder.getPosition()))
-            .angularVelocity(RotationsPerSecond.of(starboardShooterEncoder.getVelocity()));
-        },
-        this));
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            (Measure<Voltage> volts) -> {
+              starboardShooter.setVoltage(volts.in(Volts));
+            },
+            log -> {
+              log.motor("starboardShooter")
+                  .voltage(Volts.of(starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage()))
+                  .angularPosition(Rotations.of(starboardShooterEncoder.getPosition()))
+                  .angularVelocity(RotationsPerSecond.of(starboardShooterEncoder.getVelocity()));
+            },
+            this));
   }
 
   public void runLoader(double speed) {
@@ -196,8 +195,10 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterSpeed(double portRPM, double starboardRPM) {
-    portShooterPID.setReference(portRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(portRPM), ArbFFUnits.kVoltage);
-    starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(starboardRPM), ArbFFUnits.kVoltage);
+    portShooterPID.setReference(portRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(portRPM),
+        ArbFFUnits.kVoltage);
+    starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0,
+        flywheelFeedforward.calculate(starboardRPM), ArbFFUnits.kVoltage);
   }
 
   public void setPortShooterRaw(double speed) {
@@ -245,25 +246,30 @@ public class Shooter extends SubsystemBase {
       armGoal = ShooterConstants.ARM_UPPER_LIMIT;
     }
     armSetpoint = shoulderProfile.calculate(
-      timer.get(),
-      profileStart,
-      new TrapezoidProfile.State(armGoal.getRadians(), 0)
-    );
+        timer.get(),
+        profileStart,
+        new TrapezoidProfile.State(armGoal.getRadians(), 0));
     // This really shouldn't be necessary
     armSetpoint = (armSetpoint.position >= ShooterConstants.ARM_UPPER_LIMIT.getRadians())
-      ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
-      : armSetpoint;
+        ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
+        : armSetpoint;
 
-    shoulderPID.setReference(
-      armSetpoint.position,
-      ControlType.kPosition,
-      0,
-      shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity),
-      ArbFFUnits.kVoltage
-    );
+    if (Math
+        .abs(armSetpoint.position - ShooterConstants.ARM_LOWER_LIMIT.getRadians()) <= ShooterConstants.ARM_DEADBAND) {
+      shoulder.set(0);
+    } else {
+      shoulderPID.setReference(
+          armSetpoint.position,
+          ControlType.kPosition,
+          0,
+          shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity),
+          ArbFFUnits.kVoltage);
+    }
 
-    SmartDashboard.putNumber("ProportionalTerm", ShooterConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
-    SmartDashboard.putNumber("FeedforwardValue", shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity));
+    SmartDashboard.putNumber("ProportionalTerm",
+        ShooterConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
+    SmartDashboard.putNumber("FeedforwardValue",
+        shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity));
     SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
@@ -279,18 +285,23 @@ public class Shooter extends SubsystemBase {
   public Command sysIdQuasiShoulder(SysIdRoutine.Direction direction) {
     return shoulderCharacterizer.quasistatic(direction);
   }
+
   public Command sysIdQuasiPortShooter(SysIdRoutine.Direction direction) {
     return portShootCharacterizer.quasistatic(direction);
   }
+
   public Command sysIdQuasiStarShooter(SysIdRoutine.Direction direction) {
     return starboardShootCharacterizer.quasistatic(direction);
   }
+
   public Command sysIdDynShoulder(SysIdRoutine.Direction direction) {
     return shoulderCharacterizer.dynamic(direction);
   }
+
   public Command sysIdDynPortShooter(SysIdRoutine.Direction direction) {
     return portShootCharacterizer.dynamic(direction);
   }
+
   public Command sysIdDynStarShooter(SysIdRoutine.Direction direction) {
     return starboardShootCharacterizer.dynamic(direction);
   }

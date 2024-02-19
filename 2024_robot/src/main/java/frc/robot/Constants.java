@@ -225,7 +225,9 @@ public final class Constants {
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
         public static final double SHOULDER_MAX_CONTROL_EFFORT = 1;
-        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.1;
+        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.5;
+
+        public static final double ARM_DEADBAND = Math.toRadians(0.5);
 
         public static final double SHOULDER_KP = 10;
         public static final double SHOULDER_KI = 0;
