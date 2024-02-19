@@ -91,6 +91,7 @@ public final class Constants {
     // max speed (RPM) / gear ratio, convert to deg/min, divide by 60 for deg/s
     public static final double MAX_MODULE_ANGULAR_SPEED = Units.rotationsToDegrees(NEO_550_FREE_SPEED * 7 / 372) / 60; // deg/s
 
+    // Currently does nothing
     public static final double ANGULAR_ACCELERATION_LIMIT = 100;
     public static final double ANGULAR_VELOCITY_LIMIT = 5;
 

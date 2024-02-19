@@ -29,7 +29,6 @@ public class AbsoluteDrive extends Command {
   private boolean isOpenLoop;
   private Translation2d horizontalCG;
   private Translation3d robotCG;
-  private TrapezoidProfile.State setpoint;
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply 
@@ -70,7 +69,6 @@ public class AbsoluteDrive extends Command {
     lastAngle = swerve.getPose().getRotation().getRadians();
     thetaController = new PIDController(Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    setpoint = new TrapezoidProfile.State(swerve.getPose().getRotation().getRadians(), swerve.getFieldVelocity().omegaRadiansPerSecond);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -108,39 +106,8 @@ public class AbsoluteDrive extends Command {
     robotCG = new Translation3d(xMoment, yMoment, zMoment).div(Constants.ROBOT_MASS);
     horizontalCG = robotCG.toTranslation2d();
 
-    // Calculates an angular rate using a PIDController and the commanded angle.
-    Rotation2d currentHeading = swerve.getPose().getRotation();
-    setpoint.velocity = swerve.getFieldVelocity().omegaRadiansPerSecond;
-
-    TrapezoidProfile.Constraints trapProfileConstraints = new TrapezoidProfile.Constraints(
-      Drivebase.ANGULAR_VELOCITY_LIMIT,
-      Drivebase.ANGULAR_ACCELERATION_LIMIT);
-
-    // ------------------------------------------------------------------------------------------------------------------------------------
-    // Get error which is the smallest distance between goal and measurement                                            |
-    double goalMinDistance = //                                                                                         |
-        MathUtil.inputModulus(angle - currentHeading.getRadians(), -Math.PI, Math.PI); //                               |
-    double setpointMinDistance = //                                                                                     |
-        MathUtil.inputModulus(setpoint.position - currentHeading.getRadians(), -Math.PI, Math.PI); //                   |
-    //                                                                                                                  |
-    // Recompute the profile goal with the smallest error, thus giving the shortest path. The goal      Taken from ProfiledPIDController
-    // may be outside the input range after this operation, but that's OK because the controller            Applies continuous input
-    // will still go there and report an error of zero. In other words, the setpoint only needs to                      |
-    // be offset from the measurement by the input range modulus; they don't need to be equal.                          |
-    angle = goalMinDistance + currentHeading.getRadians(); //                                                           |
-    setpoint.position = setpointMinDistance + currentHeading.getRadians(); //                                           |
-    // ------------------------------------------------------------------------------------------------------------------------------------
-
-    TrapezoidProfile profile = new TrapezoidProfile(trapProfileConstraints);
-    setpoint = profile.calculate(
-      Constants.LOOP_CYCLE,
-      setpoint,
-      new TrapezoidProfile.State(angle, 0));
-    
-    SmartDashboard.putNumber("AngSetpoint", setpoint.position);
-    SmartDashboard.putNumber("AngPos", currentHeading.getRadians());
-
-    omega = thetaController.calculate(currentHeading.getRadians(), setpoint.position) + setpoint.velocity;
+    // Calculates an angular rate using a PIDController and the commanded angle.;
+    omega = thetaController.calculate(swerve.getPose().getRotation().getRadians(), angle);
 
     // Convert joystick inputs to m/s by scaling by max linear speed.  Also uses a cubic function
     // to allow for precise control and fast movement.
