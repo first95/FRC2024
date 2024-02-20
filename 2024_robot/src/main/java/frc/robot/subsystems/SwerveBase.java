@@ -464,8 +464,9 @@ public class SwerveBase extends SubsystemBase {
     if (bowPose3d != null) {
       Pose2d bowPose = bowPose3d.toPose2d();
       if (((bowPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE)
-      || (velocity.omegaRadiansPerSecond == 0 && velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
+      bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE &&
+      velocity.omegaRadiansPerSecond == 0)
+      || (velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
         timestamp = Timer.getFPGATimestamp() - bowTime / 1000;
         odometry.addVisionMeasurement(bowPose, timestamp);
       }
@@ -475,8 +476,9 @@ public class SwerveBase extends SubsystemBase {
     if (sternPose3d != null) {
       Pose2d sternPose = sternPose3d.toPose2d();
       if (((sternPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE)
-      || (velocity.omegaRadiansPerSecond == 0 && velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
+      sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE &&
+      velocity.omegaRadiansPerSecond == 0)
+      || (velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
         timestamp = Timer.getFPGATimestamp() - sternTime / 1000;
         odometry.addVisionMeasurement(sternPose, timestamp);
       }
