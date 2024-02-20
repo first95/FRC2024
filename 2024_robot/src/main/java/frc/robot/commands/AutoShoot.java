@@ -101,6 +101,7 @@ public class AutoShoot extends Command {
 
     if (thetaController.atSetpoint()) {
       SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, true);
+      swerve.setDriveBrake();
     }
   }
 

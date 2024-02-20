@@ -119,7 +119,7 @@ public class RobotContainer {
         NoteHandlerCommand noteManager = new NoteHandlerCommand(
                 shooter,
                 intake,
-                () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
+                () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()) * 0.7,
                 () -> operatorController.y().getAsBoolean());
 
         shooter.setDefaultCommand(noteManager);

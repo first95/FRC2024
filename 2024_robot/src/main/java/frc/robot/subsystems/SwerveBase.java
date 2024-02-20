@@ -453,13 +453,15 @@ public class SwerveBase extends SubsystemBase {
     odometry.update(getYaw(), getModulePositions());
 
     Pose2d estimatedPose = getPose();
+    ChassisSpeeds velocity = getFieldVelocity();
     double timestamp;
     Pose3d bowPose3d = getVisionPose(bowLimelightData);
     double bowTime = visionLatency;
     if (bowPose3d != null) {
       Pose2d bowPose = bowPose3d.toPose2d();
-      if ((bowPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
+      if (((bowPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
+      bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE)
+      || (velocity.omegaRadiansPerSecond == 0 && velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
         timestamp = Timer.getFPGATimestamp() - bowTime / 1000;
         odometry.addVisionMeasurement(bowPose, timestamp);
       }
@@ -468,8 +470,9 @@ public class SwerveBase extends SubsystemBase {
     double sternTime = visionLatency;
     if (sternPose3d != null) {
       Pose2d sternPose = sternPose3d.toPose2d();
-      if ((sternPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
+      if (((sternPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
+      sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE)
+      || (velocity.omegaRadiansPerSecond == 0 && velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
         timestamp = Timer.getFPGATimestamp() - sternTime / 1000;
         odometry.addVisionMeasurement(sternPose, timestamp);
       }
