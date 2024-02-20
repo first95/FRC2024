@@ -25,7 +25,7 @@ public class AutoShoot extends Command {
   private final SwerveBase swerve;
 
   private double angle, omega;
-  private Pose2d initialPose, currentPose;
+  private Pose2d currentPose;
   private Translation3d speakerLocation;
 
   /**
