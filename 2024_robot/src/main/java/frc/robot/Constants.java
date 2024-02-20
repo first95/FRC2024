@@ -190,8 +190,12 @@ public final class Constants {
 
     public static final class Vision {
         public static final int APRILTAG_PIPELINE_NUMBER = 0;
-        public static final String PORT_LIMELIGHT_NAME = "port";
-        public static final String STARBOARD_LIMELIGHT_NAME = "sboard";
+        public static final String BOW_LIMELIGHT_NAME = "bow";
+        private static final int BOW_IP = 13; // Git-tracked notepad
+        public static final String STERN_LIMELIGHT_NAME = "stern";
+        private static final int STERN_IP = 12;
+        public static final String NOTE_LIMELIGHT_NAME = "note";
+        private static final int NOTE_IP = 14;
         public static final double POSE_ERROR_TOLERANCE = 0.5;
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
     }

@@ -48,7 +48,7 @@ public class SwerveBase extends SubsystemBase {
 
   private final SwerveModule[] swerveModules;
   private Pigeon2 imu;
-  private NetworkTable portLimelightData, starboardLimelightData;
+  private NetworkTable bowLimelightData, sternLimelightData;
   
   public Field2d field = new Field2d();
 
@@ -95,8 +95,8 @@ public class SwerveBase extends SubsystemBase {
       new SwerveModule(Drivebase.Mod3.CONSTANTS),
     };
 
-    portLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.PORT_LIMELIGHT_NAME);
-    starboardLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.STARBOARD_LIMELIGHT_NAME);
+    bowLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.BOW_LIMELIGHT_NAME);
+    sternLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.STERN_LIMELIGHT_NAME);
     
     odometry = new SwerveDrivePoseEstimator(Drivebase.KINEMATICS, getYaw(), getModulePositions(), new Pose2d());
     wasOdometrySeeded = false;
@@ -403,44 +403,41 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded) { 
-      Pose3d portSeed3d = getVisionPose(portLimelightData);
-      Pose3d starboardSeed3d = getVisionPose(starboardLimelightData);
-      if ((portSeed3d != null) && (starboardSeed3d != null)) {
+      Pose3d bowSeed3d = getVisionPose(bowLimelightData);
+      Pose3d sternSeed3d = getVisionPose(sternLimelightData);
+      if ((bowSeed3d != null) && (sternSeed3d != null)) {
         // Average position, pick a camera for rotation
-        Pose2d portSeed = portSeed3d.toPose2d();
-        Pose2d starboardSeed = starboardSeed3d.toPose2d();
-        Translation2d translation = portSeed.getTranslation().plus(starboardSeed.getTranslation()).div(2);
+        Pose2d bowSeed = bowSeed3d.toPose2d();
+        Pose2d sternSeed = sternSeed3d.toPose2d();
+        Translation2d translation = bowSeed.getTranslation().plus(sternSeed.getTranslation()).div(2);
         //Rotation2d rotation = starboardSeed.getRotation();
         // Rotation average:
         Rotation2d rotation = 
           new Translation2d(
-            (portSeed.getRotation().getCos() + starboardSeed.getRotation().getCos()) / 2,
-            (portSeed.getRotation().getSin() + starboardSeed.getRotation().getSin()) / 2)
+            (bowSeed.getRotation().getCos() + sternSeed.getRotation().getCos()) / 2,
+            (bowSeed.getRotation().getSin() + sternSeed.getRotation().getSin()) / 2)
           .getAngle();
-        imu.setYaw(rotation.getDegrees());
         resetOdometry(new Pose2d(translation, rotation));
         wasOdometrySeeded = true;
         wasGyroReset = true;
       }
-      else if (starboardSeed3d != null) {
-        Pose2d starboardSeed = new Pose2d(
+      else if (sternSeed3d != null) {
+        Pose2d sternSeed = new Pose2d(
           new Translation2d(
-            starboardSeed3d.getX(),
-            starboardSeed3d.getY()),
-          new Rotation2d(starboardSeed3d.getRotation().getZ()));
-        imu.setYaw(starboardSeed.getRotation().getDegrees());
-        resetOdometry(starboardSeed);
+            sternSeed3d.getX(),
+            sternSeed3d.getY()),
+          new Rotation2d(sternSeed3d.getRotation().getZ()));
+        resetOdometry(sternSeed);
         wasOdometrySeeded = true;
         wasGyroReset = true;
       }
-      else if (portSeed3d != null) {
-        Pose2d portSeed = new Pose2d(
+      else if (bowSeed3d != null) {
+        Pose2d bowSeed = new Pose2d(
           new Translation2d(
-            portSeed3d.getX(),
-            portSeed3d.getY()),
-          new Rotation2d(portSeed3d.getRotation().getZ()));
-        imu.setYaw(portSeed.getRotation().getDegrees());
-        resetOdometry(portSeed);
+            bowSeed3d.getX(),
+            bowSeed3d.getY()),
+          new Rotation2d(bowSeed3d.getRotation().getZ()));
+        resetOdometry(bowSeed);
         wasOdometrySeeded = true;
         wasGyroReset = true;
       } else {
@@ -453,24 +450,24 @@ public class SwerveBase extends SubsystemBase {
 
     Pose2d estimatedPose = getPose();
     double timestamp;
-    Pose3d portPose3d = getVisionPose(portLimelightData);
-    double portTime = visionLatency;
-    if (portPose3d != null) {
-      Pose2d portPose = portPose3d.toPose2d();
-      if ((portPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      portPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
-        timestamp = Timer.getFPGATimestamp() - portTime / 1000;
-        odometry.addVisionMeasurement(portPose, timestamp);
+    Pose3d bowPose3d = getVisionPose(bowLimelightData);
+    double bowTime = visionLatency;
+    if (bowPose3d != null) {
+      Pose2d bowPose = bowPose3d.toPose2d();
+      if ((bowPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
+      bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
+        timestamp = Timer.getFPGATimestamp() - bowTime / 1000;
+        odometry.addVisionMeasurement(bowPose, timestamp);
       }
     }
-    Pose3d starboardPose3d = getVisionPose(starboardLimelightData);
-    double starboardTime = visionLatency;
-    if (starboardPose3d != null) {
-      Pose2d starboardPose = starboardPose3d.toPose2d();
-      if ((starboardPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      starboardPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
-        timestamp = Timer.getFPGATimestamp() - starboardTime / 1000;
-        odometry.addVisionMeasurement(starboardPose, timestamp);
+    Pose3d sternPose3d = getVisionPose(sternLimelightData);
+    double sternTime = visionLatency;
+    if (sternPose3d != null) {
+      Pose2d sternPose = sternPose3d.toPose2d();
+      if ((sternPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
+      sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE) {
+        timestamp = Timer.getFPGATimestamp() - sternTime / 1000;
+        odometry.addVisionMeasurement(sternPose, timestamp);
       }
     }
 
