@@ -4,12 +4,17 @@
 
 package frc.robot;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.lib.util.SwerveModuleConstants;
 
 /**
@@ -34,6 +39,8 @@ public final class Constants {
   public static final double VORTEX_STALL_TORQUE = 3.6; // N * m
 
     public static final double GRAVITY = 9.81; // m/s/s
+
+    public static final double FIELD_WIDTH = Units.inchesToMeters((12 * 26) + 3.5);
 
   public static final double LOOP_CYCLE = 0.02; // 20ms
 
@@ -289,6 +296,31 @@ public final class Constants {
         public static final double DRIVE_KD = 0;
 
         public static final double DRIVE_POSITIONAL_TOLERANCE = 0.025; // m
+
+        private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
+            // Example from last year
+            Map.entry("Node1High", new Pose2d(new Translation2d(1.87, Units.inchesToMeters(19.875)), Rotation2d.fromDegrees(180)))
+        );
+        // Iterates through every element in the pose map and mirrors them for the red alliance
+        private static final Map<String, Pose2d> RED_MAP =
+            BLUE_MAP.entrySet().stream().collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> new Pose2d(
+                    new Translation2d(
+                        entry.getValue().getX(),
+                        FIELD_WIDTH - entry.getValue().getY()
+                    ),
+                    new Rotation2d(
+                        entry.getValue().getRotation().getCos(),
+                        -entry.getValue().getRotation().getSin()
+                    )
+                )
+            ));
+        
+        public static final Map<Alliance, Map<String, Pose2d>> POSE_MAP = Map.of(
+            Alliance.Blue, BLUE_MAP,
+            Alliance.Red, RED_MAP
+        );
     }
 
     public static final class IntakeConstants {
