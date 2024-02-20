@@ -25,32 +25,21 @@ public class NoteHandlerCommand extends Command {
   private final DoubleSupplier intakeSpeedAxis;
   private final BooleanSupplier shooterButtonSupplier;
 
-  // Testing
-  private Rotation2d ang;
-  private BooleanSupplier upSup, downSup;
-  private boolean lastUp, lastDown;
-  private double volts;
-
   private enum State {
     SHOOTING, IDLE, HOLDING, SPOOLING, AUTO_SPOOLING, AUTO_SHOOTING
   }
 
-  // Real
   private State currentState;
   private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed, portSpeed, starboardSpeed;
   private Rotation2d autoArmAngle, armAngle;
   private boolean sensorvalue, shooterbutton, shooterAtSpeed, autoShooting, onTarget, armInPosition;
 
-  public NoteHandlerCommand(Shooter shooter, Intake intake, DoubleSupplier intakeSpeedAxis,
-      BooleanSupplier shooterButtonSupplier, BooleanSupplier upSup, BooleanSupplier downSup) {
+  public NoteHandlerCommand(Shooter shooter, Intake intake, DoubleSupplier intakeSpeedAxis, BooleanSupplier shooterButtonSupplier) {
     this.shooter = shooter;
     this.intake = intake;
     this.intakeSpeedAxis = intakeSpeedAxis;
     this.shooterButtonSupplier = shooterButtonSupplier;
 
-    // Testing
-    this.upSup = upSup;
-    this.downSup = downSup;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter, intake);
   }
@@ -66,15 +55,8 @@ public class NoteHandlerCommand extends Command {
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians());
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, false);
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
-
-    // For testing
-    ang = shooter.getArmAngle();
-    volts = 0;
     
-    //shooter.setArmAngle(ang);
-    lastDown = false;
-    lastUp = false;
-    shooter.setShooterSpeed(0, 0);
+    shooter.setShooterSpeed(portSpeed, starboardSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -94,20 +76,6 @@ public class NoteHandlerCommand extends Command {
     onTarget = SmartDashboard.getBoolean(Auton.ON_TARGET_KEY, false);
     autoArmAngle = Rotation2d.fromRadians(SmartDashboard.getNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians()));
 
-    // This is for testing
-    if (upSup.getAsBoolean() && !lastUp && (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
-      ang = ang.plus(Rotation2d.fromDegrees(30));
-      volts += 0.05;
-      //shooter.setShoulderVolts(volts);
-      shooter.setArmAngle(ang);
-    } else if (downSup.getAsBoolean() && !lastDown) {
-      ang = ang.minus(Rotation2d.fromDegrees(30));
-      volts -= 0.05;
-      //shooter.setShoulderVolts(volts);
-      shooter.setArmAngle(ang);
-    }
-    SmartDashboard.putNumber("ShoulderVolts", volts);
-
     // Execute statemachine logic
     switch (currentState) {
       case IDLE:
@@ -119,10 +87,14 @@ public class NoteHandlerCommand extends Command {
         armAngle = ShooterConstants.ARM_LOWER_LIMIT;
 
         // Determine if we neeed to change state
+        if (sensorvalue) {
+          currentState = State.HOLDING;
+        }
         if (shooterbutton) {
           currentState = State.SPOOLING;
-        } else if (sensorvalue) {
-          currentState = State.HOLDING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
         }
 
         // Don't forget this-- things get real weird when every successive case can execute
@@ -183,6 +155,7 @@ public class NoteHandlerCommand extends Command {
         if (!autoShooting) {
           currentState = sensorvalue ? State.HOLDING : State.IDLE;
         }
+
       break;
 
       case HOLDING:
@@ -208,13 +181,6 @@ public class NoteHandlerCommand extends Command {
     shooter.runLoader(loaderSpeed);
     shooter.setArmAngle(armAngle);
 
-    // This is also for testing
-    lastDown = downSup.getAsBoolean();
-    lastUp = upSup.getAsBoolean();
-
-    SmartDashboard.putString("AngleCommand", ang.toString());
-
-    // These are real
     SmartDashboard.putString("currentState", currentState.toString());
     SmartDashboard.putNumber("intakeSpeed", intakeSpeed);
     SmartDashboard.putNumber("shooterSpeed", portShootingSpeed);
