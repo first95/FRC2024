@@ -210,11 +210,13 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setArmAngle(Rotation2d angle) {
-    armGoal = angle;
-    profileStart = new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity());
-    timer.stop();
-    timer.reset();
-    timer.start();
+    if (angle.getRadians() != armGoal.getRadians()) {
+      armGoal = angle;
+      profileStart = new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity());
+      timer.stop();
+      timer.reset();
+      timer.start();
+    }
   }
 
   public void setShoulderVolts(double volts) {

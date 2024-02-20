@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -84,10 +85,16 @@ public class AutoShoot extends Command {
 
     // Azimuth:
     // Note that we shoot from the back of the robot, so it may seem like this is backwards what it should be.
-    angle = Math.atan2(
-      posDelta.getY(),
-      posDelta.getX()
-    );
+    angle = Rotation2d.fromRadians(
+      Math.atan2(
+        posDelta.getY(),
+        posDelta.getX()
+      )
+    ).rotateBy(Rotation2d.fromDegrees(180)).getRadians();
+
+    thetaController.reset();
+
+    SmartDashboard.putNumber("AutoShootHeading", angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
