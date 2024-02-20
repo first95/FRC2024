@@ -25,7 +25,7 @@ public class NoteHandlerCommand extends Command {
   private final BooleanSupplier shooterButtonSupplier;
 
   private enum State {
-    SHOOTING, IDLE, HOLDING, SPOOLING, AUTO_SPOOLING, AUTO_SHOOTING
+    SHOOTING, IDLE, HOLDING, SPOOLING, AUTO_SPOOLING, AUTO_SHOOTING, INDEXING_REV, INDEXING_FWD
   }
 
   private State currentState;
@@ -87,7 +87,7 @@ public class NoteHandlerCommand extends Command {
 
         // Determine if we neeed to change state
         if (sensorvalue) {
-          currentState = State.HOLDING;
+          currentState = State.INDEXING_REV;
         }
         if (shooterbutton) {
           currentState = State.SPOOLING;
@@ -157,11 +157,49 @@ public class NoteHandlerCommand extends Command {
 
       break;
 
+      case INDEXING_REV:
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = -NoteHandlerSpeeds.LOADER_INDEXING_SPEED;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
+        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+
+        if (!sensorvalue) {
+          currentState = State.INDEXING_FWD;
+        }
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+      
+      break;
+
+      case INDEXING_FWD:
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = NoteHandlerSpeeds.LOADER_INDEXING_SPEED;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
+        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+
+        if (sensorvalue) {
+          currentState = State.HOLDING;
+        }
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+      
+      break;
+
       case HOLDING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
+        portShootingSpeed = portSpeed;
+        starboardShootingSpeed = starboardSpeed;
         armAngle = ShooterConstants.ARM_LOWER_LIMIT;
 
         if (shooterbutton) {

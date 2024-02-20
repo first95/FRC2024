@@ -356,6 +356,10 @@ public class SwerveBase extends SubsystemBase {
     odometry.resetPosition(getYaw(), getModulePositions(), pose);
   }
 
+  public void clearOdometrySeed() {
+    wasOdometrySeeded = false;
+  }
+
   public void setVelocityModuleGains() {
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.setGains(

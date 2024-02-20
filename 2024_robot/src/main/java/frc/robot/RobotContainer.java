@@ -162,6 +162,7 @@ public class RobotContainer {
          * Direction.kReverse));
          */
         driveController.button(1).whileTrue(new AutoShoot(drivebase));
+        driveController.button(8).onTrue(new InstantCommand(drivebase::clearOdometrySeed).ignoringDisable(true));
     }
 
     /**

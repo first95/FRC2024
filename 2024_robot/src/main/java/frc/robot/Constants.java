@@ -334,11 +334,12 @@ public final class Constants {
         public static final double LOADER_INTAKE_SPEED = 0.8;
         public static final double LOADER_FIRING_SPEED = 1;
         public static final double LOADER_IDLE_SPEED = 0;
+        public static final double LOADER_INDEXING_SPEED = 0.1;
 
         public static final double PORT_SHOOTER_SPEED = 5000;
         public static final double STARBOARD_SHOOTER_SPEED = 3000;
-        public static final double PORT_IDLE_SPEED = 0;
-        public static final double STARBOARD_IDLE_SPEED = 0;
+        public static final double PORT_IDLE_SPEED = 3000;
+        public static final double STARBOARD_IDLE_SPEED = 1000;
 
         public static final double SHOOTER_SPEED_TOLERANCE = 200;
     }
