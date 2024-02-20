@@ -204,8 +204,8 @@ public final class Constants {
         private static final int STERN_IP = 12;
         public static final String NOTE_LIMELIGHT_NAME = "note";
         private static final int NOTE_IP = 14;
-        public static final double POSE_ERROR_TOLERANCE = 0.5;
-        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
+        public static final double POSE_ERROR_TOLERANCE = 2;
+        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
             0,
