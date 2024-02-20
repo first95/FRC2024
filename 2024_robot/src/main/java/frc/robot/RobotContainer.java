@@ -102,7 +102,7 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(noteManager);
 
-    drivebase.setDefaultCommand(closedFieldRel);
+    drivebase.setDefaultCommand(absoluteDrive);
     // Configure the trigger bindings
     configureBindings();
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
