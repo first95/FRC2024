@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.SwerveModuleConstants;
 
@@ -276,6 +277,18 @@ public final class Constants {
         public static final String ARM_ANGLE_KEY = "AutoArmAngleRadians";
         public static final String ON_TARGET_KEY = "AutoOnTarget";
         public static final String AUTO_SHOOTING_KEY = "AutoShootingRequested";
+
+        // Trapezoidal drive PID constants
+        public static final double DRIVE_ACCELERATION_LIMIT = 4; // m/s/s
+        public static final double DRIVE_VELOCITY_LIMIT = 3; // m/s
+        public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
+            DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);
+        
+        public static final double DRIVE_KP = 1;
+        public static final double DRIVE_KI = 0;
+        public static final double DRIVE_KD = 0;
+
+        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.025; // m
     }
 
     public static final class IntakeConstants {
