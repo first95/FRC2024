@@ -237,6 +237,11 @@ public final class Constants {
         public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
+        public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
+            -0.2286,
+            0,
+            0.24765);
+
         public static final double SHOULDER_MAX_CONTROL_EFFORT = 1;
         public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.5;
 
