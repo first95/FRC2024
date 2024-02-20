@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.Constants.ShooterConstants;
