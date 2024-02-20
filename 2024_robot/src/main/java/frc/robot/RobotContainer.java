@@ -68,50 +68,50 @@ public class RobotContainer {
         openRobotRel = new TeleopDrive(
                 drivebase,
                 () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getY() * 0.63
+                        ? -driveController.getY()
                         : 0,
                 () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getX() * 0.63
+                        ? -driveController.getX()
                         : 0,
-                () -> -headingController.getTwist() * 0.63, () -> false, true);
+                () -> -headingController.getTwist(), () -> false, true);
 
         closedRobotRel = new TeleopDrive(
                 drivebase,
                 () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getY() * 0.63
+                        ? -driveController.getY()
                         : 0,
                 () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getX() * 0.63
+                        ? -driveController.getX()
                         : 0,
-                () -> -headingController.getTwist() * 0.63, () -> false, false);
+                () -> -headingController.getTwist(), () -> false, false);
 
         openFieldRel = new TeleopDrive(
                 drivebase,
                 () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband)
-                        ? driveController.getY() * 0.63
+                        ? driveController.getY()
                         : 0,
                 () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband)
-                        ? driveController.getX() * 0.63
+                        ? driveController.getX()
                         : 0,
-                () -> -headingController.getTwist() * 0.63, () -> true, true);
+                () -> -headingController.getTwist(), () -> true, true);
 
         closedFieldRel = new TeleopDrive(
                 drivebase,
                 () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getY() * 0.63
+                        ? -driveController.getY()
                         : 0,
                 () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getX() * 0.63
+                        ? -driveController.getX()
                         : 0,
-                () -> -headingController.getTwist() * 0.63, () -> true, false);
+                () -> -headingController.getTwist(), () -> true, false);
 
         absoluteDrive = new AbsoluteDrive(
                 drivebase,
                 () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getY() * 0.63
+                        ? -driveController.getY()
                         : 0,
                 () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband)
-                        ? -driveController.getX() * 0.63
+                        ? -driveController.getX()
                         : 0,
                 () -> -headingController.getX(),
                 () -> -headingController.getY(), false);
