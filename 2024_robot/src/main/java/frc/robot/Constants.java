@@ -198,6 +198,17 @@ public final class Constants {
         private static final int NOTE_IP = 14;
         public static final double POSE_ERROR_TOLERANCE = 0.5;
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(2);
+
+        public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
+            0,
+            5.5474,
+            2.2585
+        );
+        public static final Translation3d RED_SPEAKER_POS = new Translation3d(
+            0,
+            2.6619,
+            2.2585
+        );
     }
 
     public static final class ShooterConstants {
