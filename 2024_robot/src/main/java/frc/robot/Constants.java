@@ -239,7 +239,7 @@ public final class Constants {
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(60);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
-            -0.2286,
+            0.2286,
             0,
             0.24765);
 

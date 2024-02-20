@@ -348,6 +348,10 @@ public class SwerveBase extends SubsystemBase {
     this.alliance = alliance;
   }
 
+  public Alliance getAlliance() {
+    return alliance;
+  }
+
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(getYaw(), getModulePositions(), pose);
   }
