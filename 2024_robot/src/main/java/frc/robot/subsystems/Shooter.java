@@ -237,6 +237,10 @@ public class Shooter extends SubsystemBase {
     return noteSensor.get();
   }
 
+  public boolean armAtGoal() {
+    return Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ShooterConstants.ARM_TOLERANCE;
+  }
+
   @Override
   public void periodic() {
     if (bottomLimitSwitch.get()) {

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.Auton;
 import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Intake;
@@ -31,13 +32,14 @@ public class NoteHandlerCommand extends Command {
   private double volts;
 
   private enum State {
-    SHOOTING, IDLE, HOLDING, SPOOLING
+    SHOOTING, IDLE, HOLDING, SPOOLING, AUTO_SPOOLING, AUTO_SHOOTING
   }
 
   // Real
   private State currentState;
   private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed, portSpeed, starboardSpeed;
-  private boolean sensorvalue, shooterbutton, shooterAtSpeed;
+  private Rotation2d autoArmAngle, armAngle;
+  private boolean sensorvalue, shooterbutton, shooterAtSpeed, autoShooting, onTarget, armInPosition;
 
   public NoteHandlerCommand(Shooter shooter, Intake intake, DoubleSupplier intakeSpeedAxis,
       BooleanSupplier shooterButtonSupplier, BooleanSupplier upSup, BooleanSupplier downSup) {
@@ -61,6 +63,9 @@ public class NoteHandlerCommand extends Command {
     starboardSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER_SPEED;
     SmartDashboard.putNumber("PortSpeed", portSpeed);
     SmartDashboard.putNumber("StarboardSpeed", starboardSpeed);
+    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians());
+    SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, false);
+    SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
 
     // For testing
     ang = shooter.getArmAngle();
@@ -82,8 +87,12 @@ public class NoteHandlerCommand extends Command {
     shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_SPEED_TOLERANCE)
         &&
         (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_SPEED_TOLERANCE);
+    armInPosition = shooter.armAtGoal();
     portSpeed = SmartDashboard.getNumber("PortSpeed", portSpeed);
     starboardSpeed = SmartDashboard.getNumber("StarboardSpeed", starboardSpeed);
+    autoShooting = SmartDashboard.getBoolean(Auton.AUTO_SHOOTING_KEY, false);
+    onTarget = SmartDashboard.getBoolean(Auton.ON_TARGET_KEY, false);
+    autoArmAngle = Rotation2d.fromRadians(SmartDashboard.getNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians()));
 
     // This is for testing
     if (upSup.getAsBoolean() && !lastUp && (ang.getRadians() <= ShooterConstants.ARM_UPPER_LIMIT.getRadians())) {
@@ -107,6 +116,7 @@ public class NoteHandlerCommand extends Command {
         loaderSpeed = (commandedIntakeSpeed > 0) ? NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
         portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
         starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
+        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
 
         // Determine if we neeed to change state
         if (shooterbutton) {
@@ -123,39 +133,70 @@ public class NoteHandlerCommand extends Command {
         starboardShootingSpeed = starboardSpeed;
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
+        armAngle = ShooterConstants.ARM_MANUAL_SHOT_ANGLE;
 
         if (!shooterbutton) {
           currentState = sensorvalue ? State.HOLDING : State.IDLE;
         }
-        if (shooterbutton && shooterAtSpeed) {
+        if (shooterbutton && shooterAtSpeed && armInPosition) {
           currentState = State.SHOOTING;
         }
 
         break;
+      
+      case AUTO_SPOOLING:
+        portShootingSpeed = portSpeed;
+        starboardShootingSpeed = starboardSpeed;
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
+        armAngle = autoArmAngle;
+
+        if (!autoShooting) {
+          currentState = sensorvalue ? State.HOLDING : State.IDLE;
+        }
+        if (autoShooting && shooterAtSpeed && armInPosition && onTarget) {
+          currentState = State.AUTO_SHOOTING;
+        }
+        
+      break;
 
       case SHOOTING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
         loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING_SPEED;
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
+        armAngle = ShooterConstants.ARM_MANUAL_SHOT_ANGLE;
 
-        // This could (should) have a special case to go back to holding if the sensor
-        // is still tripped, but 1) that's really rare, and 2) it doesn't matter if that
-        // happens; it will get fixed on the next cycle.
         if (!shooterbutton) {
-          currentState = State.IDLE;
+          currentState = sensorvalue ? State.HOLDING : State.IDLE;
         }
 
-        break;
+      break;
+      
+      case AUTO_SHOOTING:
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING_SPEED;
+        portShootingSpeed = portSpeed;
+        starboardShootingSpeed = starboardSpeed;
+        armAngle = autoArmAngle;
+
+        if (!autoShooting) {
+          currentState = sensorvalue ? State.HOLDING : State.IDLE;
+        }
+      break;
 
       case HOLDING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
         portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE_SPEED;
         starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE_SPEED;
+        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
 
         if (shooterbutton) {
           currentState = State.SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
         }
 
         break;
@@ -165,6 +206,7 @@ public class NoteHandlerCommand extends Command {
     intake.runRollers(intakeSpeed);
     shooter.setShooterSpeed(portShootingSpeed, starboardShootingSpeed);
     shooter.runLoader(loaderSpeed);
+    shooter.setArmAngle(armAngle);
 
     // This is also for testing
     lastDown = downSup.getAsBoolean();

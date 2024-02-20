@@ -216,7 +216,6 @@ public final class Constants {
         public static final int STARBOARD_SHOOTER_ID = 13;
         public static final int LOADER_ID = 14;
         public static final int SHOULDER_ID = 15;
-        // public static final int SHOULDER_2_ID = 16;
         public static final int NOTE_SENSOR_ID = 0;
         public static final int LIMIT_SWITCH_ID = 1;
 
@@ -237,6 +236,8 @@ public final class Constants {
         public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
+        public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(60);
+
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             -0.2286,
             0,
@@ -246,6 +247,8 @@ public final class Constants {
         public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.5;
 
         public static final double ARM_DEADBAND = Math.toRadians(0.5);
+
+        public static final double ARM_TOLERANCE = Math.toRadians(1);
 
         public static final double SHOULDER_KP = 10;
         public static final double SHOULDER_KI = 0;
@@ -266,6 +269,13 @@ public final class Constants {
 
         public static final double MAX_ACCELERATION = 40;
         public static final double MAX_SPEED = 10;
+    }
+
+    public static final class Auton {
+        // Plumbing via SmartDashboard
+        public static final String ARM_ANGLE_KEY = "AutoArmAngleRadians";
+        public static final String ON_TARGET_KEY = "AutoOnTarget";
+        public static final String AUTO_SHOOTING_KEY = "AutoShootingRequested";
     }
 
     public static final class IntakeConstants {
