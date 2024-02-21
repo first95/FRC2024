@@ -91,8 +91,7 @@ public final class Constants {
         public static final double IMU_MOUNT_ROLL = 0;
 
         // Drivetrain limitations
-        public static final double MAX_SPEED = (VORTEX_FREE_SPEED * Units.inchesToMeters(3 * Math.PI)) / (60 * 4.71); // meters per second NOT A LIMIT!!! DO NOT
-                                                                          // TOUCH!!!
+        public static final double MAX_SPEED = (VORTEX_FREE_SPEED * Units.inchesToMeters(3 * Math.PI)) / (60 * 4.71); // meters per second NOT A LIMIT!!! DO NOT TOUCH!!!
         public static final double MAX_ANGULAR_VELOCITY = MAX_SPEED / Math.hypot(FRONT_LEFT_X, FRONT_LEFT_Y); // rad/s
         // Theoretical max acceleration should be as follows:
         // (NEO stall torque * module gearing * number of modules) / (wheel radius *
@@ -209,9 +208,9 @@ public final class Constants {
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
 
         public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.5;
-        public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(2);
+        public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.01);
         public static final double VISION_TRANSLATIONAL_STD_DEV = 0.05;
-        public static final double VISION_ANGULAR_STD_DEV = Math.toRadians(20);
+        public static final double VISION_ANGULAR_STD_DEV = Math.toRadians(50);
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
             0,

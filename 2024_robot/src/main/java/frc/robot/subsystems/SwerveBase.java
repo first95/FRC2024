@@ -109,6 +109,8 @@ public class SwerveBase extends SubsystemBase {
     wasOdometrySeeded = false;
     wasGyroReset = false;
 
+    SmartDashboard.putData("Field", field);
+
     driveCharacterizer = new SysIdRoutine(
       new SysIdRoutine.Config(),
       new SysIdRoutine.Mechanism(
@@ -459,14 +461,11 @@ public class SwerveBase extends SubsystemBase {
         DriverStation.reportWarning("Alliance not set or tag not visible", false);
       }
     }
-    
-    // Update odometry
-    odometry.update(getYaw(), getModulePositions());
 
     Pose2d estimatedPose = getPose();
     ChassisSpeeds velocity = getFieldVelocity();
     double timestamp;
-    Pose3d bowPose3d = getVisionPose(bowLimelightData);
+    /*Pose3d bowPose3d = getVisionPose(bowLimelightData);
     double bowTime = visionLatency;
     if (bowPose3d != null) {
       Pose2d bowPose = bowPose3d.toPose2d();
@@ -489,7 +488,8 @@ public class SwerveBase extends SubsystemBase {
         timestamp = Timer.getFPGATimestamp() - sternTime / 1000;
         odometry.addVisionMeasurement(sternPose, timestamp);
       }
-    }
+    }*/
+    field.setRobotPose(estimatedPose);
 
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
@@ -516,7 +516,7 @@ public class SwerveBase extends SubsystemBase {
     }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
     SmartDashboard.putNumberArray("moduleSetpoints", moduleSetpoints);
-    SmartDashboard.putNumber("OdomHeading", getPose().getRotation().getRadians());
+    SmartDashboard.putNumber("OdomHeading", estimatedPose.getRotation().getRadians());
   }
 
   @Override
