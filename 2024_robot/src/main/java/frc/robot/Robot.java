@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -31,6 +32,23 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    // Grab the build computer, branchname, git commit ID and build timestamp from the Jar manifest
+    // and toss the on the smart dashboard
+    
+    String hostbranch = Robot.class.getPackage().getImplementationTitle();
+    if ( hostbranch != null && ! hostbranch.isEmpty()) {
+      SmartDashboard.putString("BuildHost-BranchName", hostbranch);
+    } else {
+      SmartDashboard.putString("BuildHost-BranchName","No JAR Manifest in simulation");
+    }
+    
+    String CommitIDtime = Robot.class.getPackage().getImplementationVersion();
+    if (CommitIDtime != null && ! CommitIDtime.isEmpty()) {
+      SmartDashboard.putString("GitCommitID-BuildTimestamp", CommitIDtime);
+    } else {
+      SmartDashboard.putString("GitCommitID-BuildTimestamp", "No JAR Manifest in simulation");
+    }
   }
 
   /**
