@@ -23,18 +23,11 @@ public class Intake extends SubsystemBase {
     topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
     topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
     topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, IntakeConstants.STATUS_FRAME_3_PERIOD);
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, IntakeConstants.STATUS_FRAME_4_PERIOD);
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, IntakeConstants.STATUS_FRAME_5_PERIOD);
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, IntakeConstants.STATUS_FRAME_6_PERIOD);
 
     bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
     bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
     bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, IntakeConstants.STATUS_FRAME_3_PERIOD);
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, IntakeConstants.STATUS_FRAME_4_PERIOD);
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, IntakeConstants.STATUS_FRAME_5_PERIOD);
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, IntakeConstants.STATUS_FRAME_6_PERIOD);
+
 
     topIntakeRoller.burnFlash();
     bottomIntakeRoller.burnFlash();
