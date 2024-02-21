@@ -255,6 +255,14 @@ public final class Constants {
     public static final class IntakeConstants {
         public static final int TOP_ROLLER_ID = 10;
         public static final int BOTTOM_ROLLER_ID = 11;
+
+        public static final int STATUS_FRAME_0_PERIOD = 10;
+        public static final int STATUS_FRAME_1_PERIOD = 500;
+        public static final int STATUS_FRAME_2_PERIOD = 1000;
+        public static final int STATUS_FRAME_3_PERIOD = 60000;
+        public static final int STATUS_FRAME_4_PERIOD = 59000;
+        public static final int STATUS_FRAME_5_PERIOD = 58000;
+        public static final int STATUS_FRAME_6_PERIOD = 57000;
     }
 
     public static final class NoteHandlerSpeeds {
