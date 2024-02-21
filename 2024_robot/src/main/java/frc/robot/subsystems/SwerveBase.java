@@ -52,6 +52,7 @@ public class SwerveBase extends SubsystemBase {
   private NetworkTable bowLimelightData, sternLimelightData;
   
   public Field2d field = new Field2d();
+  private Field2d sternCam, bowCam;
 
   private double angle, lasttime, visionLatency;
 
@@ -109,6 +110,10 @@ public class SwerveBase extends SubsystemBase {
     wasOdometrySeeded = false;
     wasGyroReset = false;
 
+    sternCam = new Field2d();
+    bowCam = new Field2d();
+    SmartDashboard.putData("SternCam", sternCam);
+    SmartDashboard.putData("BowCam", bowCam);
     SmartDashboard.putData("Field", field);
 
     driveCharacterizer = new SysIdRoutine(
@@ -465,16 +470,17 @@ public class SwerveBase extends SubsystemBase {
     Pose2d estimatedPose = getPose();
     ChassisSpeeds velocity = getFieldVelocity();
     double timestamp;
-    /*Pose3d bowPose3d = getVisionPose(bowLimelightData);
+    Pose3d bowPose3d = getVisionPose(bowLimelightData);
     double bowTime = visionLatency;
     if (bowPose3d != null) {
       Pose2d bowPose = bowPose3d.toPose2d();
       if (((bowPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
       bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE &&
-      velocity.omegaRadiansPerSecond == 0)
-      || (velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
+      Math.abs(velocity.omegaRadiansPerSecond) < 0.001)
+      || (Math.abs(velocity.vxMetersPerSecond) < 0.001 && Math.abs(velocity.vyMetersPerSecond) == 0.001 && Math.abs(velocity.omegaRadiansPerSecond) < 0.001)) {
         timestamp = Timer.getFPGATimestamp() - bowTime / 1000;
         odometry.addVisionMeasurement(bowPose, timestamp);
+        bowCam.setRobotPose(bowPose);
       }
     }
     Pose3d sternPose3d = getVisionPose(sternLimelightData);
@@ -483,12 +489,13 @@ public class SwerveBase extends SubsystemBase {
       Pose2d sternPose = sternPose3d.toPose2d();
       if (((sternPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
       sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE &&
-      velocity.omegaRadiansPerSecond == 0)
-      || (velocity.vxMetersPerSecond == 0 && velocity.vyMetersPerSecond == 0)) {
+      Math.abs(velocity.omegaRadiansPerSecond) < 0.001)
+      || (Math.abs(velocity.vxMetersPerSecond) < 0.001 && Math.abs(velocity.vyMetersPerSecond) == 0.001 && Math.abs(velocity.omegaRadiansPerSecond) < 0.001)) {
         timestamp = Timer.getFPGATimestamp() - sternTime / 1000;
         odometry.addVisionMeasurement(sternPose, timestamp);
+        sternCam.setRobotPose(sternPose);
       }
-    }*/
+    }
     field.setRobotPose(estimatedPose);
 
     /*ChassisSpeeds robotVelocity = getRobotVelocity();

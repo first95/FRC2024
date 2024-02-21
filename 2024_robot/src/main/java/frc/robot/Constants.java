@@ -205,11 +205,11 @@ public final class Constants {
         private static final int NOTE_IP = 14;
 
         public static final double POSE_ERROR_TOLERANCE = 5;
-        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
+        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(10);
 
-        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.5;
+        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.4;
         public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.01);
-        public static final double VISION_TRANSLATIONAL_STD_DEV = 0.05;
+        public static final double VISION_TRANSLATIONAL_STD_DEV = 0.1;
         public static final double VISION_ANGULAR_STD_DEV = Math.toRadians(50);
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
