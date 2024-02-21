@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -10,35 +11,39 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.lib.util.BetterSwerveModuleState;
 import frc.lib.util.SwerveModuleConstants;
 import frc.robot.Constants.Drivebase;
 
 public class SwerveModule {
     public final int moduleNumber;
     private final double angleOffset;
-    private final CANSparkMax angleMotor, driveMotor;
+    private final CANSparkMax angleMotor;
+    private final CANSparkFlex driveMotor;
     private final AbsoluteEncoder absoluteEncoder;
     private final RelativeEncoder driveEncoder;
     private final SparkPIDController angleController, driveController;
     private final Timer time;
-    private double angle, lastAngle, omega, speed, fakePos, lastTime, dt;
+    private final Translation2d moduleLocation;
+    private double angle, lastAngle, speed, fakePos, lastTime, dt;
+    private SwerveModuleState desiredState = new SwerveModuleState();
 
     private SimpleMotorFeedforward feedforward;
 
-    public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
+    public SwerveModule(SwerveModuleConstants moduleConstants) {
         angle = 0;
         speed = 0;
         fakePos = 0;
-        this.moduleNumber = moduleNumber;
+        moduleNumber = moduleConstants.moduleNumber;
         angleOffset = moduleConstants.angleOffset;
+        moduleLocation = new Translation2d(moduleConstants.xPos, moduleConstants.yPos);
 
         angleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
-        driveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
+        driveMotor = new CANSparkFlex(moduleConstants.driveMotorID, MotorType.kBrushless);
         angleMotor.restoreFactoryDefaults();
         driveMotor.restoreFactoryDefaults();
 
@@ -92,24 +97,25 @@ public class SwerveModule {
         lastAngle = getState().angle.getDegrees();
     }
 
-    public void setDesiredState(BetterSwerveModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         setDesiredState(desiredState, isOpenLoop, true);
     }
 
-    /*public void setGains(double kp, double ki, double kd, double ks, double kv, double ka) {
-        feedforward = new SimpleMotorFeedforward(ks, kv, ka);
-        driveController.setP(kp);
-        driveController.setI(ki);
-        driveController.setD(kd);
-    }*/
+    public void setGains(double kp, double ki, double kd, double ks, double kv, double ka) {
+        //feedforward = new SimpleMotorFeedforward(ks, kv, ka);
+        //driveController.setP(kp);
+        //driveController.setI(ki);
+        //driveController.setD(kd);
+    }
     
-    public void setDesiredState(BetterSwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
-        SwerveModuleState simpleState = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
-        simpleState = SwerveModuleState.optimize(simpleState, getState().angle);
-        desiredState = new BetterSwerveModuleState(simpleState.speedMetersPerSecond, simpleState.angle, desiredState.omegaRadPerSecond);
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        this.desiredState = desiredState;
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Speed Setpoint: ", desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
-        SmartDashboard.putNumber("Module " + moduleNumber + " Omega: ", Math.toDegrees(desiredState.omegaRadPerSecond));
+        SmartDashboard.putNumber("Module " + moduleNumber + "CurrentDraw", driveMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Module " + moduleNumber + " Volts", driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
+        SmartDashboard.putNumber("Module " + moduleNumber + "Speed", driveEncoder.getVelocity());
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Drivebase.MAX_SPEED;
@@ -122,11 +128,10 @@ public class SwerveModule {
         double angle = ((Math.abs(desiredState.speedMetersPerSecond) <= (Drivebase.MAX_SPEED * 0.01)) && antijitter ? 
             lastAngle :
             desiredState.angle.getDegrees()); // Prevents module rotation if speed is less than 1%
-        angleController.setReference(angle, ControlType.kPosition, 0, Math.toDegrees(desiredState.omegaRadPerSecond) * Drivebase.MODULE_KV);
+        angleController.setReference(angle, ControlType.kPosition);
         lastAngle = angle;
 
         this.angle = desiredState.angle.getDegrees();
-        omega = desiredState.omegaRadPerSecond;
         speed = desiredState.speedMetersPerSecond;
 
         if (!Robot.isReal()) {
@@ -136,20 +141,37 @@ public class SwerveModule {
         }
     }
 
-    public BetterSwerveModuleState getState() {
+    public void setAzimuth(Rotation2d azimuth) {
+        angleController.setReference(azimuth.getDegrees(), ControlType.kPosition);
+    }
+
+    public void setDriveVolts(double volts) {
+        driveMotor.setVoltage(volts);
+    }
+
+    public double getDriveVolts() {
+        return driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
+    }
+
+    public Translation2d getModuleLocation() {
+        return moduleLocation;
+    }
+
+    public SwerveModuleState getState() {
         double velocity;
         Rotation2d azimuth;
-        double omega;
         if (Robot.isReal()) {
             velocity = driveEncoder.getVelocity();
             azimuth = Rotation2d.fromDegrees(absoluteEncoder.getPosition());
-            omega = absoluteEncoder.getVelocity();
         } else {
             velocity = speed;
             azimuth = Rotation2d.fromDegrees(this.angle);
-            omega = this.omega;
         }
-        return new BetterSwerveModuleState(velocity, azimuth, omega);
+        return new SwerveModuleState(velocity, azimuth);
+    }
+
+    public SwerveModuleState getDesiredState() {
+        return desiredState;
     }
 
     public SwerveModulePosition getPosition() {
@@ -160,9 +182,10 @@ public class SwerveModule {
             azimuth = Rotation2d.fromDegrees(absoluteEncoder.getPosition());
         } else {
             position = fakePos;
-            azimuth = Rotation2d.fromDegrees(angle + (Math.toDegrees(omega) * dt));
+            azimuth = Rotation2d.fromDegrees(angle);
         }
         SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
+        SmartDashboard.putNumber("Module " + moduleNumber + " Wheel Pos", position);
         return new SwerveModulePosition(position, azimuth);
     }
 
