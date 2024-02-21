@@ -204,8 +204,14 @@ public final class Constants {
         private static final int STERN_IP = 12;
         public static final String NOTE_LIMELIGHT_NAME = "note";
         private static final int NOTE_IP = 14;
-        public static final double POSE_ERROR_TOLERANCE = 2;
+
+        public static final double POSE_ERROR_TOLERANCE = 5;
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
+
+        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.5;
+        public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(2);
+        public static final double VISION_TRANSLATIONAL_STD_DEV = 0.05;
+        public static final double VISION_ANGULAR_STD_DEV = Math.toRadians(20);
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
             0,
@@ -234,7 +240,7 @@ public final class Constants {
 
         public static final int SHOOTER_CURRENT_LIMIT = 40; // A
         public static final int LOADER_CURRENT_LIMIT = 40; // A
-        public static final int SHOULDER_CURRENT_LIMIT = 40; // A
+        public static final int SHOULDER_CURRENT_LIMIT = 60; // A
 
         public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
 
@@ -256,9 +262,10 @@ public final class Constants {
 
         public static final double ARM_DEADBAND = Math.toRadians(0.5);
 
-        public static final double ARM_TOLERANCE = Math.toRadians(1);
+        public static final double ARM_TOLERANCE = Math.toRadians(0.5);
+        public static final int SETTLE_TIME_LOOP_CYCLES = 5;
 
-        public static final double SHOULDER_KP = 10;
+        public static final double SHOULDER_KP = 5;
         public static final double SHOULDER_KI = 0;
         public static final double SHOULDER_KD = 1;
         public static final double SHOULDER_KF = 0;

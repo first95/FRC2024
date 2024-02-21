@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -21,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import static edu.wpi.first.units.Units.Volts;
+
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
@@ -42,7 +41,6 @@ public class Shooter extends SubsystemBase {
   private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
-  // private final SparkLimitSwitch bottomLimitSwitch;
   private final DigitalInput bottomLimitSwitch;
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
@@ -53,6 +51,7 @@ public class Shooter extends SubsystemBase {
   private Rotation2d armGoal;
   private final Timer timer;
   private TrapezoidProfile.State armSetpoint, profileStart;
+  private int cyclesSinceArmNotAtGoal;
 
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
@@ -147,6 +146,8 @@ public class Shooter extends SubsystemBase {
     timer = new Timer();
     timer.start();
 
+    cyclesSinceArmNotAtGoal = 0;
+
     shoulderCharacterizer = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
@@ -240,8 +241,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean armAtGoal() {
-    return Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ShooterConstants.ARM_TOLERANCE;
+    return cyclesSinceArmNotAtGoal >= ShooterConstants.SETTLE_TIME_LOOP_CYCLES;
   }
+
 
   @Override
   public void periodic() {
@@ -272,6 +274,10 @@ public class Shooter extends SubsystemBase {
           ArbFFUnits.kVoltage);
     }
 
+    cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ShooterConstants.ARM_TOLERANCE ?
+      cyclesSinceArmNotAtGoal + 1 :
+      0;
+
     SmartDashboard.putNumber("ProportionalTerm",
         ShooterConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
     SmartDashboard.putNumber("FeedforwardValue",
@@ -282,6 +288,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("ShooterShoulderSetpointVel", Math.toDegrees(armSetpoint.velocity));
     SmartDashboard.putNumber("ShooterShoulderPos", Math.toDegrees(shoulderEncoder.getPosition()));
     SmartDashboard.putNumber("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
+    SmartDashboard.putBoolean("ShoulderAtGoal", armAtGoal());
+    SmartDashboard.putNumber("CycleCounter", cyclesSinceArmNotAtGoal);
     SmartDashboard.putNumber("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
     SmartDashboard.putNumber("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
     SmartDashboard.putNumber("PortRPM", portShooterEncoder.getVelocity());

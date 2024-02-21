@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -98,7 +99,13 @@ public class SwerveBase extends SubsystemBase {
     bowLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.BOW_LIMELIGHT_NAME);
     sternLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.STERN_LIMELIGHT_NAME);
     
-    odometry = new SwerveDrivePoseEstimator(Drivebase.KINEMATICS, getYaw(), getModulePositions(), new Pose2d());
+    odometry = new SwerveDrivePoseEstimator(
+      Drivebase.KINEMATICS,
+      getYaw(),
+      getModulePositions(),
+      new Pose2d(),
+      VecBuilder.fill(Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_ANGULAR_STD_DEV),
+      VecBuilder.fill(Vision.VISION_TRANSLATIONAL_STD_DEV, Vision.VISION_TRANSLATIONAL_STD_DEV, Vision.VISION_ANGULAR_STD_DEV));
     wasOdometrySeeded = false;
     wasGyroReset = false;
 
