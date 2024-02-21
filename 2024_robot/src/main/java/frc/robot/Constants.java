@@ -205,7 +205,7 @@ public final class Constants {
         private static final int NOTE_IP = 14;
 
         public static final double POSE_ERROR_TOLERANCE = 5;
-        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(10);
+        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(7);
 
         public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.4;
         public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.01);
