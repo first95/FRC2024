@@ -33,7 +33,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.util.LimelightHelpers;
 import frc.lib.util.PoseLatency;
+import frc.lib.util.LimelightHelpers.LimelightResults;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.SwerveModule;
@@ -97,9 +99,6 @@ public class SwerveBase extends SubsystemBase {
       new SwerveModule(Drivebase.Mod2.CONSTANTS),
       new SwerveModule(Drivebase.Mod3.CONSTANTS),
     };
-
-    bowLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.BOW_LIMELIGHT_NAME);
-    sternLimelightData = NetworkTableInstance.getDefault().getTable("limelight-" + Vision.STERN_LIMELIGHT_NAME);
     
     odometry = new SwerveDrivePoseEstimator(
       Drivebase.KINEMATICS,
@@ -387,7 +386,8 @@ public class SwerveBase extends SubsystemBase {
     }
   }
 
-  public PoseLatency getVisionPose(NetworkTable visionData) {
+  public PoseLatency getVisionPose(String limelightName) {
+    NetworkTable visionData = NetworkTableInstance.getDefault().getTable("limelight-" + limelightName);
     if ((visionData.getEntry("tv").getDouble(0) == 0 ||
       visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
       return null;
@@ -403,7 +403,8 @@ public class SwerveBase extends SubsystemBase {
     return new PoseLatency(poseComponents);
   }
   
-  private void addVisionMeasurement(NetworkTable visionData, Pose2d estimatedPose) {
+  private void addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
+    NetworkTable visionData = NetworkTableInstance.getDefault().getTable("limelight-" + limelightName);
     if ((visionData.getEntry("tv").getInteger(0) == 0 ||
       visionData.getEntry("getPipe").getInteger(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
       return;
@@ -418,21 +419,36 @@ public class SwerveBase extends SubsystemBase {
     }
     PoseLatency visionMeasurement = new PoseLatency(poseComponents);
     double targetArea = visionData.getEntry("ta").getDouble(0);
+    LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
+    int numTargets = llResults.targetingResults.targets_Fiducials.length;
 
-    double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
+    //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, degStds;
 
     if (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR) {
       return;
     }
-    if (targetArea > Vision.MIN_CLOSE_TARGET_AREA) {
-      xyStds = Vision.VISION_CLOSE_TRANSLATIONAL_STD_DEV;
-      degStds = Vision.VISION_CLOSE_ANGULAR_STD_DEV;
-    } else if (targetArea > Vision.MIN_FAR_TARGET_AREA) {
-      xyStds = Vision.VISION_FAR_TRANSLATIONAL_STD_DEV;
-      degStds = Vision.VISION_FAR_ANGULAR_STD_DEV;
+    
+    if (numTargets >= 2) {
+      if (targetArea > Vision.MIN_CLOSE_MULTITARGET_AREA) {
+        xyStds = Vision.VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
+        degStds = Vision.VISION_CLOSE_MULTITARGET_ANGULAR_STD_DEV;
+      } else if (targetArea > Vision.MIN_FAR_MULTITARGET_AREA) {
+        xyStds = Vision.VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV;
+        degStds = Vision.VISION_FAR_MULTITARGET_ANGULAR_STD_DEV;
+      } else {
+        return;
+      }
     } else {
-      return;
+      if (targetArea > Vision.MIN_CLOSE_TARGET_AREA) {
+        xyStds = Vision.VISION_CLOSE_TRANSLATIONAL_STD_DEV;
+        degStds = Vision.VISION_CLOSE_ANGULAR_STD_DEV;
+      } else if (targetArea > Vision.MIN_FAR_TARGET_AREA) {
+        xyStds = Vision.VISION_FAR_TRANSLATIONAL_STD_DEV;
+        degStds = Vision.VISION_FAR_ANGULAR_STD_DEV;
+      } else {
+        return;
+      }
     }
     double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Math.toRadians(degStds)));
@@ -454,8 +470,8 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded) { 
-      PoseLatency bowSeed = getVisionPose(bowLimelightData);
-      PoseLatency sternSeed = getVisionPose(sternLimelightData);
+      PoseLatency bowSeed = getVisionPose(Vision.BOW_LIMELIGHT_NAME);
+      PoseLatency sternSeed = getVisionPose(Vision.STERN_LIMELIGHT_NAME);
       if ((bowSeed != null) && (sternSeed != null)) {
         // Average position, pick a camera for rotation
         Translation2d translation = bowSeed.pose2d.getTranslation().plus(sternSeed.pose2d.getTranslation()).div(2);
@@ -486,18 +502,18 @@ public class SwerveBase extends SubsystemBase {
 
     Pose2d estimatedPose = getPose();
     
-    addVisionMeasurement(bowLimelightData, estimatedPose);
-    addVisionMeasurement(sternLimelightData, estimatedPose);
+    addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, estimatedPose);
+    addVisionMeasurement(Vision.STERN_LIMELIGHT_NAME, estimatedPose);
 
     field.setRobotPose(estimatedPose);
-    PoseLatency bowCamPose = getVisionPose(bowLimelightData);
+    PoseLatency bowCamPose = getVisionPose(Vision.BOW_LIMELIGHT_NAME);
     if (bowCamPose != null) {
-      bowCam.setRobotPose(getVisionPose(bowLimelightData).pose2d);
+      bowCam.setRobotPose(bowCamPose.pose2d);
       SmartDashboard.putNumber("BowCamZ", bowCamPose.pose3d.getZ());
     }
-    PoseLatency sternCamPose = getVisionPose(sternLimelightData);
+    PoseLatency sternCamPose = getVisionPose(Vision.STERN_LIMELIGHT_NAME);
     if (sternCamPose != null) {
-      sternCam.setRobotPose(getVisionPose(sternLimelightData).pose2d);
+      sternCam.setRobotPose(sternCamPose.pose2d);
       SmartDashboard.putNumber("SternCamZ", sternCamPose.pose3d.getZ());
     }
 
