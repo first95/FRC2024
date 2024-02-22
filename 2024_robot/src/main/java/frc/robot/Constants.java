@@ -367,6 +367,8 @@ public final class Constants {
         public static final int STATUS_FRAME_0_PERIOD = 20;
         public static final int STATUS_FRAME_1_PERIOD = 60000;
         public static final int STATUS_FRAME_2_PERIOD = 59000;
+
+        public static final double INTAKE_MAX_SPEED = 0.7;
     }
 
     public static final class NoteHandlerSpeeds {
