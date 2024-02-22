@@ -250,7 +250,8 @@ public final class Constants {
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(60);
-        public static final Rotation2d ARM_AMP_SHOT_ANGLE = Rotation2d.fromDegrees(109);
+        public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
+        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(109);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -291,6 +292,8 @@ public final class Constants {
         public static final String ARM_ANGLE_KEY = "AutoArmAngleRadians";
         public static final String ON_TARGET_KEY = "AutoOnTarget";
         public static final String AUTO_SHOOTING_KEY = "AutoShootingRequested";
+        public static final String PORT_SPEED_KEY = "PortSpeed";
+        public static final String STARBOARD_SPEED_KEY = "StarboardSpeed";
 
         // Trapezoidal drive PID constants
         public static final double DRIVE_ACCELERATION_LIMIT = 4; // m/s/s
@@ -347,6 +350,9 @@ public final class Constants {
         public static final double STARBOARD_SHOOTER_SPEED = 3000;
         public static final double PORT_IDLE_SPEED = 3000;
         public static final double STARBOARD_IDLE_SPEED = 1000;
+
+        public static final double PORT_AMP_SCORE_SPEED = 2000;
+        public static final double STARBOARD_AMP_SCORE_SPEED = 2000;
 
         public static final double SHOOTER_SPEED_TOLERANCE = 200;
     }
