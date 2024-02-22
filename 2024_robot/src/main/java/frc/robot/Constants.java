@@ -331,7 +331,8 @@ public final class Constants {
         public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
-            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), Units.inchesToMeters(323 - 3.25 - 15.5)), Rotation2d.fromDegrees(90)))
+            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), Units.inchesToMeters(323 - 3.25 - 15.5)), Rotation2d.fromDegrees(90))),
+            Map.entry("3/4NoteCenterStart", new Pose2d(new Translation2d(1.9, 5.55), Rotation2d.fromDegrees(180)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
         private static final Map<String, Pose2d> RED_MAP =
