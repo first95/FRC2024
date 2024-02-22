@@ -85,7 +85,9 @@ public class AutoShoot extends Command {
 
     // Azimuth:
     // Note that we shoot from the back of the robot, so it may seem like this is backwards what it should be.
-    angle = new Rotation2d(posDelta.getX(), posDelta.getY()).plus(Rotation2d.fromDegrees(180)).getRadians();
+    angle = new Rotation2d(posDelta.getX(), posDelta.getY())
+      .plus(Auton.AUTO_SHOOT_AZIMUTH_ADJUSTMENT)
+      .plus(Rotation2d.fromDegrees(180)).getRadians();
 
     thetaController.reset();
 

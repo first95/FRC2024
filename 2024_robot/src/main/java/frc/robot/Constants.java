@@ -212,8 +212,8 @@ public final class Constants {
         public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.01);
         public static final double VISION_CLOSE_TRANSLATIONAL_STD_DEV = 0.3;
         public static final double VISION_CLOSE_ANGULAR_STD_DEV = Math.toRadians(10);
-        public static final double VISION_FAR_TRANSLATIONAL_STD_DEV = 1;
-        public static final double VISION_FAR_ANGULAR_STD_DEV = Math.toRadians(30);
+        public static final double VISION_FAR_TRANSLATIONAL_STD_DEV = 5;
+        public static final double VISION_FAR_ANGULAR_STD_DEV = Math.toRadians(50);
         public static final double VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV = 0.1;
         public static final double VISION_CLOSE_MULTITARGET_ANGULAR_STD_DEV = Math.toRadians(2);
         public static final double VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV = 0.5;
@@ -353,6 +353,9 @@ public final class Constants {
             Alliance.Blue, BLUE_MAP,
             Alliance.Red, RED_MAP
         );
+
+        // Added to final autoshoot calculations-- remember that we shoot from the back
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(10);
     }
 
     public static final class IntakeConstants {
