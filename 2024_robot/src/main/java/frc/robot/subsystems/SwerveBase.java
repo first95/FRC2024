@@ -404,8 +404,8 @@ public class SwerveBase extends SubsystemBase {
   }
   
   private void addVisionMeasurement(NetworkTable visionData, Pose2d estimatedPose) {
-    if ((visionData.getEntry("tv").getDouble(0) == 0 ||
-      visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
+    if ((visionData.getEntry("tv").getInteger(0) == 0 ||
+      visionData.getEntry("getPipe").getInteger(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
       return;
     }
     double[] poseComponents;
@@ -425,17 +425,18 @@ public class SwerveBase extends SubsystemBase {
     if (Math.abs(visionMeasurement.pose3d.getZ()) >= 1) {
       return;
     }
-    if (targetArea > 0.8 && poseDifference < 0.5) {
-      xyStds = 1.0;
-      degStds = 12;
-    } else if (targetArea > 0.1 && poseDifference < 0.3) {
-      xyStds = 2.0;
+    if (targetArea > 0.5) {
+      xyStds = 0.01;
+      degStds = 2;
+    } else if (targetArea > 0.1) {
+      xyStds = 0.3;
       degStds = 30;
     } else {
       return;
     }
+    double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Math.toRadians(degStds)));
-    odometry.addVisionMeasurement(visionMeasurement.pose2d, degStds);
+    odometry.addVisionMeasurement(visionMeasurement.pose2d, timestamp);
   }
 
   @Override
@@ -489,6 +490,16 @@ public class SwerveBase extends SubsystemBase {
     addVisionMeasurement(sternLimelightData, estimatedPose);
 
     field.setRobotPose(estimatedPose);
+    PoseLatency bowCamPose = getVisionPose(bowLimelightData);
+    if (bowCamPose != null) {
+      bowCam.setRobotPose(getVisionPose(bowLimelightData).pose2d);
+      SmartDashboard.putNumber("BowCamZ", bowCamPose.pose3d.getZ());
+    }
+    PoseLatency sternCamPose = getVisionPose(sternLimelightData);
+    if (sternCamPose != null) {
+      sternCam.setRobotPose(getVisionPose(sternLimelightData).pose2d);
+      SmartDashboard.putNumber("SternCamZ", sternCamPose.pose3d.getZ());
+    }
 
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
