@@ -107,7 +107,7 @@ public class SwerveBase extends SubsystemBase {
       getModulePositions(),
       new Pose2d(),
       VecBuilder.fill(Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_ANGULAR_STD_DEV),
-      VecBuilder.fill(Vision.VISION_TRANSLATIONAL_STD_DEV, Vision.VISION_TRANSLATIONAL_STD_DEV, Vision.VISION_ANGULAR_STD_DEV));
+      VecBuilder.fill(Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_ANGULAR_STD_DEV));
     wasOdometrySeeded = false;
     wasGyroReset = false;
 
@@ -422,15 +422,15 @@ public class SwerveBase extends SubsystemBase {
     double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, degStds;
 
-    if (Math.abs(visionMeasurement.pose3d.getZ()) >= 1) {
+    if (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR) {
       return;
     }
-    if (targetArea > 0.5) {
-      xyStds = 0.01;
-      degStds = 2;
-    } else if (targetArea > 0.1) {
-      xyStds = 0.3;
-      degStds = 30;
+    if (targetArea > Vision.MIN_CLOSE_TARGET_AREA) {
+      xyStds = Vision.VISION_CLOSE_TRANSLATIONAL_STD_DEV;
+      degStds = Vision.VISION_CLOSE_ANGULAR_STD_DEV;
+    } else if (targetArea > Vision.MIN_FAR_TARGET_AREA) {
+      xyStds = Vision.VISION_FAR_TRANSLATIONAL_STD_DEV;
+      degStds = Vision.VISION_FAR_ANGULAR_STD_DEV;
     } else {
       return;
     }
