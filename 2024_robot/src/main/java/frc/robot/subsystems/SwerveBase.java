@@ -387,6 +387,22 @@ public class SwerveBase extends SubsystemBase {
     }
   }
 
+  public PoseLatency getVisionPose(NetworkTable visionData) {
+    if ((visionData.getEntry("tv").getDouble(0) == 0 ||
+      visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
+      return null;
+    }
+    double[] poseComponents;
+    if (alliance == Alliance.Blue) {
+      poseComponents = visionData.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
+    } else if (alliance == Alliance.Red) {
+      poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
+    } else {
+      return null;
+    }
+    return new PoseLatency(poseComponents);
+  }
+  
   private void addVisionMeasurement(NetworkTable visionData, Pose2d estimatedPose) {
     if ((visionData.getEntry("tv").getDouble(0) == 0 ||
       visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
@@ -401,11 +417,25 @@ public class SwerveBase extends SubsystemBase {
       return;
     }
     PoseLatency visionMeasurement = new PoseLatency(poseComponents);
-    int numTargets = visionData.getEntry(getName())
+    double targetArea = visionData.getEntry("ta").getDouble(0);
 
     double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, degStds;
 
+    if (Math.abs(visionMeasurement.pose3d.getZ()) >= 1) {
+      return;
+    }
+    if (targetArea > 0.8 && poseDifference < 0.5) {
+      xyStds = 1.0;
+      degStds = 12;
+    } else if (targetArea > 0.1 && poseDifference < 0.3) {
+      xyStds = 2.0;
+      degStds = 30;
+    } else {
+      return;
+    }
+    odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Math.toRadians(degStds)));
+    odometry.addVisionMeasurement(visionMeasurement.pose2d, degStds);
   }
 
   @Override
@@ -454,8 +484,10 @@ public class SwerveBase extends SubsystemBase {
     }
 
     Pose2d estimatedPose = getPose();
-    ChassisSpeeds velocity = getFieldVelocity();
     
+    addVisionMeasurement(bowLimelightData, estimatedPose);
+    addVisionMeasurement(sternLimelightData, estimatedPose);
+
     field.setRobotPose(estimatedPose);
 
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
