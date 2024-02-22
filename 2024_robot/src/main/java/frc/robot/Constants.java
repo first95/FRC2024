@@ -280,7 +280,7 @@ public final class Constants {
             0.24765);
 
         public static final double SHOULDER_MAX_CONTROL_EFFORT = 1;
-        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.5;
+        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.2;
 
         public static final double ARM_DEADBAND = Math.toRadians(0.5);
 

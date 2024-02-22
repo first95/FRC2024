@@ -16,7 +16,7 @@ public final class Autos {
   }
 
   public static Command shootPreload(SwerveBase drive) {
-    return new AutoShoot(drive);
+    return new AutoShoot(drive).withTimeout(5);
   }
 
   private Autos() {

@@ -98,6 +98,12 @@ public class NoteHandlerCommand extends Command {
         if (sensorvalue) {
           currentState = State.INDEXING_REV;
         }
+        if (ampAligning) {
+          currentState = State.AMP_ALIGNING;
+        }
+        if (ampAligning && ampScoring) {
+          currentState = State.AMP_SCORING_A;
+        }
         if (shooterbutton) {
           currentState = State.SPOOLING;
         }
@@ -179,6 +185,12 @@ public class NoteHandlerCommand extends Command {
         if (!sensorvalue) {
           currentState = State.INDEXING_FWD;
         }
+        if (ampAligning) {
+          currentState = State.AMP_ALIGNING;
+        }
+        if (ampAligning && ampScoring) {
+          currentState = State.AMP_SCORING_A;
+        }
         if (shooterbutton) {
           currentState = State.SPOOLING;
         }
@@ -198,6 +210,12 @@ public class NoteHandlerCommand extends Command {
         if (sensorvalue) {
           currentState = State.HOLDING;
         }
+        if (ampAligning) {
+          currentState = State.AMP_ALIGNING;
+        }
+        if (ampAligning && ampScoring) {
+          currentState = State.AMP_SCORING_A;
+        }
         if (shooterbutton) {
           currentState = State.SPOOLING;
         }
@@ -215,6 +233,12 @@ public class NoteHandlerCommand extends Command {
         starboardShootingSpeed = starboardSpeed;
         armAngle = ShooterConstants.ARM_LOWER_LIMIT;
 
+        if (ampAligning) {
+          currentState = State.AMP_ALIGNING;
+        }
+        if (ampAligning && ampScoring) {
+          currentState = State.AMP_SCORING_A;
+        }
         if (shooterbutton) {
           currentState = State.SPOOLING;
         }
