@@ -195,6 +195,7 @@ public final class Constants {
         public static final int PIGEON = 30;
     }
 
+    @SuppressWarnings("unused")
     public static final class Vision {
         public static final int APRILTAG_PIPELINE_NUMBER = 0;
         public static final String BOW_LIMELIGHT_NAME = "bow";
@@ -294,6 +295,8 @@ public final class Constants {
         public static final String AUTO_SHOOTING_KEY = "AutoShootingRequested";
         public static final String PORT_SPEED_KEY = "PortSpeed";
         public static final String STARBOARD_SPEED_KEY = "StarboardSpeed";
+        public static final String AUTO_AMP_ALIGN_KEY = "AutoAligningAmp";
+        public static final String AUTO_AMP_SCORE_KEY = "AutoScoreAmp";
 
         // Trapezoidal drive PID constants
         public static final double DRIVE_ACCELERATION_LIMIT = 4; // m/s/s

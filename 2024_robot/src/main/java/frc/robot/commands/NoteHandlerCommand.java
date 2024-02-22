@@ -80,8 +80,8 @@ public class NoteHandlerCommand extends Command {
     onTarget = SmartDashboard.getBoolean(Auton.ON_TARGET_KEY, false);
     autoArmAngle = Rotation2d
         .fromRadians(SmartDashboard.getNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians()));
-    ampAligning = ampAlignSupplier.getAsBoolean();
-    ampScoring = ampScoreSupplier.getAsBoolean();
+    ampAligning = ampAlignSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
+    ampScoring = ampScoreSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
 
     // Execute statemachine logic
     switch (currentState) {
