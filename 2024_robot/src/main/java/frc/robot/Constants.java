@@ -272,7 +272,7 @@ public final class Constants {
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(60);
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
-        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(109);
+        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(107);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -319,8 +319,8 @@ public final class Constants {
         public static final String AUTO_AMP_SCORE_KEY = "AutoScoreAmp";
 
         // Trapezoidal drive PID constants
-        public static final double DRIVE_ACCELERATION_LIMIT = 4; // m/s/s
-        public static final double DRIVE_VELOCITY_LIMIT = 3; // m/s
+        public static final double DRIVE_ACCELERATION_LIMIT = 1; // m/s/s
+        public static final double DRIVE_VELOCITY_LIMIT = 1; // m/s
         public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
             DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);
         
@@ -328,7 +328,7 @@ public final class Constants {
         public static final double DRIVE_KI = 0;
         public static final double DRIVE_KD = 0;
 
-        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.025; // m
+        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
             Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), Units.inchesToMeters(323 - 3.25 - 15.5)), Rotation2d.fromDegrees(90)))
@@ -380,8 +380,8 @@ public final class Constants {
         public static final double PORT_IDLE_SPEED = 3000;
         public static final double STARBOARD_IDLE_SPEED = 1000;
 
-        public static final double PORT_AMP_SCORE_SPEED = 2000;
-        public static final double STARBOARD_AMP_SCORE_SPEED = 2000;
+        public static final double PORT_AMP_SCORE_SPEED = 1000;
+        public static final double STARBOARD_AMP_SCORE_SPEED = 1000;
 
         public static final double SHOOTER_SPEED_TOLERANCE = 200;
     }

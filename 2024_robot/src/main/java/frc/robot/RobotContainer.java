@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import frc.robot.Constants.Auton;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoAmp;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.NoteHandlerCommand;
+import frc.robot.commands.autocommands.AlignToPose;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
@@ -165,6 +168,12 @@ public class RobotContainer {
          */
         driveController.button(1).whileTrue(new AutoShoot(drivebase));
         driveController.button(8).onTrue(new InstantCommand(drivebase::clearOdometrySeed).ignoringDisable(true));
+        headingController.button(1).whileTrue(new AutoAmp(drivebase)).onFalse(new InstantCommand(() -> {
+                SmartDashboard.putBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
+                SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
+        }
+        ));
+        //headingController.button(1).whileTrue(new AlignToPose("ScoreAmp", drivebase));
     }
 
     /**

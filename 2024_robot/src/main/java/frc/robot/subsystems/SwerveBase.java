@@ -419,8 +419,8 @@ public class SwerveBase extends SubsystemBase {
     }
     PoseLatency visionMeasurement = new PoseLatency(poseComponents);
     double targetArea = visionData.getEntry("ta").getDouble(0);
-    LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
-    int numTargets = llResults.targetingResults.targets_Fiducials.length;
+    //LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
+    int numTargets = 1;//llResults.targetingResults.targets_Fiducials.length;
 
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, degStds;
