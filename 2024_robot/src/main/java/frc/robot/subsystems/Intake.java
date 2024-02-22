@@ -6,24 +6,35 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
-  private CANSparkMax topintakeRoller, bottomIntakeRoller;
+  private CANSparkMax topIntakeRoller, bottomIntakeRoller;
   /** Creates a new ExampleSubsystem. */
   public Intake() {
-    topintakeRoller = new CANSparkMax(IntakeConstants.TOP_ROLLER_ID, MotorType.kBrushless);
+    topIntakeRoller = new CANSparkMax(IntakeConstants.TOP_ROLLER_ID, MotorType.kBrushless);
     bottomIntakeRoller = new CANSparkMax(IntakeConstants.BOTTOM_ROLLER_ID, MotorType.kBrushless);
-    topintakeRoller.restoreFactoryDefaults();
+    topIntakeRoller.restoreFactoryDefaults();
     bottomIntakeRoller.restoreFactoryDefaults();
-    topintakeRoller.burnFlash();
+
+    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
+    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
+    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
+
+    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
+    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
+    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
+
+
+    topIntakeRoller.burnFlash();
     bottomIntakeRoller.burnFlash();
   }
 
   public void runRollers(double speed) {
-    topintakeRoller.set(speed);
+    topIntakeRoller.set(speed);
     bottomIntakeRoller.set(-speed);
   }
 

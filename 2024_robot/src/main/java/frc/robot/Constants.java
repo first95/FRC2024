@@ -233,6 +233,14 @@ public final class Constants {
         public static final int NOTE_SENSOR_ID = 0;
         public static final int LIMIT_SWITCH_ID = 1;
 
+        public static final int LOADER_STATUS_FRAME_0_PERIOD = 10;
+        public static final int LOADER_STATUS_FRAME_1_PERIOD = 58000;
+        public static final int LOADER_STATUS_FRAME_2_PERIOD = 57000;
+
+        public static final int SHOOTER_STATUS_FRAME_0_PERIOD = 10;
+        public static final int SHOOTER_STATUS_FRAME_1_PERIOD = 20;
+        public static final int SHOOTER_STATUS_FRAME_2_PERIOD = 56000;
+
         public static final boolean INVERT_PORT_SHOOTER = false;
         public static final boolean INVERT_STARBOARD_SHOOTER = true;
         public static final boolean INVERT_LOADER = true;
@@ -338,6 +346,10 @@ public final class Constants {
     public static final class IntakeConstants {
         public static final int TOP_ROLLER_ID = 10;
         public static final int BOTTOM_ROLLER_ID = 11;
+
+        public static final int STATUS_FRAME_0_PERIOD = 20;
+        public static final int STATUS_FRAME_1_PERIOD = 60000;
+        public static final int STATUS_FRAME_2_PERIOD = 59000;
     }
 
     public static final class NoteHandlerSpeeds {

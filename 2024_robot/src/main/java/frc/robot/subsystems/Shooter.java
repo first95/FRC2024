@@ -11,6 +11,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -64,6 +65,18 @@ public class Shooter extends SubsystemBase {
     starboardShooter.restoreFactoryDefaults();
     loader.restoreFactoryDefaults();
     shoulder.restoreFactoryDefaults();
+
+    portShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, ShooterConstants.SHOOTER_STATUS_FRAME_0_PERIOD);
+    portShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, ShooterConstants.SHOOTER_STATUS_FRAME_1_PERIOD);
+    portShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, ShooterConstants.SHOOTER_STATUS_FRAME_2_PERIOD);
+
+    starboardShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, ShooterConstants.SHOOTER_STATUS_FRAME_0_PERIOD);
+    starboardShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, ShooterConstants.SHOOTER_STATUS_FRAME_1_PERIOD);
+    starboardShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, ShooterConstants.SHOOTER_STATUS_FRAME_2_PERIOD);
+
+    loader.setPeriodicFramePeriod(PeriodicFrame.kStatus0, ShooterConstants.LOADER_STATUS_FRAME_0_PERIOD);
+    loader.setPeriodicFramePeriod(PeriodicFrame.kStatus1, ShooterConstants.LOADER_STATUS_FRAME_1_PERIOD);
+    loader.setPeriodicFramePeriod(PeriodicFrame.kStatus2, ShooterConstants.LOADER_STATUS_FRAME_2_PERIOD);
 
     portShooter.setInverted(ShooterConstants.INVERT_PORT_SHOOTER);
     starboardShooter.setInverted(ShooterConstants.INVERT_STARBOARD_SHOOTER);
