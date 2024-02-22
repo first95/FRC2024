@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.util.PoseLatency;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.SwerveModule;
@@ -54,7 +55,7 @@ public class SwerveBase extends SubsystemBase {
   public Field2d field = new Field2d();
   private Field2d sternCam, bowCam;
 
-  private double angle, lasttime, visionLatency;
+  private double angle, lasttime;
 
   private Timer timer;
 
@@ -386,10 +387,10 @@ public class SwerveBase extends SubsystemBase {
     }
   }
 
-  public Pose3d getVisionPose(NetworkTable visionData) {
+  private void addVisionMeasurement(NetworkTable visionData, Pose2d estimatedPose) {
     if ((visionData.getEntry("tv").getDouble(0) == 0 ||
       visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
-      return null;
+      return;
     }
     double[] poseComponents;
     if (alliance == Alliance.Blue) {
@@ -397,17 +398,14 @@ public class SwerveBase extends SubsystemBase {
     } else if (alliance == Alliance.Red) {
       poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
     } else {
-      return null;
+      return;
     }
-    visionLatency = poseComponents[6];
-    return new Pose3d(
-        poseComponents[0],
-        poseComponents[1],
-        poseComponents[2],
-        new Rotation3d(
-          Math.toRadians(poseComponents[3]),
-          Math.toRadians(poseComponents[4]),
-          Math.toRadians(poseComponents[5])));
+    PoseLatency visionMeasurement = new PoseLatency(poseComponents);
+    int numTargets = visionData.getEntry(getName())
+
+    double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
+    double xyStds, degStds;
+
   }
 
   @Override
@@ -425,41 +423,29 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded) { 
-      Pose3d bowSeed3d = getVisionPose(bowLimelightData);
-      Pose3d sternSeed3d = getVisionPose(sternLimelightData);
-      if ((bowSeed3d != null) && (sternSeed3d != null)) {
+      PoseLatency bowSeed = getVisionPose(bowLimelightData);
+      PoseLatency sternSeed = getVisionPose(sternLimelightData);
+      if ((bowSeed != null) && (sternSeed != null)) {
         // Average position, pick a camera for rotation
-        Pose2d bowSeed = bowSeed3d.toPose2d();
-        Pose2d sternSeed = sternSeed3d.toPose2d();
-        Translation2d translation = bowSeed.getTranslation().plus(sternSeed.getTranslation()).div(2);
+        Translation2d translation = bowSeed.pose2d.getTranslation().plus(sternSeed.pose2d.getTranslation()).div(2);
         //Rotation2d rotation = starboardSeed.getRotation();
         // Rotation average:
         Rotation2d rotation = 
           new Translation2d(
-            (bowSeed.getRotation().getCos() + sternSeed.getRotation().getCos()) / 2,
-            (bowSeed.getRotation().getSin() + sternSeed.getRotation().getSin()) / 2)
+            (bowSeed.pose2d.getRotation().getCos() + sternSeed.pose2d.getRotation().getCos()) / 2,
+            (bowSeed.pose2d.getRotation().getSin() + sternSeed.pose2d.getRotation().getSin()) / 2)
           .getAngle();
         resetOdometry(new Pose2d(translation, rotation));
         wasOdometrySeeded = true;
         wasGyroReset = true;
       }
-      else if (sternSeed3d != null) {
-        Pose2d sternSeed = new Pose2d(
-          new Translation2d(
-            sternSeed3d.getX(),
-            sternSeed3d.getY()),
-          new Rotation2d(sternSeed3d.getRotation().getZ()));
-        resetOdometry(sternSeed);
+      else if (sternSeed != null) {
+        resetOdometry(sternSeed.pose2d);
         wasOdometrySeeded = true;
         wasGyroReset = true;
       }
-      else if (bowSeed3d != null) {
-        Pose2d bowSeed = new Pose2d(
-          new Translation2d(
-            bowSeed3d.getX(),
-            bowSeed3d.getY()),
-          new Rotation2d(bowSeed3d.getRotation().getZ()));
-        resetOdometry(bowSeed);
+      else if (bowSeed != null) {
+        resetOdometry(bowSeed.pose2d);
         wasOdometrySeeded = true;
         wasGyroReset = true;
       } else {
@@ -469,33 +455,7 @@ public class SwerveBase extends SubsystemBase {
 
     Pose2d estimatedPose = getPose();
     ChassisSpeeds velocity = getFieldVelocity();
-    double timestamp;
-    Pose3d bowPose3d = getVisionPose(bowLimelightData);
-    double bowTime = visionLatency;
-    if (bowPose3d != null) {
-      Pose2d bowPose = bowPose3d.toPose2d();
-      if (((bowPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      bowPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE &&
-      Math.abs(velocity.omegaRadiansPerSecond) < 0.001)
-      || (Math.abs(velocity.vxMetersPerSecond) < 0.001 && Math.abs(velocity.vyMetersPerSecond) == 0.001 && Math.abs(velocity.omegaRadiansPerSecond) < 0.001)) {
-        timestamp = Timer.getFPGATimestamp() - bowTime / 1000;
-        odometry.addVisionMeasurement(bowPose, timestamp);
-        bowCam.setRobotPose(bowPose);
-      }
-    }
-    Pose3d sternPose3d = getVisionPose(sternLimelightData);
-    double sternTime = visionLatency;
-    if (sternPose3d != null) {
-      Pose2d sternPose = sternPose3d.toPose2d();
-      if (((sternPose.minus(estimatedPose).getTranslation().getNorm() <= Vision.POSE_ERROR_TOLERANCE) &&
-      sternPose.getRotation().minus(estimatedPose.getRotation()).getRadians() <= Vision.ANGULAR_ERROR_TOLERANCE &&
-      Math.abs(velocity.omegaRadiansPerSecond) < 0.001)
-      || (Math.abs(velocity.vxMetersPerSecond) < 0.001 && Math.abs(velocity.vyMetersPerSecond) == 0.001 && Math.abs(velocity.omegaRadiansPerSecond) < 0.001)) {
-        timestamp = Timer.getFPGATimestamp() - sternTime / 1000;
-        odometry.addVisionMeasurement(sternPose, timestamp);
-        sternCam.setRobotPose(sternPose);
-      }
-    }
+    
     field.setRobotPose(estimatedPose);
 
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
