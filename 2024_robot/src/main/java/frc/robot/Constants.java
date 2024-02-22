@@ -317,6 +317,7 @@ public final class Constants {
         public static final String STARBOARD_SPEED_KEY = "StarboardSpeed";
         public static final String AUTO_AMP_ALIGN_KEY = "AutoAligningAmp";
         public static final String AUTO_AMP_SCORE_KEY = "AutoScoreAmp";
+        public static final String AUTO_INTAKE_SPEED_KEY = "AutoIntakeSpeed";
 
         // Trapezoidal drive PID constants
         public static final double DRIVE_ACCELERATION_LIMIT = 1; // m/s/s

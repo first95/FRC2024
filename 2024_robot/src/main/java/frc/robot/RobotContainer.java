@@ -51,7 +51,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
+    private final Map<String, ChoreoTrajectory> trajMap;
+    
+        // The robot's subsystems and commands are defined here...
     private final Intake intake = new Intake();
     private final SwerveBase drivebase = new SwerveBase();
     private final Shooter shooter = new Shooter();
@@ -129,10 +131,13 @@ public class RobotContainer {
 
         shooter.setDefaultCommand(noteManager);
 
-    drivebase.setDefaultCommand(absoluteDrive);
-    // Configure the trigger bindings
-    configureBindings();
-    SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
+        drivebase.setDefaultCommand(absoluteDrive);
+        // Configure the trigger bindings
+        configureBindings();
+        
+        trajMap = loadTrajectories();
+
+        SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
 
         SmartDashboard.putNumber("KV", Drivebase.KV);
         SmartDashboard.putNumber("KA", Drivebase.KA);

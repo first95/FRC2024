@@ -69,7 +69,7 @@ public class NoteHandlerCommand extends Command {
     // Read inputs
     sensorvalue = shooter.getNoteSensor();
     shooterbutton = shooterButtonSupplier.getAsBoolean();
-    commandedIntakeSpeed = intakeSpeedAxis.getAsDouble();
+    commandedIntakeSpeed = intakeSpeedAxis.getAsDouble() + SmartDashboard.getNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
     shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_SPEED_TOLERANCE)
         &&
         (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_SPEED_TOLERANCE);
