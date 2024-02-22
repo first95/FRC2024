@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Auton;
@@ -15,11 +16,13 @@ import frc.robot.Constants.Drivebase;
 import frc.robot.subsystems.SwerveBase;
 
 public class AlignToPose extends Command {
-  private final Pose2d target;
+  private Pose2d target;
+  private String targetName;
   private final SwerveBase swerve;
   private final TrapezoidProfile driveProfile;
   private final PIDController xController, yController, thetaController;
   private final Timer timer;
+  private final boolean stringPose;
   
   private Pose2d currentRelativePose;
   private double initialDistance, cosine, sine;
@@ -27,7 +30,6 @@ public class AlignToPose extends Command {
 
   /** Creates a new AlignToPose. */
   public AlignToPose(Pose2d pose, SwerveBase swerve) {
-    // Use addRequirements() here to declare subsystem dependencies.
     target = pose;
     this.swerve = swerve;
     driveProfile = new TrapezoidProfile(Auton.DRIVE_CONSTRAINTS);
@@ -42,6 +44,27 @@ public class AlignToPose extends Command {
     yController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
     thetaController.setTolerance(Drivebase.HEADING_TOLERANCE);
     timer = new Timer();
+    stringPose = false;
+
+    addRequirements(swerve);
+  }
+
+  public AlignToPose(String poseName, SwerveBase swerve) {
+    targetName = poseName;
+    this.swerve = swerve;
+    driveProfile = new TrapezoidProfile(Auton.DRIVE_CONSTRAINTS);
+    xController = new PIDController(
+      Auton.DRIVE_KP, Auton.DRIVE_KI, Auton.DRIVE_KD);
+    yController = new PIDController(
+      Auton.DRIVE_KP, Auton.DRIVE_KI, Auton.DRIVE_KD);
+    thetaController = new PIDController(
+      Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    xController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
+    yController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
+    thetaController.setTolerance(Drivebase.HEADING_TOLERANCE);
+    timer = new Timer();
+    stringPose = true;
 
     addRequirements(swerve);
   }
@@ -49,6 +72,18 @@ public class AlignToPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (stringPose) {
+      try {
+        target = Auton.POSE_MAP.get(swerve.getAlliance()).get(targetName);
+      } catch (NullPointerException e) {
+        DriverStation.reportError("AlignToPose aborted! Alliance Invalid; could not fetch poses!", false);
+        cancel();
+      }
+      if (target == null) {
+        DriverStation.reportError("AlignToPose aborted! Named pose does not exist!", false);
+        cancel();
+      }
+    }
     var initialPose = swerve.getPose();
     var deltaTranslation = target.getTranslation().minus(initialPose.getTranslation());
     var currentVelocity = swerve.getFieldVelocity();
