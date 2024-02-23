@@ -61,9 +61,6 @@ public class AlignToPose extends Command {
     thetaController = new PIDController(
       Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    xController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
-    yController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
-    thetaController.setTolerance(Drivebase.HEADING_TOLERANCE);
     timer = new Timer();
     stringPose = true;
 
@@ -149,6 +146,7 @@ public class AlignToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint();
+    return (currentRelativePose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE)
+    && Math.abs(currentRelativePose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE;
   }
 }

@@ -28,7 +28,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void runRollers(double speed) {
-    //intakeRoller.set(speed * IntakeConstants.MAX_SPEED);
+    intakeRoller.set(speed * IntakeConstants.MAX_SPEED);
   }
 
   @Override

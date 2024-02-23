@@ -285,7 +285,7 @@ public final class Constants {
         public static final double ARM_DEADBAND = Math.toRadians(0.5);
 
         public static final double ARM_TOLERANCE = Math.toRadians(0.5);
-        public static final int SETTLE_TIME_LOOP_CYCLES = 5;
+        public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
         public static final double SHOULDER_KP = 5;
         public static final double SHOULDER_KI = 0;
@@ -325,14 +325,14 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
             DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);
         
-        public static final double DRIVE_KP = 1;
+        public static final double DRIVE_KP = 2;
         public static final double DRIVE_KI = 0;
         public static final double DRIVE_KD = 0;
 
-        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
+        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.1; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
-            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), Units.inchesToMeters(323 - 3.25 - 15.5 - 2)), Rotation2d.fromDegrees(90))),
+            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
             Map.entry("3/4NoteCenterStart", new Pose2d(new Translation2d(1.9, 5.55), Rotation2d.fromDegrees(180)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance

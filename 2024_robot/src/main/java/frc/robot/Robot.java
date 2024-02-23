@@ -137,6 +137,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians());
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, false);
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
+    SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
+    SmartDashboard.putBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
     SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
   }
 }
