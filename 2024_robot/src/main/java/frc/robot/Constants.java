@@ -44,7 +44,7 @@ public final class Constants {
 
   public static final double LOOP_CYCLE = 0.02; // 20ms
 
-  public static final double ROBOT_MASS = 95 / 2.2;
+  public static final double ROBOT_MASS = 90 / 2.2;
   public static final double MANIPULATOR_MASS = 0;
   public static final double CHASSIS_MASS = ROBOT_MASS - MANIPULATOR_MASS;
   public static final double ARM_Y_POS = 0;
@@ -393,7 +393,6 @@ public final class Constants {
 
         public static final double SHOOTER_SPEED_TOLERANCE = 200;
     }
-
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;
         public static final int headingControllerPort = 1;
