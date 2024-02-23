@@ -136,7 +136,8 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
         
-        trajMap = loadTrajectories();
+        //trajMap = loadTrajectories();
+        trajMap = null;
 
         SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
 
@@ -189,7 +190,8 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return Autos.shootPreload(drivebase);
+        //return Autos.twoNoteCenter(drivebase, intake, trajMap);
+        return null;
     }
 
     public void sendAlliance() {
