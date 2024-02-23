@@ -393,10 +393,8 @@ public class SwerveBase extends SubsystemBase {
       return null;
     }
     double[] poseComponents;
-    if (alliance == Alliance.Blue) {
+    if (alliance != null) {
       poseComponents = visionData.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
-    } else if (alliance == Alliance.Red) {
-      poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
     } else {
       return null;
     }
