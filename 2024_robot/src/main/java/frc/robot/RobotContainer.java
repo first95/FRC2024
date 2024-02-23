@@ -175,10 +175,12 @@ public class RobotContainer {
      */
     driveController.button(1).whileTrue(new AutoShoot(drivebase));
     driveController.button(8).onTrue(new InstantCommand(drivebase::clearOdometrySeed).ignoringDisable(true));
-    headingController.button(1).whileTrue(new AutoAmp(drivebase)).onFalse(new InstantCommand(() -> {
+    driveController.button(2).whileTrue(new AutoAmp(drivebase)).onFalse(new InstantCommand(() -> {
       SmartDashboard.putBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
       SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
     }));
+    headingController.button(1).onTrue(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
+    .onFalse(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
     // headingController.button(1).whileTrue(new AlignToPose("ScoreAmp",
     // drivebase));
   }
@@ -201,7 +203,7 @@ public class RobotContainer {
     Set<String> trajNames;
     try {
       if (Robot.isReal()) {
-        trajNames = listFilesUsingFilesList("/deploy/choreo");
+        trajNames = listFilesUsingFilesList("/home/lvuser/deploy/choreo");
       } else {
         trajNames = listFilesUsingFilesList("src/main/deploy/choreo");
       }

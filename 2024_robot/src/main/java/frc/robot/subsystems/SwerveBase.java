@@ -387,16 +387,14 @@ public class SwerveBase extends SubsystemBase {
   }
 
   public PoseLatency getVisionPose(String limelightName) {
-    NetworkTable visionData = NetworkTableInstance.getDefault().getTable("limelight-" + limelightName);
+    NetworkTable visionData = NetworkTableInstance.getDefault().getTable(limelightName);
     if ((visionData.getEntry("tv").getDouble(0) == 0 ||
       visionData.getEntry("getPipe").getDouble(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
       return null;
     }
     double[] poseComponents;
-    if (alliance == Alliance.Blue) {
+    if (alliance != null) {
       poseComponents = visionData.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
-    } else if (alliance == Alliance.Red) {
-      poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
     } else {
       return null;
     }
@@ -404,23 +402,10 @@ public class SwerveBase extends SubsystemBase {
   }
   
   private void addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
-    NetworkTable visionData = NetworkTableInstance.getDefault().getTable("limelight-" + limelightName);
-    if ((visionData.getEntry("tv").getInteger(0) == 0 ||
-      visionData.getEntry("getPipe").getInteger(0) != Vision.APRILTAG_PIPELINE_NUMBER)) {
-      return;
-    }
-    double[] poseComponents;
-    if (alliance == Alliance.Blue) {
-      poseComponents = visionData.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
-    } else if (alliance == Alliance.Red) {
-      poseComponents = visionData.getEntry("botpose_wpired").getDoubleArray(new double[7]);
-    } else {
-      return;
-    }
-    PoseLatency visionMeasurement = new PoseLatency(poseComponents);
-    double targetArea = visionData.getEntry("ta").getDouble(0);
-    //LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
-    int numTargets = 1;//llResults.targetingResults.targets_Fiducials.length;
+    PoseLatency visionMeasurement = getVisionPose(limelightName);
+    double targetArea = LimelightHelpers.getTA(limelightName);
+    LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
+    int numTargets = llResults.targetingResults.targets_Fiducials.length;
 
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, degStds;

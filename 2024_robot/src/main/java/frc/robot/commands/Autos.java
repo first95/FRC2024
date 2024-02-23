@@ -37,7 +37,7 @@ public final class Autos {
       .andThen(new AlignToPose("3/4NoteCenterStart", drive))
       .alongWith(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp.1.traj"), drive, true, true))
-      .andThen(new AutoShoot(drive)).withTimeout(3);
+      .andThen(new AutoShoot(drive)).withTimeout(5);
       command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
       return command;
   }

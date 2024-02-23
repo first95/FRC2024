@@ -25,7 +25,7 @@ public class AlignToPose extends Command {
   private final Timer timer;
   private final boolean stringPose;
   
-  private Pose2d currentRelativePose;
+  private Pose2d currentRelativePose, currentPose;
   private double initialDistance, cosine, sine;
   private TrapezoidProfile.State goalState, initialState;
 
@@ -84,12 +84,13 @@ public class AlignToPose extends Command {
     }
     SmartDashboard.putNumber("AutoAlignTargetTheta", target.getRotation().getDegrees());
     initialPose = swerve.getPose();
+    currentPose = initialPose;
     var deltaTranslation = target.getTranslation().minus(initialPose.getTranslation());
     var currentVelocity = swerve.getFieldVelocity();
     var driveAngle = deltaTranslation.getAngle();
     SmartDashboard.putNumber("AutoAlignDriveAngle", driveAngle.getDegrees());
-    SmartDashboard.putNumber("AutoAlignTargetX", deltaTranslation.getX());
-    SmartDashboard.putNumber("AutoAlignTargetY", deltaTranslation.getY());
+    SmartDashboard.putNumber("AutoAlignTargetX", target.getX());
+    SmartDashboard.putNumber("AutoAlignTargetY", target.getY());
     cosine = driveAngle.getCos();
     sine = driveAngle.getSin();
     initialDistance = deltaTranslation.getNorm();
@@ -103,7 +104,7 @@ public class AlignToPose extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var currentPose = swerve.getPose();
+    currentPose = swerve.getPose();
     currentRelativePose = new Pose2d(
       currentPose.getTranslation().minus(initialPose.getTranslation()),
       currentPose.getRotation()
@@ -124,17 +125,16 @@ public class AlignToPose extends Command {
     );
     SmartDashboard.putNumber("XPosSetpoint", profileSetpoint.position * cosine);
     SmartDashboard.putNumber("YPosSetpoint", profileSetpoint.position * sine);
-    SmartDashboard.putNumber("XPos", currentRelativePose.getX());
-    SmartDashboard.putNumber("Ypos", currentRelativePose.getY());
+    SmartDashboard.putNumber("XPos", currentPose.getX());
+    SmartDashboard.putNumber("Ypos", currentPose.getY());
 
     var omega = thetaController.calculate(currentRelativePose.getRotation().getRadians(), target.getRotation().getRadians());
     omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
 
     swerve.drive(translation, omega, true, false);
 
-    SmartDashboard.putBoolean("XatTarg", xController.atSetpoint());
-    SmartDashboard.putBoolean("YatTarg", yController.atSetpoint());
-    SmartDashboard.putBoolean("thetaAtTarg", thetaController.atSetpoint());
+    SmartDashboard.putBoolean("XYatTarg", currentPose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE);
+    SmartDashboard.putBoolean("thetaAtTarg", Math.abs(currentPose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE);
   }
 
   // Called once the command ends or is interrupted.
@@ -146,7 +146,7 @@ public class AlignToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (currentRelativePose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE)
-    && Math.abs(currentRelativePose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE;
+    return (currentPose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE)
+    && Math.abs(currentPose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE;
   }
 }

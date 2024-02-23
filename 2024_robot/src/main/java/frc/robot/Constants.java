@@ -41,6 +41,7 @@ public final class Constants {
     public static final double GRAVITY = 9.81; // m/s/s
 
     public static final double FIELD_WIDTH = Units.inchesToMeters((12 * 26) + 3.5);
+    public static final double FIELD_LENGTH = 16.55445;
 
   public static final double LOOP_CYCLE = 0.02; // 20ms
 
@@ -198,11 +199,11 @@ public final class Constants {
     @SuppressWarnings("unused")
     public static final class Vision {
         public static final int APRILTAG_PIPELINE_NUMBER = 0;
-        public static final String BOW_LIMELIGHT_NAME = "bow";
+        public static final String BOW_LIMELIGHT_NAME = "limelight-bow";
         private static final int BOW_IP = 13; // Git-tracked notepad
-        public static final String STERN_LIMELIGHT_NAME = "stern";
+        public static final String STERN_LIMELIGHT_NAME = "limelight-stern";
         private static final int STERN_IP = 12;
-        public static final String NOTE_LIMELIGHT_NAME = "note";
+        public static final String NOTE_LIMELIGHT_NAME = "limelight-note";
         private static final int NOTE_IP = 14;
 
         public static final double POSE_ERROR_TOLERANCE = 5;
@@ -330,11 +331,11 @@ public final class Constants {
         public static final double DRIVE_KI = 0;
         public static final double DRIVE_KD = 0;
 
-        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.1; // m
+        public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
-            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
-            Map.entry("3/4NoteCenterStart", new Pose2d(new Translation2d(1.9, 5.55), Rotation2d.fromDegrees(180)))
+            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), FIELD_WIDTH - 0.67), Rotation2d.fromDegrees(90))),
+            Map.entry("3/4NoteCenterStart", new Pose2d(new Translation2d(1.9, 5.55), Rotation2d.fromDegrees(0)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
         private static final Map<String, Pose2d> RED_MAP =
@@ -342,12 +343,12 @@ public final class Constants {
                 entry -> entry.getKey(),
                 entry -> new Pose2d(
                     new Translation2d(
-                        entry.getValue().getX(),
-                        FIELD_WIDTH - entry.getValue().getY()
+                        FIELD_LENGTH - entry.getValue().getX(),
+                        entry.getValue().getY()
                     ),
                     new Rotation2d(
-                        entry.getValue().getRotation().getCos(),
-                        -entry.getValue().getRotation().getSin()
+                        -entry.getValue().getRotation().getCos(),
+                        entry.getValue().getRotation().getSin()
                     )
                 )
             ));
@@ -387,11 +388,11 @@ public final class Constants {
         public static final double STARBOARD_SHOOTER_SPEED = 3000;
         public static final double PORT_IDLE_SPEED = 3000;
         public static final double STARBOARD_IDLE_SPEED = 1000;
-        public static final double PORT_AMP_SCORE_SPEED = 1000;
-        public static final double STARBOARD_AMP_SCORE_SPEED = 1000;
+        public static final double PORT_AMP_SCORE_SPEED = 500;
+        public static final double STARBOARD_AMP_SCORE_SPEED = 500;
         public static final double SHOOTER_INTAKE_SPEED = -500;
 
-        public static final double SHOOTER_SPEED_TOLERANCE = 200;
+        public static final double SHOOTER_SPEED_TOLERANCE = 100;
     }
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;
