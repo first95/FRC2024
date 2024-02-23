@@ -240,12 +240,30 @@ public class SwerveBase extends SubsystemBase {
     return odometry.getEstimatedPosition();
   }
 
+  public Pose2d getTelePose() {
+    if (alliance == Alliance.Red) {
+      var odomPose = odometry.getEstimatedPosition();
+      return new Pose2d(odomPose.getTranslation(), odomPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+    } else {
+      return odometry.getEstimatedPosition();
+    }
+  }
+
   /**
    * Gets the current field-relative velocity (x, y and omega) of the robot
    * @return A ChassisSpeeds object of the current field-relative velocity
    */
   public ChassisSpeeds getFieldVelocity() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotVelocity(), getPose().getRotation());
+  }
+
+  public ChassisSpeeds getTeleFieldVelocity() {
+    if (alliance == Alliance.Red) {
+      var speeds = getFieldVelocity();
+      return new ChassisSpeeds(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond);
+    } else {
+      return getFieldVelocity();
+    }
   }
 
   /**

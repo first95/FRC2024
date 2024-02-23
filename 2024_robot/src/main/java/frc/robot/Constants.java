@@ -232,8 +232,8 @@ public final class Constants {
             2.2585
         );
         public static final Translation3d RED_SPEAKER_POS = new Translation3d(
-            0,
-            2.6619,
+            FIELD_LENGTH,
+            5.5474,
             2.2585
         );
     }

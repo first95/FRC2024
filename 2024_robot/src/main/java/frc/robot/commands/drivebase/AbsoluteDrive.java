@@ -64,7 +64,7 @@ public class AbsoluteDrive extends Command {
 
   @Override
   public void initialize() {
-    lastAngle = swerve.getPose().getRotation().getRadians();
+    lastAngle = swerve.getTelePose().getRotation().getRadians();
     thetaController = new PIDController(Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     swerve.drive(new Translation2d(), 0, true, true);
@@ -78,7 +78,7 @@ public class AbsoluteDrive extends Command {
     // reset without the robot immediately rotating to the previously-commanded angle in the new
     // refrence frame.  This currently does not override the joystick.
     if (swerve.wasGyroReset()) {
-      lastAngle = swerve.getPose().getRotation().getRadians();
+      lastAngle = swerve.getTelePose().getRotation().getRadians();
       swerve.clearGyroReset();
     }
 
@@ -106,7 +106,7 @@ public class AbsoluteDrive extends Command {
     horizontalCG = robotCG.toTranslation2d();
 
     // Calculates an angular rate using a PIDController and the commanded angle.;
-    omega = thetaController.calculate(swerve.getPose().getRotation().getRadians(), angle);
+    omega = thetaController.calculate(swerve.getTelePose().getRotation().getRadians(), angle);
     omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
     SmartDashboard.putNumber("HeadingSetpoint", angle);
     SmartDashboard.putNumber("CommandedOmega", omega);
@@ -194,7 +194,7 @@ public class AbsoluteDrive extends Command {
    */
   private Translation2d limitVelocity(Translation2d commandedVelocity) {
     // Get the robot's current field-relative velocity
-    ChassisSpeeds vel = swerve.getFieldVelocity();
+    ChassisSpeeds vel = swerve.getTeleFieldVelocity();
     Translation2d currentVelocity = new Translation2d(
         vel.vxMetersPerSecond,
         vel.vyMetersPerSecond);
@@ -210,7 +210,7 @@ public class AbsoluteDrive extends Command {
     Translation2d maxAccel = new Translation2d(
       calcMaxAccel(deltaV
         // Rotates the velocity vector to convert from field-relative to robot-relative
-        .rotateBy(swerve.getPose().getRotation().unaryMinus())
+        .rotateBy(swerve.getTelePose().getRotation().unaryMinus())
         .getAngle()),
       deltaV.getAngle());
 

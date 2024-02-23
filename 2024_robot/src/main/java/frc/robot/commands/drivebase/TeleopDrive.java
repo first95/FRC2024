@@ -52,8 +52,7 @@ public class TeleopDrive extends Command {
     SmartDashboard.putNumber("omega", angVelocity);
     swerve.drive(
       new Translation2d(
-        xVelocity
-        ,
+        xVelocity,
         yVelocity),
       angVelocity,
       driveMode.getAsBoolean(),
