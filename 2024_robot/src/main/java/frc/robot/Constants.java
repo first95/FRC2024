@@ -270,9 +270,10 @@ public final class Constants {
         public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
-        public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(60);
+        public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
         public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(107);
+        public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(107);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -386,9 +387,9 @@ public final class Constants {
         public static final double STARBOARD_SHOOTER_SPEED = 3000;
         public static final double PORT_IDLE_SPEED = 3000;
         public static final double STARBOARD_IDLE_SPEED = 1000;
-
         public static final double PORT_AMP_SCORE_SPEED = 1000;
         public static final double STARBOARD_AMP_SCORE_SPEED = 1000;
+        public static final double SHOOTER_INTAKE_SPEED = -500;
 
         public static final double SHOOTER_SPEED_TOLERANCE = 200;
     }
