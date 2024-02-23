@@ -358,17 +358,20 @@ public final class Constants {
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
         public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(10);
+
+        public static final double AUTO_INTAKE_SPEED = 1;
     }
 
     public static final class IntakeConstants {
-        public static final int TOP_ROLLER_ID = 10;
-        public static final int BOTTOM_ROLLER_ID = 11;
+        public static final int ROLLER_ID = 10;
 
         public static final int STATUS_FRAME_0_PERIOD = 20;
         public static final int STATUS_FRAME_1_PERIOD = 60000;
         public static final int STATUS_FRAME_2_PERIOD = 59000;
 
-        public static final double INTAKE_MAX_SPEED = 0.7;
+        public static final double MAX_SPEED = 0.7;
+
+        public static final int CURRENT_LIMIT = 50;
     }
 
     public static final class NoteHandlerSpeeds {

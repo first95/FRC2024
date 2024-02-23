@@ -125,7 +125,7 @@ public class RobotContainer {
         NoteHandlerCommand noteManager = new NoteHandlerCommand(
                 shooter,
                 intake,
-                () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()) * IntakeConstants.INTAKE_MAX_SPEED,
+                () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
                 () -> operatorController.y().getAsBoolean(),
                 () -> operatorController.leftBumper().getAsBoolean(),
                 () -> operatorController.rightBumper().getAsBoolean());

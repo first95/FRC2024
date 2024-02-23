@@ -12,30 +12,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
-  private CANSparkMax topIntakeRoller, bottomIntakeRoller;
+  private final CANSparkMax intakeRoller;
   /** Creates a new ExampleSubsystem. */
   public Intake() {
-    topIntakeRoller = new CANSparkMax(IntakeConstants.TOP_ROLLER_ID, MotorType.kBrushless);
-    bottomIntakeRoller = new CANSparkMax(IntakeConstants.BOTTOM_ROLLER_ID, MotorType.kBrushless);
-    topIntakeRoller.restoreFactoryDefaults();
-    bottomIntakeRoller.restoreFactoryDefaults();
+    intakeRoller = new CANSparkMax(IntakeConstants.ROLLER_ID, MotorType.kBrushless);
+    intakeRoller.restoreFactoryDefaults();
 
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
-    topIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
+    intakeRoller.setSmartCurrentLimit(IntakeConstants.CURRENT_LIMIT);
 
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
-    bottomIntakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
+    intakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, IntakeConstants.STATUS_FRAME_0_PERIOD);
+    intakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, IntakeConstants.STATUS_FRAME_1_PERIOD);
+    intakeRoller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, IntakeConstants.STATUS_FRAME_2_PERIOD);
 
-
-    topIntakeRoller.burnFlash();
-    bottomIntakeRoller.burnFlash();
+    intakeRoller.burnFlash();
   }
 
   public void runRollers(double speed) {
-    topIntakeRoller.set(speed);
-    bottomIntakeRoller.set(-speed);
+    //intakeRoller.set(speed * IntakeConstants.MAX_SPEED);
   }
 
   @Override
