@@ -7,6 +7,7 @@ package frc.robot.commands.autocommands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,9 +42,6 @@ public class AlignToPose extends Command {
     thetaController = new PIDController(
       Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    xController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
-    yController.setTolerance(Auton.DRIVE_POSITIONAL_TOLERANCE);
-    thetaController.setTolerance(Drivebase.HEADING_TOLERANCE);
     timer = new Timer();
     stringPose = false;
 
@@ -94,6 +92,7 @@ public class AlignToPose extends Command {
     cosine = driveAngle.getCos();
     sine = driveAngle.getSin();
     initialDistance = deltaTranslation.getNorm();
+    //fix initial velocity
     initialState = new TrapezoidProfile.State(0, Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond));
     goalState = new TrapezoidProfile.State(initialDistance, 0);
     SmartDashboard.putNumber("AutoAlignGoal", initialDistance);
@@ -113,16 +112,14 @@ public class AlignToPose extends Command {
     SmartDashboard.putNumber("AutoAlignPosSetpoint", profileSetpoint.position);
     SmartDashboard.putNumber("AutoAlignVelSetpoint", profileSetpoint.velocity);
     
-    var translation = new Translation2d(
-      xController.calculate(
-        currentRelativePose.getX(),
-        profileSetpoint.position * cosine
-      ) + profileSetpoint.velocity * cosine,
-      yController.calculate(
-        currentRelativePose.getY(),
-        profileSetpoint.position * sine
-      ) + profileSetpoint.velocity * sine
-    );
+    var x = xController.calculate(
+      currentRelativePose.getX(),
+      profileSetpoint.position * cosine
+    ) + profileSetpoint.velocity * cosine;
+    var y = yController.calculate(
+      currentRelativePose.getY(),
+      profileSetpoint.position * sine
+    ) + profileSetpoint.velocity * sine;
     SmartDashboard.putNumber("XPosSetpoint", profileSetpoint.position * cosine);
     SmartDashboard.putNumber("YPosSetpoint", profileSetpoint.position * sine);
     SmartDashboard.putNumber("XPos", currentPose.getX());
@@ -131,7 +128,7 @@ public class AlignToPose extends Command {
     var omega = thetaController.calculate(currentRelativePose.getRotation().getRadians(), target.getRotation().getRadians());
     omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
 
-    swerve.drive(translation, omega, true, false);
+    swerve.setFieldRelChassisSpeedsAndSkewCorrect(new ChassisSpeeds(x, y, omega));
 
     SmartDashboard.putBoolean("XYatTarg", currentPose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE);
     SmartDashboard.putBoolean("thetaAtTarg", Math.abs(currentPose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE);

@@ -156,6 +156,7 @@ public class SwerveBase extends SubsystemBase {
    * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity
    * control for the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation
    *  vector is used.
+   * !!!IMPORTANT!!! -- this method flips input speeds when on the Red alliance.  Use setChassisSpeeds for auton.
    * @param translation  Translation2d that is the commanded linear velocity of the robot, in meters per second.
    * In robot-relative mode, positive x is torwards the bow (front) and positive y is torwards port (left).  In field-
    * relative mode, positive x is away from the alliance wall (field North) and positive y is torwards the left wall when looking 
@@ -177,7 +178,7 @@ public class SwerveBase extends SubsystemBase {
           rotation),
         Constants.LOOP_CYCLE,
         Drivebase.SKEW_CORRECTION_FACTOR),
-      getPose().getRotation()
+      getTelePose().getRotation()
     )
     : new ChassisSpeeds(
       translation.getX(),
@@ -231,6 +232,15 @@ public class SwerveBase extends SubsystemBase {
       Drivebase.KINEMATICS.toSwerveModuleStates(chassisSpeeds));
   }
 
+  public void setFieldRelChassisSpeedsAndSkewCorrect(ChassisSpeeds chassisSpeeds) {
+    setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
+      correctForDynamics(
+        chassisSpeeds,
+        Constants.LOOP_CYCLE,
+        Drivebase.SKEW_CORRECTION_FACTOR),
+      getPose().getRotation()));
+  }
+
   
   /**
    * Gets the current pose (position and rotation) of the robot, as reported by odometry.
@@ -260,7 +270,7 @@ public class SwerveBase extends SubsystemBase {
   public ChassisSpeeds getTeleFieldVelocity() {
     if (alliance == Alliance.Red) {
       var speeds = getFieldVelocity();
-      return new ChassisSpeeds(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond);
+      return new ChassisSpeeds(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
     } else {
       return getFieldVelocity();
     }

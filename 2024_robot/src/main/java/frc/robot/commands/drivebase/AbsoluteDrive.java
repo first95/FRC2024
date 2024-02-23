@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -22,7 +23,7 @@ public class AbsoluteDrive extends Command {
   private SwerveBase swerve;
   private PIDController thetaController;
   private DoubleSupplier vX, vY, headingHorizontal, headingVertical;
-  private double omega, angle, lastAngle, x, y, 
+  private double omega, angle, lastAngle, x, y,
     maxAngularVelocity, xMoment, yMoment, zMoment, armHeight, armExtension, maxAngularAccel;
   private boolean isOpenLoop;
   private Translation2d horizontalCG;
@@ -117,7 +118,7 @@ public class AbsoluteDrive extends Command {
     y = Math.pow(vY.getAsDouble(), 3) * Drivebase.MAX_SPEED;
 
     // Limit velocity to prevent tippy
-    Translation2d translation = limitVelocity(new Translation2d(x, y));
+    Translation2d translation = new Translation2d(x,y);//limitVelocity(new Translation2d(x, y));
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", (new Translation2d(x, y)).toString());
 
