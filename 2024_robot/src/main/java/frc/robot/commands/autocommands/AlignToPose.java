@@ -134,6 +134,10 @@ public class AlignToPose extends Command {
     omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
 
     swerve.drive(translation, omega, true, false);
+
+    SmartDashboard.putBoolean("XatTarg", xController.atSetpoint());
+    SmartDashboard.putBoolean("YatTarg", yController.atSetpoint());
+    SmartDashboard.putBoolean("thetaAtTarg", thetaController.atSetpoint());
   }
 
   // Called once the command ends or is interrupted.
