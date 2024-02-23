@@ -21,7 +21,7 @@ public class AutoAmp extends SequentialCommandGroup {
     addCommands(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, true)));
     addCommands(new AlignToPose("ScoreAmp", swerve));
     addCommands(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.AUTO_AMP_SCORE_KEY, true)));
-    addCommands(new WaitCommand(0.5));
+    addCommands(new WaitCommand(1));
     addCommands(new InstantCommand(() -> {
       SmartDashboard.putBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
       SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
