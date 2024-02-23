@@ -334,8 +334,8 @@ public final class Constants {
         public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
-            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), FIELD_WIDTH - 0.67), Rotation2d.fromDegrees(90))),
-            Map.entry("3/4NoteCenterStart", new Pose2d(new Translation2d(1.9, 5.55), Rotation2d.fromDegrees(0)))
+            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
+            Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
         private static final Map<String, Pose2d> RED_MAP =
@@ -359,7 +359,7 @@ public final class Constants {
         );
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
-        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(10);
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(5);
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }

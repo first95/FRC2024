@@ -131,7 +131,7 @@ public class AlignToPose extends Command {
     swerve.setFieldRelChassisSpeedsAndSkewCorrect(new ChassisSpeeds(x, y, omega));
 
     SmartDashboard.putBoolean("XYatTarg", currentPose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE);
-    SmartDashboard.putBoolean("thetaAtTarg", Math.abs(currentPose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE);
+    SmartDashboard.putBoolean("thetaAtTarg", currentPose.getRotation().minus(target.getRotation()).getRadians() <= Drivebase.HEADING_TOLERANCE);
   }
 
   // Called once the command ends or is interrupted.
@@ -144,6 +144,6 @@ public class AlignToPose extends Command {
   @Override
   public boolean isFinished() {
     return (currentPose.getTranslation().getDistance(target.getTranslation()) <= Auton.DRIVE_POSITIONAL_TOLERANCE)
-    && Math.abs(currentPose.getRotation().getRadians() - target.getRotation().getRadians()) <= Drivebase.HEADING_TOLERANCE;
+    && currentPose.getRotation().minus(target.getRotation()).getRadians() <= Drivebase.HEADING_TOLERANCE;
   }
 }
