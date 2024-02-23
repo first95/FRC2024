@@ -403,6 +403,9 @@ public class SwerveBase extends SubsystemBase {
   
   private void addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
     PoseLatency visionMeasurement = getVisionPose(limelightName);
+    if (visionMeasurement == null) {
+      return;
+    }
     double targetArea = LimelightHelpers.getTA(limelightName);
     LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
     int numTargets = llResults.targetingResults.targets_Fiducials.length;
