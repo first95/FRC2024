@@ -33,15 +33,11 @@ public final class Autos {
     return new AutoShoot(drive).withTimeout(5);
   }
 
-  public static Command twoNoteCenter(SwerveBase drive, Intake intake, Map<String, ChoreoTrajectory> trajMap) {
+  public static Command twoNoteCenter(SwerveBase drive, Intake intake) {
     Command command = new AutoShoot(drive).withTimeout(2)
-      .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "Finished Shot 1")))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new AlignToPose("CenterNearNote", drive))
-      .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "Finished Aligning")))
-      .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "Starting Shot 2")))
       .andThen(new AutoShoot(drive)).withTimeout(5)
-      .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "Finished Shot 2")))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
       command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
       return command;
@@ -49,14 +45,13 @@ public final class Autos {
 
   public static Command threeNoteCenterAmp(SwerveBase drive, Intake intake, Map<String, ChoreoTrajectory> trajMap) {
     Command command = new AutoShoot(drive).withTimeout(3)
-      .andThen(new AlignToPose("3/4NoteCenterStart", drive))
       .alongWith(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
-      .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp.1.traj"), drive, false, true))
-      .andThen(new WaitCommand(1))
+      .andThen(new AlignToPose("CenterNearNote", drive))
       .andThen(new AutoShoot(drive)).withTimeout(5)
-      .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp.2.traj"), drive, false, true))
-      .andThen(new WaitCommand(1))
-      .andThen(new AutoShoot(drive)).withTimeout(2)
+      .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "DoneShot2")))
+      .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp.traj"), drive, false, true))
+      .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "DonePath")))
+      .andThen(new AutoShoot(drive)).withTimeout(5)
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
     command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
     return command;

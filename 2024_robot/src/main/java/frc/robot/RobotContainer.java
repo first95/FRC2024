@@ -14,6 +14,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.NoteHandlerCommand;
 import frc.robot.commands.autocommands.AlignToPose;
+import frc.robot.commands.autocommands.FollowTrajectory;
 import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
@@ -193,7 +194,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.twoNoteCenter(drivebase, intake, trajMap);
+    //return Autos.threeNoteCenterAmp(drivebase, intake, trajMap);
+    return new AlignToPose("CenterNearNote", drivebase).andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp.traj"), drivebase, false, true));
   }
 
   public void sendAlliance() {
