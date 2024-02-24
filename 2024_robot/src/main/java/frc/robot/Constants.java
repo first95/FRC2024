@@ -380,7 +380,7 @@ public final class Constants {
     public static final class NoteHandlerSpeeds {
         public static final double INTAKE_IDLE_SPEED = 0;
 
-        public static final double LOADER_INTAKE_SPEED = 0.9;
+        public static final double LOADER_INTAKE_SPEED = 0.8;
         public static final double LOADER_FIRING_SPEED = 1;
         public static final double LOADER_IDLE_SPEED = 0;
         public static final double LOADER_INDEXING_SPEED = 0.1;

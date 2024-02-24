@@ -438,7 +438,7 @@ public class SwerveBase extends SubsystemBase {
       SmartDashboard.putBoolean(limelightName + " Tests", false);
       return visionMeasurement;
     }
-    if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (errorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
+    /*if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (errorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
       errorCounter++;
       SmartDashboard.putBoolean(limelightName + " Tests", false);
       return visionMeasurement;
@@ -446,7 +446,7 @@ public class SwerveBase extends SubsystemBase {
       wasOdometrySeeded = false;
       return visionMeasurement;
     }
-    errorCounter = 0;
+    errorCounter = 0;*/
     if (visionMeasurement.numTargets >= 2) {
       if (visionMeasurement.ta > Vision.MIN_CLOSE_MULTITARGET_AREA) {
         xyStds = Vision.VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
