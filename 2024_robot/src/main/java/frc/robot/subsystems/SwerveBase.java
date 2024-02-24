@@ -496,6 +496,9 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
     SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);*/
 
+    SmartDashboard.putNumber("SternErrorCounter", sternErrorCounter);
+    SmartDashboard.putNumber("BowErrorCounter", bowErrorCounter);
+
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded && alliance != null) { 

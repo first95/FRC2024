@@ -298,7 +298,7 @@ public final class Constants {
         public static final double SHOULDER_KV = (12 * 60) / (ARM_RADIANS_PER_MOTOR_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
         public static final double SHOULDER_KA = 0.5; // V * s^2 / rad
 
-        public static final double FLYWHEEL_KP = 2.6269E-8;
+        public static final double FLYWHEEL_KP = 2E-4;
         public static final double FLYWHEEL_KI = 0;
         public static final double FLYWHEEL_KD = 0;
         public static final double FLYWHEEL_KF = 0;

@@ -71,14 +71,14 @@ red_balance:1200
 roi_x:0.000000
 roi_y:0.000000
 rsf:0.0635
-rspitch:11
+rspitch:14
 rsroll:1
 rss:0.3048
 rsu:0.5382
 rsyaw:0
 sat_max:255
 sat_min:70
-send_corners:0
+send_corners:1
 send_raw_contours:0
 solve3d:0
 solve3d_algo:0
