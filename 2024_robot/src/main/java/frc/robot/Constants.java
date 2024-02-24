@@ -219,10 +219,10 @@ public final class Constants {
         public static final double VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV = 1;
         public static final double VISION_FAR_MULTITARGET_ANGULAR_STD_DEV = Math.toRadians(30);
 
-        public static final double MIN_CLOSE_TARGET_AREA = 0.4; // Proportions
-        public static final double MIN_FAR_TARGET_AREA = 0.2;
-        public static final double MIN_CLOSE_MULTITARGET_AREA = 0.35;
-        public static final double MIN_FAR_MULTITARGET_AREA = 0.15;
+        public static final double MIN_CLOSE_TARGET_AREA = 0.005; // Units unknown
+        public static final double MIN_FAR_TARGET_AREA = 0.002;
+        public static final double MIN_CLOSE_MULTITARGET_AREA = 0.004;
+        public static final double MIN_FAR_MULTITARGET_AREA = 0.001;
         public static final double MAX_ALLOWABLE_Z_ERROR = 0.25; // Meters
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(

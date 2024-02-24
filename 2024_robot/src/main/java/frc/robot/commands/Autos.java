@@ -5,8 +5,6 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.Auton;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.commands.autocommands.AlignToPose;
 import frc.robot.commands.autocommands.FollowTrajectory;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -21,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
