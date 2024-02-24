@@ -59,6 +59,8 @@ public class SwerveBase extends SubsystemBase {
 
   private double angle, lasttime;
 
+  private int bowErrorCounter, sternErrorCounter;
+
   private Timer timer;
 
   private boolean wasGyroReset, wasOdometrySeeded;
@@ -115,6 +117,8 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putData("SternCam", sternCam);
     SmartDashboard.putData("BowCam", bowCam);
     SmartDashboard.putData("Field", field);
+    bowErrorCounter = 0;
+    sternErrorCounter = 0;
 
     driveCharacterizer = new SysIdRoutine(
       new SysIdRoutine.Config(),
@@ -416,18 +420,33 @@ public class SwerveBase extends SubsystemBase {
   
   private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
     CamData visionMeasurement = new CamData(LimelightHelpers.getLatestResults(limelightName));
+    int errorCounter;
+    if (limelightName == Vision.BOW_LIMELIGHT_NAME) {
+      errorCounter = bowErrorCounter;
+    } else if (limelightName == Vision.STERN_LIMELIGHT_NAME) {
+      errorCounter = sternErrorCounter;
+    } else {
+      errorCounter = 0;
+    }
 
     double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, angStds;
 
     if (!visionMeasurement.valid
     || visionMeasurement.pipeline != Vision.APRILTAG_PIPELINE_NUMBER
-    || (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR)
-    || (poseDifference > Vision.POSE_ERROR_TOLERANCE)) {
+    || (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR)) {
       SmartDashboard.putBoolean(limelightName + " Tests", false);
       return visionMeasurement;
     }
-    
+    if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (errorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
+      errorCounter++;
+      SmartDashboard.putBoolean(limelightName + " Tests", false);
+      return visionMeasurement;
+    } else if (errorCounter >= Vision.LOOP_CYCLES_BEFORE_RESET) {
+      wasOdometrySeeded = false;
+      return visionMeasurement;
+    }
+    errorCounter = 0;
     if (visionMeasurement.numTargets >= 2) {
       if (visionMeasurement.ta > Vision.MIN_CLOSE_MULTITARGET_AREA) {
         xyStds = Vision.VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
@@ -455,6 +474,12 @@ public class SwerveBase extends SubsystemBase {
     double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, angStds));
     odometry.addVisionMeasurement(visionMeasurement.pose2d, timestamp);
+
+    if (limelightName == Vision.BOW_LIMELIGHT_NAME) {
+      bowErrorCounter = errorCounter;
+    } else if (limelightName == Vision.STERN_LIMELIGHT_NAME) {
+      sternErrorCounter = errorCounter;
+    }
 
     return visionMeasurement;
   }

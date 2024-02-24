@@ -205,8 +205,9 @@ public final class Constants {
         public static final String NOTE_LIMELIGHT_NAME = "limelight-note";
         private static final int NOTE_IP = 14;
 
-        public static final double POSE_ERROR_TOLERANCE = 5;
+        public static final double POSE_ERROR_TOLERANCE = 1;
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(7);
+        public static final int LOOP_CYCLES_BEFORE_RESET = 20;
 
         public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.05; // Meters and radians
         public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.01);
@@ -260,7 +261,7 @@ public final class Constants {
 
         public static final int SHOOTER_CURRENT_LIMIT = 40; // A
         public static final int LOADER_CURRENT_LIMIT = 40; // A
-        public static final int SHOULDER_CURRENT_LIMIT = 60; // A
+        public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
         public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
 
@@ -371,7 +372,7 @@ public final class Constants {
         public static final int STATUS_FRAME_1_PERIOD = 60000;
         public static final int STATUS_FRAME_2_PERIOD = 59000;
 
-        public static final double MAX_SPEED = 0.7;
+        public static final double MAX_SPEED = 1;
 
         public static final int CURRENT_LIMIT = 50;
     }
@@ -379,7 +380,7 @@ public final class Constants {
     public static final class NoteHandlerSpeeds {
         public static final double INTAKE_IDLE_SPEED = 0;
 
-        public static final double LOADER_INTAKE_SPEED = 0.8;
+        public static final double LOADER_INTAKE_SPEED = 0.9;
         public static final double LOADER_FIRING_SPEED = 1;
         public static final double LOADER_IDLE_SPEED = 0;
         public static final double LOADER_INDEXING_SPEED = 0.1;
