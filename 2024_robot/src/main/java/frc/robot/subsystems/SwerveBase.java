@@ -438,10 +438,11 @@ public class SwerveBase extends SubsystemBase {
     LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
     int numTargets = llResults.targetingResults.targets_Fiducials.length;
 
-    //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
+    double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, degStds;
 
-    if (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR) {
+    if ((Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR)
+    || (poseDifference > Vision.POSE_ERROR_TOLERANCE)) {
       return;
     }
     

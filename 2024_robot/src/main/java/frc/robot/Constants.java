@@ -209,22 +209,22 @@ public final class Constants {
         public static final double POSE_ERROR_TOLERANCE = 5;
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(7);
 
-        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.1; // Meters and radians
+        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.05; // Meters and radians
         public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.01);
-        public static final double VISION_CLOSE_TRANSLATIONAL_STD_DEV = 0.3;
-        public static final double VISION_CLOSE_ANGULAR_STD_DEV = Math.toRadians(10);
+        public static final double VISION_CLOSE_TRANSLATIONAL_STD_DEV = 3;
+        public static final double VISION_CLOSE_ANGULAR_STD_DEV = Math.toRadians(20);
         public static final double VISION_FAR_TRANSLATIONAL_STD_DEV = 5;
         public static final double VISION_FAR_ANGULAR_STD_DEV = Math.toRadians(50);
-        public static final double VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV = 0.1;
-        public static final double VISION_CLOSE_MULTITARGET_ANGULAR_STD_DEV = Math.toRadians(2);
-        public static final double VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV = 0.5;
-        public static final double VISION_FAR_MULTITARGET_ANGULAR_STD_DEV = Math.toRadians(20);
+        public static final double VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV = 0.5;
+        public static final double VISION_CLOSE_MULTITARGET_ANGULAR_STD_DEV = Math.toRadians(10);
+        public static final double VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV = 1;
+        public static final double VISION_FAR_MULTITARGET_ANGULAR_STD_DEV = Math.toRadians(30);
 
-        public static final double MIN_CLOSE_TARGET_AREA = 0.5; // Proportions
-        public static final double MIN_FAR_TARGET_AREA = 0.1;
-        public static final double MIN_CLOSE_MULTITARGET_AREA = 0.5;
-        public static final double MIN_FAR_MULTITARGET_AREA = 0.1;
-        public static final double MAX_ALLOWABLE_Z_ERROR = 1; // Meters
+        public static final double MIN_CLOSE_TARGET_AREA = 0.4; // Proportions
+        public static final double MIN_FAR_TARGET_AREA = 0.2;
+        public static final double MIN_CLOSE_MULTITARGET_AREA = 0.35;
+        public static final double MIN_FAR_MULTITARGET_AREA = 0.15;
+        public static final double MAX_ALLOWABLE_Z_ERROR = 0.25; // Meters
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
             0,
