@@ -194,7 +194,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.threeNoteCenterAmp(drivebase, intake, trajMap);
+    return Autos.fourNearNotes(drivebase, intake, trajMap);
   }
 
   public void sendAlliance() {
@@ -214,7 +214,7 @@ public class RobotContainer {
       return null;
     }
     return trajNames.stream().collect(Collectors.toMap(
-        entry -> entry,
+        entry -> entry.replace(".traj", ""),
         entry -> Choreo.getTrajectory(entry.replace(".traj", ""))));
   }
 

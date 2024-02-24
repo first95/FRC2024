@@ -140,7 +140,7 @@ public class NoteHandlerCommand extends Command {
         break;
 
       case AUTO_SPOOLING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        intakeSpeed = commandedIntakeSpeed;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE_SPEED
             : NoteHandlerSpeeds.LOADER_IDLE_SPEED;
         portShootingSpeed = portSpeed;
@@ -170,7 +170,7 @@ public class NoteHandlerCommand extends Command {
         break;
 
       case AUTO_SHOOTING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE_SPEED;
+        intakeSpeed = commandedIntakeSpeed;
         loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING_SPEED;
         portShootingSpeed = portSpeed;
         starboardShootingSpeed = starboardSpeed;
