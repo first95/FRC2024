@@ -336,7 +336,7 @@ public final class Constants {
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
             Map.entry("ScoreAmp", new Pose2d(new Translation2d(1.8, FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
             Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0))),
-            Map.entry("AmpNote", new Pose2d(new Translation2d(2.5, 6.8), new Rotation2d(0.5)))
+            Map.entry("AmpNote", new Pose2d(new Translation2d(2.66, 6.8), new Rotation2d(0.5)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
         private static final Map<String, Pose2d> RED_MAP =
