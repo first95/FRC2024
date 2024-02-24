@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +25,8 @@ import frc.robot.subsystems.SwerveBase;
 public class AutoShoot extends Command {
   private final PIDController thetaController;
   private final SwerveBase swerve;
+  private final double timeout;
+  private final Timer timer;
 
   private double angle, omega;
   private Pose2d currentPose;
@@ -35,6 +38,9 @@ public class AutoShoot extends Command {
    * @param subsystem The subsystem used by this command.
    */
   public AutoShoot(SwerveBase swerve) {
+    this(swerve, -1);
+  }
+  public AutoShoot(SwerveBase swerve, double timeoutSeconds) {
     thetaController = new PIDController(
       Drivebase.HEADING_KP,
       Drivebase.HEADING_KI,
@@ -42,6 +48,8 @@ public class AutoShoot extends Command {
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     thetaController.setTolerance(Drivebase.HEADING_TOLERANCE);
     this.swerve = swerve;
+    timeout = timeoutSeconds;
+    timer = new Timer();
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
@@ -52,6 +60,11 @@ public class AutoShoot extends Command {
   public void initialize() {
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, true);
+
+    if (timeout >= 0) {
+      timer.reset();
+      timer.start();
+    }
 
     var alliance = swerve.getAlliance();
     if (alliance == Alliance.Blue) {
@@ -116,6 +129,10 @@ public class AutoShoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (timeout < 0) {
+      return false;
+    } else {
+      return timer.get() >= timeout;
+    }
   }
 }
