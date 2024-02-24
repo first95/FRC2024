@@ -39,8 +39,7 @@ public final class Constants {
   public static final double VORTEX_STALL_TORQUE = 3.6; // N * m
 
     public static final double GRAVITY = 9.81; // m/s/s
-
-    public static final double FIELD_WIDTH = Units.inchesToMeters((12 * 26) + 3.5);
+    public static final double FIELD_WIDTH = 8.0137;
     public static final double FIELD_LENGTH = 16.55445;
 
   public static final double LOOP_CYCLE = 0.02; // 20ms
@@ -334,7 +333,7 @@ public final class Constants {
         public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
-            Map.entry("ScoreAmp", new Pose2d(new Translation2d(Units.inchesToMeters(72.4), FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
+            Map.entry("ScoreAmp", new Pose2d(new Translation2d(1.8, FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
             Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
@@ -359,7 +358,7 @@ public final class Constants {
         );
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
-        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(5);
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(0);
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }

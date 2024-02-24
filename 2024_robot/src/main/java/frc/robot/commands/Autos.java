@@ -48,7 +48,7 @@ public final class Autos {
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new AlignToPose("CenterNearNote", drive))
       .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "DoneAlign")))
-      .andThen(new AutoShoot(drive, 5))
+      .andThen(new AutoShoot(drive, 2))
       .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "DoneShot2")))
       .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp.traj"), drive, false, true))
       .andThen(new InstantCommand(() -> SmartDashboard.putString("AutoState", "DonePath")))
