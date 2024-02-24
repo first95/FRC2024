@@ -40,7 +40,7 @@ public final class Constants {
 
     public static final double GRAVITY = 9.81; // m/s/s
     public static final double FIELD_WIDTH = 8.0137;
-    public static final double FIELD_LENGTH = 16.55445;
+    public static final double FIELD_LENGTH = 16.5410515;
 
   public static final double LOOP_CYCLE = 0.02; // 20ms
 
