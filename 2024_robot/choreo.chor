@@ -1,9 +1,9 @@
 {
-    "version": "v0.2.1",
+    "version": "v0.2.2",
     "robotConfiguration": {
         "mass": 44.45278620185516,
         "rotationalInertia": 30.9768,
-        "motorMaxTorque": 0.3,
+        "motorMaxTorque": 0.6,
         "motorMaxVelocity": 5427.200000000001,
         "gearing": 4.71,
         "wheelbase": 0.5714996913901667,
@@ -239,15 +239,13 @@
                     "scope": [
                         "first"
                     ],
-                    "type": "StopPoint",
-                    "uuid": "0e184fb9-99bc-4c21-8c2f-1ad32e2caaf0"
+                    "type": "StopPoint"
                 },
                 {
                     "scope": [
                         "last"
                     ],
-                    "type": "StopPoint",
-                    "uuid": "4b38d3e9-4f34-4431-b4cb-0b83aef2907a"
+                    "type": "StopPoint"
                 }
             ],
             "usesControlIntervalGuessing": true,
@@ -499,15 +497,13 @@
                     "scope": [
                         "first"
                     ],
-                    "type": "StopPoint",
-                    "uuid": "7d3d9cbd-bd09-4ef5-864f-08e68977cfa6"
+                    "type": "StopPoint"
                 },
                 {
                     "scope": [
                         "last"
                     ],
-                    "type": "StopPoint",
-                    "uuid": "91eec57b-c3f7-4c8a-9ccf-02d27277266b"
+                    "type": "StopPoint"
                 }
             ],
             "usesControlIntervalGuessing": true,
@@ -750,15 +746,13 @@
                     "scope": [
                         "first"
                     ],
-                    "type": "StopPoint",
-                    "uuid": "7653e631-b690-4ab5-89fe-b47901c565b5"
+                    "type": "StopPoint"
                 },
                 {
                     "scope": [
                         "last"
                     ],
-                    "type": "StopPoint",
-                    "uuid": "c19a2372-652b-4b4e-8bd1-19c927bf4b46"
+                    "type": "StopPoint"
                 }
             ],
             "usesControlIntervalGuessing": true,
@@ -767,5 +761,6 @@
             "circleObstacles": []
         }
     },
-    "splitTrajectoriesAtStopPoints": true
+    "splitTrajectoriesAtStopPoints": true,
+    "usesObstacles": false
 }
