@@ -31,10 +31,10 @@ public final class Autos {
   }
 
   public static Command twoNoteCenter(SwerveBase drive, Intake intake) {
-    Command command = new AutoShoot(drive).withTimeout(2)
+    Command command = new AutoShoot(drive, 3)
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new AlignToPose("CenterNearNote", drive))
-      .andThen(new AutoShoot(drive)).withTimeout(5)
+      .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
       command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
       return command;
