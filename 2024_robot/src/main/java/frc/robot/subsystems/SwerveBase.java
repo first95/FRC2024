@@ -51,6 +51,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 public class SwerveBase extends SubsystemBase {
 
   private final SwerveModule[] swerveModules;
+  private SwerveModulePosition[] currentModulePositions = new SwerveModulePosition[Drivebase.NUM_MODULES];
+  private SwerveModuleState[] currentModuleStates = new SwerveModuleState[Drivebase.NUM_MODULES];
   private Pigeon2 imu;
   private NetworkTable bowLimelightData, sternLimelightData;
   
@@ -58,6 +60,9 @@ public class SwerveBase extends SubsystemBase {
   private Field2d sternCam, bowCam;
 
   private double angle, lasttime;
+
+  private double[] moduleStates = new double[8];
+  private double[] moduleSetpoints = new double[8];
 
   private int bowErrorCounter, sternErrorCounter;
 
@@ -67,7 +72,9 @@ public class SwerveBase extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator odometry;
 
-  private Pose2d currentPose;
+  private Pose2d currentPose, currentTelePose;
+
+  private ChassisSpeeds currentRobotVelocity, currentFieldVelocity, currentTeleFieldVelocity;
 
   private Alliance alliance = null;
 
@@ -103,17 +110,25 @@ public class SwerveBase extends SubsystemBase {
       new SwerveModule(Drivebase.Mod2.CONSTANTS),
       new SwerveModule(Drivebase.Mod3.CONSTANTS),
     };
+    for (SwerveModule module : swerveModules) {
+      currentModulePositions[module.moduleNumber] = module.getPosition();
+    }
     
     odometry = new SwerveDrivePoseEstimator(
       Drivebase.KINEMATICS,
       getYaw(),
-      getModulePositions(),
+      currentModulePositions,
       new Pose2d(),
       VecBuilder.fill(Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_ANGULAR_STD_DEV),
       VecBuilder.fill(Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_ANGULAR_STD_DEV));
     wasOdometrySeeded = false;
     wasGyroReset = false;
     currentPose = new Pose2d();
+    currentTelePose = new Pose2d();
+
+    currentRobotVelocity = new ChassisSpeeds();
+    currentFieldVelocity = new ChassisSpeeds();
+    currentTeleFieldVelocity = new ChassisSpeeds();
 
     sternCam = new Field2d();
     bowCam = new Field2d();
@@ -152,7 +167,7 @@ public class SwerveBase extends SubsystemBase {
         log -> {
           log.motor("driveAngular")
           .voltage(Volts.of(avgDriveVolts()))
-          .angularPosition(Radians.of(getPose().getRotation().getRadians()))
+          .angularPosition(Radians.of(currentPose.getRotation().getRadians()))
           .angularVelocity(RadiansPerSecond.of(getRobotVelocity().omegaRadiansPerSecond));
         },
         this));
@@ -185,7 +200,7 @@ public class SwerveBase extends SubsystemBase {
           rotation),
         Constants.LOOP_CYCLE,
         Drivebase.SKEW_CORRECTION_FACTOR),
-      getTelePose().getRotation()
+      currentTelePose.getRotation()
     )
     : new ChassisSpeeds(
       translation.getX(),
@@ -243,7 +258,7 @@ public class SwerveBase extends SubsystemBase {
         chassisSpeeds,
         Constants.LOOP_CYCLE,
         Drivebase.SKEW_CORRECTION_FACTOR),
-      getPose().getRotation()));
+      currentPose.getRotation()));
   }
 
   
@@ -256,11 +271,7 @@ public class SwerveBase extends SubsystemBase {
   }
 
   public Pose2d getTelePose() {
-    if (alliance == Alliance.Red) {
-      return new Pose2d(currentPose.getTranslation(), currentPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
-    } else {
-      return currentPose;
-    }
+    return currentTelePose;
   }
 
   /**
@@ -268,16 +279,11 @@ public class SwerveBase extends SubsystemBase {
    * @return A ChassisSpeeds object of the current field-relative velocity
    */
   public ChassisSpeeds getFieldVelocity() {
-    return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotVelocity(), getPose().getRotation());
+    return currentFieldVelocity;
   }
 
   public ChassisSpeeds getTeleFieldVelocity() {
-    if (alliance == Alliance.Red) {
-      var speeds = getFieldVelocity();
-      return new ChassisSpeeds(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
-    } else {
-      return getFieldVelocity();
-    }
+    return currentTeleFieldVelocity;
   }
 
   /**
@@ -285,7 +291,7 @@ public class SwerveBase extends SubsystemBase {
    * @return A ChassisSpeeds object of the current robot-relative velocity
    */
   public ChassisSpeeds getRobotVelocity() {
-    return Drivebase.KINEMATICS.toChassisSpeeds(getStates());
+    return currentRobotVelocity;
   }
 
   /**
@@ -293,25 +299,16 @@ public class SwerveBase extends SubsystemBase {
    * @return A list of SwerveModuleStates containing the current module states
    */
   public SwerveModuleState[] getStates() {
-    SwerveModuleState[] states = new SwerveModuleState[Drivebase.NUM_MODULES];
-    for (SwerveModule module : swerveModules) {
-      states[module.moduleNumber] = module.getState();
-    }
-    return states;
+    return currentModuleStates;
   }
 
   /**
    * Gets the current module positions (azimuth and wheel position (meters))
    * @return A list of SwerveModulePositions cointaing the current module positions
    */
-  public SwerveModulePosition[] getModulePositions() {
-    SwerveModulePosition[] positions = new SwerveModulePosition[Drivebase.NUM_MODULES];
-    for (SwerveModule module : swerveModules) {
-      positions[module.moduleNumber] = module.getPosition();
-    }
-    return positions;
+  public SwerveModulePosition[] getCurrentModulePositions() {
+    return currentModulePositions;
   }
-
   
   public boolean wasGyroReset() {
     return wasGyroReset;
@@ -320,8 +317,6 @@ public class SwerveBase extends SubsystemBase {
   public void clearGyroReset() {
     wasGyroReset = false;
   }
-
-
 
   /**
    * Gets the current yaw angle of the robot, as reported by the imu.  CCW positive, not wrapped.
@@ -399,7 +394,7 @@ public class SwerveBase extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
-    odometry.resetPosition(getYaw(), getModulePositions(), pose);
+    odometry.resetPosition(getYaw(), getCurrentModulePositions(), pose);
   }
 
   public void clearOdometrySeed() {
@@ -486,12 +481,32 @@ public class SwerveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
-    odometry.update(getYaw(), getModulePositions());
+    // Update odometry and current pose/velocity
+    for (SwerveModule module : swerveModules) {
+      currentModulePositions[module.moduleNumber] = module.getPosition();
+      currentModuleStates[module.moduleNumber] = module.getState();
+
+      SmartDashboard.putNumber("Module " + module.moduleNumber + " Absolute Encoder", module.getAbsoluteEncoder());
+      var desState = module.getDesiredState();
+      moduleStates[module.moduleNumber] = currentModuleStates[module.moduleNumber].angle.getRadians();
+      moduleSetpoints[module.moduleNumber] = desState.angle.getRadians();
+      moduleStates[module.moduleNumber + 1] = currentModuleStates[module.moduleNumber].speedMetersPerSecond;
+      moduleSetpoints[module.moduleNumber + 1] = desState.speedMetersPerSecond;
+    }
+    odometry.update(getYaw(), currentModulePositions);
     currentPose = odometry.getEstimatedPosition();
+    currentTelePose = alliance == Alliance.Red 
+    ? new Pose2d(currentPose.getTranslation(), currentPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)))
+    : currentPose;
+    currentRobotVelocity = Drivebase.KINEMATICS.toChassisSpeeds(currentModuleStates);
+    currentFieldVelocity = ChassisSpeeds.fromRobotRelativeSpeeds(currentRobotVelocity, currentPose.getRotation());
+    currentTeleFieldVelocity = alliance == Alliance.Red
+    ? new ChassisSpeeds(-currentFieldVelocity.vxMetersPerSecond, -currentFieldVelocity.vyMetersPerSecond, currentFieldVelocity.omegaRadiansPerSecond)
+    : currentFieldVelocity;
 
     SmartDashboard.putString("Gyro", getYaw().toString());
     SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
-    SmartDashboard.putString("OdometryPos", getPose().toString());
+    SmartDashboard.putString("OdometryPos", currentPose.toString());
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
@@ -565,17 +580,6 @@ public class SwerveBase extends SubsystemBase {
       
     }
 
-    double[] moduleStates = new double[8];
-    double[] moduleSetpoints = new double[8];
-    for (SwerveModule module : swerveModules) {
-      SmartDashboard.putNumber("Module" + module.moduleNumber + "CANCoder", module.getAbsoluteEncoder());
-      var state = module.getState();
-      var desState = module.getDesiredState();
-      moduleStates[module.moduleNumber] = state.angle.getRadians();
-      moduleSetpoints[module.moduleNumber] = desState.angle.getRadians();
-      moduleStates[module.moduleNumber + 1] = state.speedMetersPerSecond;
-      moduleSetpoints[module.moduleNumber + 1] = desState.speedMetersPerSecond;
-    }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
     SmartDashboard.putNumberArray("moduleSetpoints", moduleSetpoints);
     SmartDashboard.putNumber("OdomHeading", currentPose.getRotation().getRadians());
