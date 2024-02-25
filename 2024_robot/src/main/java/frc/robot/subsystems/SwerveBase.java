@@ -67,6 +67,8 @@ public class SwerveBase extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator odometry;
 
+  private Pose2d currentPose;
+
   private Alliance alliance = null;
 
   private final SysIdRoutine driveCharacterizer, angleCharacterizer;
@@ -190,8 +192,6 @@ public class SwerveBase extends SubsystemBase {
       rotation
     );
 
-    //velocity = correctForDynamics(velocity, Constants.LOOP_CYCLE, 1);
-
     // Display commanded speed for testing
     SmartDashboard.putString("RobotVelocity", velocity.toString());
 
@@ -202,7 +202,7 @@ public class SwerveBase extends SubsystemBase {
       );
     
     // Desaturate calculated speeds
-    //SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Drivebase.MAX_SPEED);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Drivebase.MAX_SPEED);
 
     // Command and display desired states
     for (SwerveModule module : swerveModules) {
@@ -251,15 +251,14 @@ public class SwerveBase extends SubsystemBase {
    * @return The robot's pose
    */
   public Pose2d getPose() {
-    return odometry.getEstimatedPosition();
+    return currentPose;
   }
 
   public Pose2d getTelePose() {
     if (alliance == Alliance.Red) {
-      var odomPose = odometry.getEstimatedPosition();
-      return new Pose2d(odomPose.getTranslation(), odomPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+      return new Pose2d(currentPose.getTranslation(), currentPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
     } else {
-      return odometry.getEstimatedPosition();
+      return currentPose;
     }
   }
 
@@ -487,6 +486,7 @@ public class SwerveBase extends SubsystemBase {
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
+    currentPose = odometry.getEstimatedPosition();
 
     SmartDashboard.putString("Gyro", getYaw().toString());
     SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
@@ -532,13 +532,11 @@ public class SwerveBase extends SubsystemBase {
     } else if (alliance == null) {
       DriverStation.reportError("Alliance not set!!  Odometry not seeded!", false);
     }
-
-    Pose2d estimatedPose = getPose();
     
-    CamData bowCamPose = addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, estimatedPose);
-    CamData sternCamPose = addVisionMeasurement(Vision.STERN_LIMELIGHT_NAME, estimatedPose);
+    CamData bowCamPose = addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, currentPose);
+    CamData sternCamPose = addVisionMeasurement(Vision.STERN_LIMELIGHT_NAME, currentPose);
 
-    field.setRobotPose(estimatedPose);
+    field.setRobotPose(currentPose);
     bowCam.setRobotPose(bowCamPose.pose2d);
     SmartDashboard.putNumber("BowCamZ", bowCamPose.pose3d.getZ());
     SmartDashboard.putBoolean("BowValid", bowCamPose.valid);
@@ -579,7 +577,7 @@ public class SwerveBase extends SubsystemBase {
     }
     SmartDashboard.putNumberArray("moduleStates", moduleStates);
     SmartDashboard.putNumberArray("moduleSetpoints", moduleSetpoints);
-    SmartDashboard.putNumber("OdomHeading", estimatedPose.getRotation().getRadians());
+    SmartDashboard.putNumber("OdomHeading", currentPose.getRotation().getRadians());
   }
 
   @Override
