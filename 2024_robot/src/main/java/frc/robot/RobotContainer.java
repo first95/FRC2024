@@ -6,17 +6,13 @@ package frc.robot;
 
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.Drivebase;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoAmp;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.NoteHandlerCommand;
-import frc.robot.commands.autocommands.AlignToPose;
-import frc.robot.commands.autocommands.FollowTrajectory;
-import frc.robot.commands.drivebase.TeleopDrive;
-import frc.robot.subsystems.ExampleSubsystem;
+//import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveBase;
@@ -34,15 +30,13 @@ import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+//import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -60,7 +54,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final SwerveBase drivebase = new SwerveBase();
   private final Shooter shooter = new Shooter();
-  private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
+  //private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
   private final AbsoluteDrive absoluteDrive;
 
   private final CommandJoystick driveController = new CommandJoystick(OperatorConstants.driveControllerPort);
@@ -73,7 +67,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    openRobotRel = new TeleopDrive(
+    /*openRobotRel = new TeleopDrive(
         drivebase,
         () -> (Math.abs(driveController.getY()) > OperatorConstants.joystickDeadband)
             ? -driveController.getY()
@@ -111,7 +105,7 @@ public class RobotContainer {
         () -> (Math.abs(driveController.getX()) > OperatorConstants.joystickDeadband)
             ? -driveController.getX()
             : 0,
-        () -> -headingController.getTwist(), () -> true, false);
+        () -> -headingController.getTwist(), () -> true, false);*/
 
     absoluteDrive = new AbsoluteDrive(
         drivebase,

@@ -46,6 +46,7 @@ public class Shooter extends SubsystemBase {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
+  private double armFeedforwardValue;
 
   private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
@@ -143,6 +144,8 @@ public class Shooter extends SubsystemBase {
         ShooterConstants.SHOULDER_KG,
         ShooterConstants.SHOULDER_KV,
         ShooterConstants.SHOULDER_KA);
+    
+    armFeedforwardValue = 0;
 
     flywheelFeedforward = new SimpleMotorFeedforward(
         ShooterConstants.FLYWHEEL_KS,
@@ -275,17 +278,16 @@ public class Shooter extends SubsystemBase {
         ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
         : armSetpoint;
 
-    double feedforward = 0;
-    if (Math
-        .abs(armSetpoint.position - ShooterConstants.ARM_LOWER_LIMIT.getRadians()) <= ShooterConstants.ARM_DEADBAND) {
+    if (Math.abs(armSetpoint.position - ShooterConstants.ARM_LOWER_LIMIT.getRadians()) <= ShooterConstants.ARM_DEADBAND) {
       shoulder.set(0);
+      armFeedforwardValue = 0;
     } else {
-      feedforward = shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity);
+      armFeedforwardValue = shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity);
       shoulderPID.setReference(
           armSetpoint.position,
           ControlType.kPosition,
           0,
-          feedforward,
+          armFeedforwardValue,
           ArbFFUnits.kVoltage);
     }
 
@@ -295,7 +297,7 @@ public class Shooter extends SubsystemBase {
 
     SmartDashboard.putNumber("ProportionalTerm",
         ShooterConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
-    SmartDashboard.putNumber("FeedforwardValue", feedforward;
+    SmartDashboard.putNumber("FeedforwardValue", armFeedforwardValue);
     SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
     SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
     SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));

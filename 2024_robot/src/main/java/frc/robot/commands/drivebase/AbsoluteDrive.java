@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -23,8 +22,8 @@ public class AbsoluteDrive extends Command {
   private SwerveBase swerve;
   private PIDController thetaController;
   private DoubleSupplier vX, vY, headingHorizontal, headingVertical;
-  private double omega, angle, lastAngle, x, y,
-    maxAngularVelocity, xMoment, yMoment, zMoment, armHeight, armExtension, maxAngularAccel;
+  private double omega, angle, lastAngle, x, y, xMoment, yMoment, zMoment,
+    armHeight, armExtension; //maxAngularVelocity, maxAngularAccel;
   private boolean isOpenLoop;
   private Translation2d horizontalCG;
   private Translation3d robotCG;

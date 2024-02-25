@@ -195,14 +195,17 @@ public final class Constants {
         public static final int PIGEON = 30;
     }
 
-    @SuppressWarnings("unused")
     public static final class Vision {
         public static final int APRILTAG_PIPELINE_NUMBER = 0;
         public static final String BOW_LIMELIGHT_NAME = "limelight-bow";
-        private static final int BOW_IP = 13; // Git-tracked notepad
         public static final String STERN_LIMELIGHT_NAME = "limelight-stern";
-        private static final int STERN_IP = 12;
         public static final String NOTE_LIMELIGHT_NAME = "limelight-note";
+
+        @SuppressWarnings("unused")
+        private static final int BOW_IP = 13; // Git-tracked notepad
+        @SuppressWarnings("unused")
+        private static final int STERN_IP = 12;
+        @SuppressWarnings("unused")
         private static final int NOTE_IP = 14;
 
         public static final double POSE_ERROR_TOLERANCE = 1;
