@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -189,6 +190,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return Autos.fourNearNotes(drivebase, intake, trajMap);
+  }
+
+  public void stopDrive() {
+    drivebase.setChassisSpeeds(new ChassisSpeeds());
   }
 
   public void sendAlliance() {
