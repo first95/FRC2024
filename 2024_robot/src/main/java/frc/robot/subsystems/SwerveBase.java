@@ -113,6 +113,7 @@ public class SwerveBase extends SubsystemBase {
       VecBuilder.fill(Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_ANGULAR_STD_DEV));
     wasOdometrySeeded = false;
     wasGyroReset = false;
+    currentPose = new Pose2d();
 
     sternCam = new Field2d();
     bowCam = new Field2d();
