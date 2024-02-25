@@ -276,8 +276,8 @@ public final class Constants {
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
-        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(107);
-        public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(107);
+        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(109);
+        public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -337,7 +337,7 @@ public final class Constants {
         public static final double DRIVE_POSITIONAL_TOLERANCE = 0.05; // m
 
         private static final Map<String, Pose2d> BLUE_MAP = Map.ofEntries(
-            Map.entry("ScoreAmp", new Pose2d(new Translation2d(1.8, FIELD_WIDTH - 0.57), Rotation2d.fromDegrees(90))),
+            Map.entry("ScoreAmp", new Pose2d(new Translation2d(1.83, 7.5), Rotation2d.fromDegrees(90))),
             Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0))),
             Map.entry("AmpNote", new Pose2d(new Translation2d(2.66, 6.8), new Rotation2d(0.5)))
         );
