@@ -134,8 +134,8 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void initializeDashboard() {
-    SmartDashboard.putNumber(Auton.PORT_SPEED_KEY, NoteHandlerSpeeds.PORT_SHOOTER_SPEED);
-    SmartDashboard.putNumber(Auton.STARBOARD_SPEED_KEY, NoteHandlerSpeeds.STARBOARD_SHOOTER_SPEED);
+    SmartDashboard.putNumber(Auton.PORT_SPEED_KEY, NoteHandlerSpeeds.PORT_SHOOTER);
+    SmartDashboard.putNumber(Auton.STARBOARD_SPEED_KEY, NoteHandlerSpeeds.STARBOARD_SHOOTER);
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians());
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, false);
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);

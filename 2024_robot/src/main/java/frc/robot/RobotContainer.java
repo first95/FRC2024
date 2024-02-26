@@ -126,7 +126,10 @@ public class RobotContainer {
         () -> operatorController.y().getAsBoolean(),
         () -> operatorController.leftBumper().getAsBoolean(),
         () -> operatorController.rightBumper().getAsBoolean(),
-        () -> operatorController.a().getAsBoolean());
+        () -> headingController.button(2).getAsBoolean(),
+        () -> operatorController.b().getAsBoolean(),
+        () -> operatorController.a().getAsBoolean(),
+        () -> operatorController.x().getAsBoolean());
 
     shooter.setDefaultCommand(noteManager);
 

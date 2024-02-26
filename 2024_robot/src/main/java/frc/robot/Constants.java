@@ -278,6 +278,7 @@ public final class Constants {
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
         public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
+        public static final Rotation2d ARM_CLIMB_ANGLE = Rotation2d.fromDegrees(90);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -381,22 +382,27 @@ public final class Constants {
     }
 
     public static final class NoteHandlerSpeeds {
-        public static final double INTAKE_IDLE_SPEED = 0;
+        public static final double INTAKE_IDLE = 0;
+        public static final double INTAKE_UNJAM = -1;
 
-        public static final double LOADER_INTAKE_SPEED = 0.8;
-        public static final double LOADER_FIRING_SPEED = 1;
-        public static final double LOADER_IDLE_SPEED = 0;
-        public static final double LOADER_INDEXING_SPEED = 0.1;
+        public static final double LOADER_INTAKE = 0.8;
+        public static final double LOADER_FIRING = 1;
+        public static final double LOADER_IDLE = 0;
+        public static final double LOADER_INDEXING = 0.1;
 
-        public static final double PORT_SHOOTER_SPEED = 5000;
-        public static final double STARBOARD_SHOOTER_SPEED = 3000;
-        public static final double PORT_IDLE_SPEED = 3000;
-        public static final double STARBOARD_IDLE_SPEED = 1000;
-        public static final double PORT_AMP_SCORE_SPEED = 500;
-        public static final double STARBOARD_AMP_SCORE_SPEED = 500;
-        public static final double SHOOTER_INTAKE_SPEED = -500;
+        public static final double PORT_SHOOTER = 5000;
+        public static final double STARBOARD_SHOOTER = 3000;
+        public static final double PORT_IDLE = 3000;
+        public static final double STARBOARD_IDLE = 1000;
+        public static final double PORT_AMP_SCORE = 500;
+        public static final double STARBOARD_AMP_SCORE = PORT_AMP_SCORE;
+        public static final double SHOOTER_INTAKE = -500;
+        public static final double PORT_EJECT = 500;
+        public static final double STARBOARD_EJECT = PORT_EJECT;
+        public static final double PORT_CLIMB = 0;
+        public static final double STARBOARD_CLIMB = PORT_CLIMB;
 
-        public static final double SHOOTER_SPEED_TOLERANCE = 100;
+        public static final double SHOOTER_TOLERANCE = 100;
     }
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;
