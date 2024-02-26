@@ -27,7 +27,9 @@ public final class Autos {
   }
 
   public static Command shootPreload(SwerveBase drive) {
-    return new AutoShoot(drive).withTimeout(5);
+    Command command = new AutoShoot(drive).withTimeout(5);
+    command.setName("Shoot Preload");
+    return command;
   }
 
   public static Command twoNoteCenter(SwerveBase drive, Intake intake) {
@@ -36,6 +38,7 @@ public final class Autos {
       .andThen(new AlignToPose("CenterNearNote", drive))
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      command.setName("Two Note Auto");
       command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
       return command;
   }
@@ -48,6 +51,7 @@ public final class Autos {
       .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp"), drive, false, true))
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+    command.setName("Three Note Auto");
     command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
     return command;
   }
@@ -62,6 +66,7 @@ public final class Autos {
     .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst2"), drive, false, true))
     .andThen(new AutoShoot(drive, 5))
     .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+    command.setName("Four Note Auto");
     command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
     return command;
   }

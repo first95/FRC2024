@@ -31,6 +31,7 @@ import com.choreo.lib.ChoreoTrajectory;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -62,6 +63,9 @@ public class RobotContainer {
   private final CommandJoystick headingController = new CommandJoystick(OperatorConstants.headingControllerPort);
   private final CommandXboxController operatorController = new CommandXboxController(
       OperatorConstants.operatorControllerPort);
+  
+  private Command autoCommand;
+  SendableChooser<Command> chooser = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -139,7 +143,23 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    SmartDashboard.putString("Selected Auto:", "NONE!!!");
+
     trajMap = loadTrajectories();
+
+    Command oneNoteAuto = Autos.shootPreload(drivebase);
+    Command twoNoteAuto = Autos.twoNoteCenter(drivebase, intake);
+    Command threeNoteAuto = Autos.threeNoteCenterAmp(drivebase, intake, trajMap);
+    Command fourNoteAuto = Autos.fourNearNotes(drivebase, intake, trajMap);
+    chooser.addOption(oneNoteAuto.getName(), oneNoteAuto);
+    chooser.addOption(twoNoteAuto.getName(), twoNoteAuto);
+    chooser.addOption(threeNoteAuto.getName(), threeNoteAuto);
+    chooser.setDefaultOption(fourNoteAuto.getName(), fourNoteAuto);
+    SmartDashboard.putData(chooser);
+    SmartDashboard.putData("SetAuto", new InstantCommand(() -> {
+      autoCommand = chooser.getSelected();
+      SmartDashboard.putString("Selected Auto:", autoCommand.getName());
+    }).ignoringDisable(true));
 
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
 
