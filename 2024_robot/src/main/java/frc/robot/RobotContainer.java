@@ -117,7 +117,9 @@ public class RobotContainer {
             ? -driveController.getX()
             : 0,
         () -> -headingController.getX(),
-        () -> -headingController.getY(), false);
+        () -> -headingController.getY(),
+        false,
+        () -> driveController.button(3).getAsBoolean());
 
     NoteHandlerCommand noteManager = new NoteHandlerCommand(
         shooter,

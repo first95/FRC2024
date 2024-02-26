@@ -4,6 +4,7 @@
 
 package frc.robot.commands.drivebase;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,12 +20,13 @@ import frc.robot.subsystems.SwerveBase;
 
 /** An example command that uses an example subsystem. */
 public class AbsoluteDrive extends Command {
-  private SwerveBase swerve;
-  private PIDController thetaController;
-  private DoubleSupplier vX, vY, headingHorizontal, headingVertical;
+  private final SwerveBase swerve;
+  private final PIDController thetaController;
+  private final DoubleSupplier vX, vY, headingHorizontal, headingVertical;
+  private final BooleanSupplier brakeMode;
   private double omega, angle, lastAngle, x, y, xMoment, yMoment, zMoment,
     armHeight, armExtension; //maxAngularVelocity, maxAngularAccel;
-  private boolean isOpenLoop;
+  private final boolean isOpenLoop;
   private Translation2d horizontalCG;
   private Translation3d robotCG;
 
@@ -48,13 +50,15 @@ public class AbsoluteDrive extends Command {
    * robot coordinate system, this is along the same axis as vX.  Should range from -1 to 1 with no deadband.
    * Positive is away from the alliance wall.
    */
-  public AbsoluteDrive(SwerveBase swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingHorizontal, DoubleSupplier headingVertical, boolean isOpenLoop) {
+  public AbsoluteDrive(SwerveBase swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingHorizontal, DoubleSupplier headingVertical, boolean isOpenLoop, BooleanSupplier brakeMode) {
     this.swerve = swerve;
     this.vX = vX;
     this.vY = vY;
     this.headingHorizontal = headingHorizontal;
     this.headingVertical = headingVertical;
     this.isOpenLoop = isOpenLoop;
+    this.brakeMode = brakeMode;
+    thetaController = new PIDController(Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
     
     addRequirements(swerve);
   }
@@ -65,9 +69,8 @@ public class AbsoluteDrive extends Command {
   @Override
   public void initialize() {
     lastAngle = swerve.getTelePose().getRotation().getRadians();
-    thetaController = new PIDController(Drivebase.HEADING_KP, Drivebase.HEADING_KI, Drivebase.HEADING_KD);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    swerve.drive(new Translation2d(), 0, true, true);
+    swerve.drive(new Translation2d(), 0, true, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -82,47 +85,52 @@ public class AbsoluteDrive extends Command {
       swerve.clearGyroReset();
     }
 
-    // Converts the horizontal and vertical components to the commanded angle, in radians, unless
-    // the joystick is near the center (i. e. has been released), in which case the angle is held
-    // at the last valid joystick input (hold position when stick released).
-    if (Math.hypot(headingHorizontal.getAsDouble(), headingVertical.getAsDouble()) < 0.5) {
-      angle = lastAngle;
+    if (brakeMode.getAsBoolean()) {
+      swerve.setDriveBrake();
     } else {
-      angle = Math.atan2(headingHorizontal.getAsDouble(), headingVertical.getAsDouble());
+
+      // Converts the horizontal and vertical components to the commanded angle, in radians, unless
+      // the joystick is near the center (i. e. has been released), in which case the angle is held
+      // at the last valid joystick input (hold position when stick released).
+      if (Math.hypot(headingHorizontal.getAsDouble(), headingVertical.getAsDouble()) < 0.5) {
+        angle = lastAngle;
+      } else {
+        angle = Math.atan2(headingHorizontal.getAsDouble(), headingVertical.getAsDouble());
+      }
+
+      // Get the position of the arm from NetworkTables 
+      armHeight = SmartDashboard.getNumber("armHeight", 0);
+      armExtension = SmartDashboard.getNumber("armExtension", 0);
+
+      xMoment = (armExtension * Constants.MANIPULATOR_MASS) + (Constants.CHASSIS_CG.getX() * Constants.CHASSIS_MASS);
+      yMoment = (Constants.ARM_Y_POS * Constants.MANIPULATOR_MASS) + (Constants.CHASSIS_CG.getY() * Constants.CHASSIS_MASS);
+      // Calculate the vertical mass moment using the floor as the datum.  This will be used later to calculate max acceleration
+      zMoment = 
+        (armHeight * Constants.MANIPULATOR_MASS)
+        + (Constants.CHASSIS_CG.getZ() * (Constants.CHASSIS_MASS));
+      
+      robotCG = new Translation3d(xMoment, yMoment, zMoment).div(Constants.ROBOT_MASS);
+      horizontalCG = robotCG.toTranslation2d();
+
+      // Calculates an angular rate using a PIDController and the commanded angle.;
+      omega = thetaController.calculate(swerve.getTelePose().getRotation().getRadians(), angle);
+      omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
+      SmartDashboard.putNumber("HeadingSetpoint", angle);
+      SmartDashboard.putNumber("CommandedOmega", omega);
+
+      // Convert joystick inputs to m/s by scaling by max linear speed.  Also uses a cubic function
+      // to allow for precise control and fast movement.
+      x = Math.pow(vX.getAsDouble(), 3) * Drivebase.MAX_SPEED;
+      y = Math.pow(vY.getAsDouble(), 3) * Drivebase.MAX_SPEED;
+
+      // Limit velocity to prevent tippy
+      Translation2d translation = limitVelocity(new Translation2d(x, y));
+      SmartDashboard.putNumber("LimitedTranslation", translation.getX());
+      SmartDashboard.putString("Translation", (new Translation2d(x, y)).toString());
+
+      // Make the robot move
+      swerve.drive(translation, omega, true, isOpenLoop);
     }
-
-    // Get the position of the arm from NetworkTables 
-    armHeight = SmartDashboard.getNumber("armHeight", 0);
-    armExtension = SmartDashboard.getNumber("armExtension", 0);
-
-    xMoment = (armExtension * Constants.MANIPULATOR_MASS) + (Constants.CHASSIS_CG.getX() * Constants.CHASSIS_MASS);
-    yMoment = (Constants.ARM_Y_POS * Constants.MANIPULATOR_MASS) + (Constants.CHASSIS_CG.getY() * Constants.CHASSIS_MASS);
-    // Calculate the vertical mass moment using the floor as the datum.  This will be used later to calculate max acceleration
-    zMoment = 
-      (armHeight * Constants.MANIPULATOR_MASS)
-      + (Constants.CHASSIS_CG.getZ() * (Constants.CHASSIS_MASS));
-    
-    robotCG = new Translation3d(xMoment, yMoment, zMoment).div(Constants.ROBOT_MASS);
-    horizontalCG = robotCG.toTranslation2d();
-
-    // Calculates an angular rate using a PIDController and the commanded angle.;
-    omega = thetaController.calculate(swerve.getTelePose().getRotation().getRadians(), angle);
-    omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
-    SmartDashboard.putNumber("HeadingSetpoint", angle);
-    SmartDashboard.putNumber("CommandedOmega", omega);
-
-    // Convert joystick inputs to m/s by scaling by max linear speed.  Also uses a cubic function
-    // to allow for precise control and fast movement.
-    x = Math.pow(vX.getAsDouble(), 3) * Drivebase.MAX_SPEED;
-    y = Math.pow(vY.getAsDouble(), 3) * Drivebase.MAX_SPEED;
-
-    // Limit velocity to prevent tippy
-    Translation2d translation = limitVelocity(new Translation2d(x, y));
-    SmartDashboard.putNumber("LimitedTranslation", translation.getX());
-    SmartDashboard.putString("Translation", (new Translation2d(x, y)).toString());
-
-    // Make the robot move
-    swerve.drive(translation, omega, true, isOpenLoop);
     
     // Used for the position hold feature
     lastAngle = angle;
