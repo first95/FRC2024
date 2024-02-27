@@ -416,14 +416,14 @@ public class SwerveBase extends SubsystemBase {
       SmartDashboard.putBoolean(limelightName + " Tests", false);
       return visionMeasurement;
     }
-    if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (poseErrorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
+    /*if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (poseErrorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
       poseErrorCounter++;
       SmartDashboard.putBoolean(limelightName + " Tests", false);
       return visionMeasurement;
     } else if (poseErrorCounter >= Vision.LOOP_CYCLES_BEFORE_RESET) {
       wasOdometrySeeded = false;
       return visionMeasurement;
-    }
+    }*/
     poseErrorCounter = 0;
     if (visionMeasurement.numTargets >= 2) {
       if (visionMeasurement.ta > Vision.MIN_CLOSE_MULTITARGET_AREA) {
@@ -543,7 +543,6 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putNumber("SternNumTarg", sternCamPose.numTargets);
     SmartDashboard.putNumber("SternPipe", sternCamPose.pipeline);
     SmartDashboard.putNumber("SternLatency", sternCamPose.latency);
-
     /*ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
