@@ -405,6 +405,15 @@ public final class Constants {
 
         public static final double SHOOTER_TOLERANCE = 100;
     }
+
+    public static final class ClimberConstants {
+        public static final int WINCH_ID = 16;
+        public static final int WINCH2_ID = 17;
+
+        public static final int CURRENT_LIMIT = 40;
+
+        public static final boolean INVERT_WINCH = true;
+    }
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;
         public static final int headingControllerPort = 1;

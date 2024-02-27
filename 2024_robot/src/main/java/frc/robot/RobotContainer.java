@@ -12,6 +12,7 @@ import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.NoteHandlerCommand;
+import frc.robot.subsystems.Climber;
 //import frc.robot.commands.drivebase.TeleopDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -56,6 +57,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final SwerveBase drivebase = new SwerveBase();
   private final Shooter shooter = new Shooter();
+  private final Climber climber = new Climber();
   //private final TeleopDrive openRobotRel, closedRobotRel, openFieldRel, closedFieldRel;
   private final AbsoluteDrive absoluteDrive;
 
@@ -203,8 +205,9 @@ public class RobotContainer {
     }));
     headingController.button(1).onTrue(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
     .onFalse(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-    // headingController.button(1).whileTrue(new AlignToPose("ScoreAmp",
-    // drivebase));
+    operatorController.povDown().onTrue(climber.runWinches(-0.7));
+    operatorController.povUp().onTrue(climber.runWinches(0.7));
+    operatorController.povCenter().onTrue(climber.runWinches(0));
   }
 
   /**
