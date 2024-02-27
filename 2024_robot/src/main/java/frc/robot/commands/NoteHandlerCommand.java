@@ -434,6 +434,9 @@ public class NoteHandlerCommand extends Command {
             if (!unjamButton) {
               currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
             }
+            if (sensorvalue) {
+              currentState = State.INDEXING_REV;
+            }
             if (ejectButton) {
               currentState = State.EJECT_DOWNSPOOL;
             }
