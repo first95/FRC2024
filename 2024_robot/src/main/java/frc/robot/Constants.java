@@ -276,7 +276,7 @@ public final class Constants {
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
-        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(109);
+        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(101);
         public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d ARM_CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
 
