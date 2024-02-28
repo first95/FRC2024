@@ -262,7 +262,7 @@ public final class Constants {
         public static final boolean INVERT_LOADER = true;
         public static final boolean INVERT_SHOULDER = false;
 
-        public static final int SHOOTER_CURRENT_LIMIT = 40; // A
+        public static final int SHOOTER_CURRENT_LIMIT = 50; // A
         public static final int LOADER_CURRENT_LIMIT = 40; // A
         public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
@@ -271,7 +271,7 @@ public final class Constants {
         public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14.0 / (44 * 5 * 5));
         public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
 
-        public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(128);
+        public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(120);
         public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28);
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
@@ -293,7 +293,7 @@ public final class Constants {
         public static final double ARM_TOLERANCE = Math.toRadians(0.5);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double SHOULDER_KP = 5;
+        public static final double SHOULDER_KP = 4;
         public static final double SHOULDER_KI = 0;
         public static final double SHOULDER_KD = 1;
         public static final double SHOULDER_KF = 0;

@@ -128,6 +128,7 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putData("BowCam", bowCam);
     SmartDashboard.putData("Field", field);
     poseErrorCounter = 0;
+    LimelightHelpers.setCameraMode_Driver(Vision.NOTE_LIMELIGHT_NAME);
 
     driveCharacterizer = new SysIdRoutine(
       new SysIdRoutine.Config(),
