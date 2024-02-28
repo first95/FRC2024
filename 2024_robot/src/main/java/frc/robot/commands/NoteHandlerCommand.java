@@ -471,14 +471,6 @@ public class NoteHandlerCommand extends Command {
     SmartDashboard.putNumber("shooterSpeed", portShootingSpeed);
     SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
     SmartDashboard.putBoolean("sensor", sensorvalue);
-
-    if(sensorvalue){
-        haveNoteLight.set(1);
-
-    } else{
-       haveNoteLight.set(0);
-    }
-
   }
 
   // Called once the command ends or is interrupted.

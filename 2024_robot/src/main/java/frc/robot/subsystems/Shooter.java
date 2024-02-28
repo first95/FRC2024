@@ -298,6 +298,8 @@ public class Shooter extends SubsystemBase {
     cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ShooterConstants.ARM_TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
       0;
+    
+    haveNoteLight.set(noteSensor.get() ? 1 : 0);
 
     SmartDashboard.putNumber("ProportionalTerm",
         ShooterConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
