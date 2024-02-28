@@ -278,7 +278,7 @@ public final class Constants {
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
         public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
-        public static final Rotation2d ARM_CLIMB_ANGLE = Rotation2d.fromDegrees(90);
+        public static final Rotation2d ARM_CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
 
         public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -364,7 +364,7 @@ public final class Constants {
         );
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
-        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(0);
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(3);
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }
