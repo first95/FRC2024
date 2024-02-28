@@ -29,6 +29,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +40,7 @@ public class Shooter extends SubsystemBase {
 
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
   private final CANSparkMax loader; // shoulder2;
+  private final Spark haveNoteLight;
   private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
@@ -61,6 +63,8 @@ public class Shooter extends SubsystemBase {
     starboardShooter = new CANSparkFlex(ShooterConstants.STARBOARD_SHOOTER_ID, MotorType.kBrushless);
     loader = new CANSparkMax(ShooterConstants.LOADER_ID, MotorType.kBrushless);
     shoulder = new CANSparkFlex(ShooterConstants.SHOULDER_ID, MotorType.kBrushless);
+    haveNoteLight = new Spark(ShooterConstants.HAVE_NOTE_LIGHT_PWM_ID);
+
 
     portShooter.restoreFactoryDefaults();
     starboardShooter.restoreFactoryDefaults();

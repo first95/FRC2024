@@ -248,6 +248,7 @@ public final class Constants {
         public static final int SHOULDER_ID = 15;
         public static final int NOTE_SENSOR_ID = 0;
         public static final int LIMIT_SWITCH_ID = 1;
+        public static final int HAVE_NOTE_LIGHT_PWM_ID = 0;
 
         public static final int LOADER_STATUS_FRAME_0_PERIOD = 10;
         public static final int LOADER_STATUS_FRAME_1_PERIOD = 58000;
