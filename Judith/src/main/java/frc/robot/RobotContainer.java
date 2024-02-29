@@ -164,6 +164,12 @@ public class RobotContainer {
     }).ignoringDisable(true));
 
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
+    SmartDashboard.putData("SendAlliance",
+      new InstantCommand(
+        () -> drivebase.setAlliance(DriverStation.getAlliance().get())
+      )
+      .ignoringDisable(true)
+    );
 
     SmartDashboard.putNumber("KV", Drivebase.KV);
     SmartDashboard.putNumber("KA", Drivebase.KA);
