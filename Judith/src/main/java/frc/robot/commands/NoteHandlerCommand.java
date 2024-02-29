@@ -211,6 +211,9 @@ public class NoteHandlerCommand extends Command {
         if (!sensorvalue) {
           currentState = State.INDEXING_FWD;
         }
+        if (climbButton) {
+          currentState = State.CLIMB;
+        }
         if (ampAligning) {
           currentState = State.AMP_ALIGNING;
         }
