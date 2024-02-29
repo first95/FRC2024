@@ -7,7 +7,7 @@ package frc.robot;
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AutoAmp;
+//import frc.robot.commands.AutoAmp;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.drivebase.AbsoluteDrive;
