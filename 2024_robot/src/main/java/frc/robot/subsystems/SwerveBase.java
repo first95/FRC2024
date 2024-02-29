@@ -408,7 +408,7 @@ public class SwerveBase extends SubsystemBase {
   private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
     CamData visionMeasurement = new CamData(LimelightHelpers.getLatestResults(limelightName));
 
-    double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
+    //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     double xyStds, angStds;
 
     if (!visionMeasurement.valid
