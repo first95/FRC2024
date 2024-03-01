@@ -485,10 +485,10 @@ public class SwerveBase extends SubsystemBase {
     SmartDashboard.putString("Gyro", getYaw().toString());
     SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
     SmartDashboard.putString("OdometryPos", currentPose.toString());
-    /*ChassisSpeeds robotVelocity = getRobotVelocity();
+    ChassisSpeeds robotVelocity = getRobotVelocity();
     SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
     SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
-    SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);*/
+    SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);
 
     SmartDashboard.putNumber("PoseErrorCounter", poseErrorCounter);
 
