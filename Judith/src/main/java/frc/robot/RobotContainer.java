@@ -150,12 +150,20 @@ public class RobotContainer {
     trajMap = loadTrajectories();
 
     Command oneNoteAuto = Autos.shootPreload(drivebase);
-    Command twoNoteAuto = Autos.twoNoteCenter(drivebase, intake);
-    Command threeNoteAuto = Autos.threeNoteCenterAmp(drivebase, intake, trajMap);
+    Command centerAuto = Autos.twoNoteCenter(drivebase, intake);
+    Command centerAmpAuto = Autos.threeNoteCenterAmp(drivebase, intake, trajMap);
     Command fourNoteAuto = Autos.fourNearNotes(drivebase, intake, trajMap);
+    Command podiumAuto = Autos.twoNotePodium(drivebase, intake);
+    Command ampAuto = Autos.twoNoteAmp(drivebase, intake);
+    Command ampCenterAuto = Autos.threeNoteAmpCenter(drivebase, intake, trajMap);
+    Command centerPodium = Autos.threeNoteCenterPodium(drivebase, intake, trajMap);
     chooser.addOption(oneNoteAuto.getName(), oneNoteAuto);
-    chooser.addOption(twoNoteAuto.getName(), twoNoteAuto);
-    chooser.addOption(threeNoteAuto.getName(), threeNoteAuto);
+    chooser.addOption(centerAuto.getName(), centerAuto);
+    chooser.addOption(centerAmpAuto.getName(), centerAmpAuto);
+    chooser.addOption(podiumAuto.getName(), podiumAuto);
+    chooser.addOption(ampAuto.getName(), ampAuto);
+    chooser.addOption(ampCenterAuto.getName(), ampCenterAuto);
+    chooser.addOption(centerPodium.getName(), centerPodium);
     chooser.setDefaultOption(fourNoteAuto.getName(), fourNoteAuto);
     SmartDashboard.putData(chooser);
     SmartDashboard.putData("SetAuto", new InstantCommand(() -> {

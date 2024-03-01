@@ -38,10 +38,33 @@ public final class Autos {
       .andThen(new AlignToPose("CenterNearNote", drive))
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-      command.setName("Two Note Auto");
+      command.setName("Center");
       command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
       return command;
   }
+
+  public static Command twoNoteAmp(SwerveBase drive, Intake intake) {
+    Command command = new AutoShoot(drive, 3)
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
+      .andThen(new AlignToPose("AmpNote", drive))
+      .andThen(new AutoShoot(drive, 5))
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      command.setName("Amp");
+      command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+      return command;
+  }
+
+  public static Command twoNotePodium(SwerveBase drive, Intake intake) {
+    Command command = new AutoShoot(drive, 3)
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
+      .andThen(new AlignToPose("PodiumNote", drive))
+      .andThen(new AutoShoot(drive, 5))
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      command.setName("Podium");
+      command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+      return command;
+  }
+  
 
   public static Command threeNoteCenterAmp(SwerveBase drive, Intake intake, Map<String, ChoreoTrajectory> trajMap) {
     Command command = new AutoShoot(drive, 3)
@@ -51,7 +74,33 @@ public final class Autos {
       .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp"), drive, false, true))
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-    command.setName("Three Note Auto");
+    command.setName("Center Amp");
+    command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    return command;
+  }
+
+  public static Command threeNoteCenterPodium(SwerveBase drive, Intake intake, Map<String, ChoreoTrajectory> trajMap) {
+    Command command = new AutoShoot(drive, 3)
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
+      .andThen(new AlignToPose("CenterNearNote", drive))
+      .andThen(new AutoShoot(drive, 2))
+      .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst2"), drive, false, true))
+      .andThen(new AutoShoot(drive, 5))
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+    command.setName("Center Podium");
+    command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    return command;
+  }
+
+  public static Command threeNoteAmpCenter(SwerveBase drive, Intake intake, Map<String, ChoreoTrajectory> trajMap) {
+    Command command = new AutoShoot(drive, 3)
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
+      .andThen(new AlignToPose("AmpNote", drive))
+      .andThen(new AutoShoot(drive, 2))
+      .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst1"), drive, false, true))
+      .andThen(new AutoShoot(drive, 5))
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+    command.setName("Center Amp");
     command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
     return command;
   }
