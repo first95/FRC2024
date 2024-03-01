@@ -80,9 +80,9 @@ public class NoteHandlerCommand extends Command {
     sensorvalue = shooter.getNoteSensor();
     shooterbutton = shooterButtonSupplier.getAsBoolean();
     commandedIntakeSpeed = intakeSpeedAxis.getAsDouble() + SmartDashboard.getNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
-    shooterAtSpeed = (Math.abs(portSpeed - shooter.getPortShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE)
+    shooterAtSpeed = (Math.abs(portShootingSpeed - shooter.getPortShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE)
         &&
-        (Math.abs(starboardSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE);
+        (Math.abs(starboardShootingSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE);
     armInPosition = shooter.armAtGoal();
     portSpeed = SmartDashboard.getNumber("PortSpeed", portSpeed);
     starboardSpeed = SmartDashboard.getNumber("StarboardSpeed", starboardSpeed);
@@ -461,6 +461,7 @@ public class NoteHandlerCommand extends Command {
             if (autoShooting) {
               currentState = State.AUTO_SPOOLING;
             }
+          break;
     }
 
     // Apply outputs
