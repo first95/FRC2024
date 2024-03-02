@@ -46,7 +46,7 @@ public class Shooter extends SubsystemBase {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
-  private double armFeedforwardValue;
+  private double armFeedforwardValue, armLowerLimit;
 
   private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
@@ -164,6 +164,9 @@ public class Shooter extends SubsystemBase {
 
     cyclesSinceArmNotAtGoal = 0;
 
+    SmartDashboard.putNumber("ARM LOWER LIMIT", ShooterConstants.ARM_LOWER_LIMIT.getDegrees());
+    armLowerLimit = ShooterConstants.ARM_LOWER_LIMIT.getRadians();
+
     shoulderCharacterizer = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
@@ -263,8 +266,10 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    armLowerLimit = Math.toRadians(SmartDashboard.getNumber("ARM LOWER LIMIT", ShooterConstants.ARM_LOWER_LIMIT.getDegrees()));
+
     if (bottomLimitSwitch.get()) {
-      shoulderEncoder.setPosition(ShooterConstants.ARM_LOWER_LIMIT.getRadians());
+      shoulderEncoder.setPosition(armLowerLimit);
     }
     if (armGoal.getRadians() >= ShooterConstants.ARM_UPPER_LIMIT.getRadians()) {
       armGoal = ShooterConstants.ARM_UPPER_LIMIT;
@@ -278,7 +283,7 @@ public class Shooter extends SubsystemBase {
         ? new TrapezoidProfile.State(ShooterConstants.ARM_UPPER_LIMIT.getRadians(), 0)
         : armSetpoint;
 
-    if (Math.abs(armSetpoint.position - ShooterConstants.ARM_LOWER_LIMIT.getRadians()) <= ShooterConstants.ARM_DEADBAND) {
+    if (Math.abs(armSetpoint.position - armLowerLimit) <= ShooterConstants.ARM_DEADBAND) {
       shoulder.set(0);
       armFeedforwardValue = 0;
     } else {
