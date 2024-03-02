@@ -272,7 +272,7 @@ public final class Constants {
         public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
 
         public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(120);
-        public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28.6);
+        public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(27);
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
