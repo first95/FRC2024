@@ -272,7 +272,7 @@ public final class Constants {
         public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
 
         public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(120);
-        public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(27);
+        public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28.6);
 
         public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
@@ -393,9 +393,9 @@ public final class Constants {
         public static final double LOADER_INDEXING = 0.1;
 
         public static final double PORT_SHOOTER = 5000;
-        public static final double STARBOARD_SHOOTER = 3000;
-        public static final double PORT_IDLE = 3000;
-        public static final double STARBOARD_IDLE = 1000;
+        public static final double STARBOARD_SHOOTER = 4000;
+        public static final double PORT_IDLE = 3500;
+        public static final double STARBOARD_IDLE = 2000;
         public static final double PORT_AMP_SCORE = 500;
         public static final double STARBOARD_AMP_SCORE = PORT_AMP_SCORE;
         public static final double SHOOTER_INTAKE = -500;
