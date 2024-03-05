@@ -125,8 +125,8 @@ public class AbsoluteDrive extends Command {
 
       // Limit velocity to prevent tippy
       Translation2d translation = limitVelocity(new Translation2d(x, y));
-      SmartDashboard.putNumber("LimitedTranslation", translation.getX());
-      SmartDashboard.putString("Translation", (new Translation2d(x, y)).toString());
+      SmartDashboard.putNumber("DriveInputX", translation.getX());
+      SmartDashboard.putNumber("DriveInputY", translation.getY());
 
       // Make the robot move
       swerve.drive(translation, omega, true, isOpenLoop);
