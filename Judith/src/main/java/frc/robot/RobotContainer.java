@@ -67,7 +67,8 @@ public class RobotContainer {
       OperatorConstants.operatorControllerPort);
   
   private Command autoCommand;
-  SendableChooser<Command> chooser = new SendableChooser<>();
+  SendableChooser<Command> autoChooser = new SendableChooser<>();
+  SendableChooser<String> debugMode = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -157,19 +158,22 @@ public class RobotContainer {
     Command ampAuto = Autos.twoNoteAmp(drivebase, intake);
     Command ampCenterAuto = Autos.threeNoteAmpCenter(drivebase, intake, trajMap);
     Command centerPodium = Autos.threeNoteCenterPodium(drivebase, intake, trajMap);
-    chooser.addOption(oneNoteAuto.getName(), oneNoteAuto);
-    chooser.addOption(centerAuto.getName(), centerAuto);
-    chooser.addOption(centerAmpAuto.getName(), centerAmpAuto);
-    chooser.addOption(podiumAuto.getName(), podiumAuto);
-    chooser.addOption(ampAuto.getName(), ampAuto);
-    chooser.addOption(ampCenterAuto.getName(), ampCenterAuto);
-    chooser.addOption(centerPodium.getName(), centerPodium);
-    chooser.setDefaultOption(fourNoteAuto.getName(), fourNoteAuto);
-    SmartDashboard.putData(chooser);
+    autoChooser.addOption(oneNoteAuto.getName(), oneNoteAuto);
+    autoChooser.addOption(centerAuto.getName(), centerAuto);
+    autoChooser.addOption(centerAmpAuto.getName(), centerAmpAuto);
+    autoChooser.addOption(podiumAuto.getName(), podiumAuto);
+    autoChooser.addOption(ampAuto.getName(), ampAuto);
+    autoChooser.addOption(ampCenterAuto.getName(), ampCenterAuto);
+    autoChooser.addOption(centerPodium.getName(), centerPodium);
+    autoChooser.setDefaultOption(fourNoteAuto.getName(), fourNoteAuto);
+    SmartDashboard.putData(autoChooser);
     SmartDashboard.putData("SetAuto", new InstantCommand(() -> {
-      autoCommand = chooser.getSelected();
+      autoCommand = autoChooser.getSelected();
       SmartDashboard.putString("Selected Auto:", autoCommand.getName());
     }).ignoringDisable(true));
+
+    debugMode.setDefaultOption("None (For Competition)", "");
+    debugMode.addOption("Arm", "arm");
 
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
     SmartDashboard.putData("SendAlliance",

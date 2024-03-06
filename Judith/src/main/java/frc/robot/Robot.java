@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.Constants.ShooterConstants;
@@ -136,7 +137,7 @@ public class Robot extends TimedRobot {
   private void initializeDashboard() {
     SmartDashboard.putNumber(Auton.PORT_SPEED_KEY, NoteHandlerSpeeds.PORT_SHOOTER);
     SmartDashboard.putNumber(Auton.STARBOARD_SPEED_KEY, NoteHandlerSpeeds.STARBOARD_SHOOTER);
-    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians());
+    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ArmConstants.ARM_LOWER_LIMIT.getRadians());
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, false);
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
     SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);

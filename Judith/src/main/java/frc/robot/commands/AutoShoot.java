@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.Drivebase;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveBase;
 
@@ -82,7 +82,7 @@ public class AutoShoot extends Command {
       new Translation3d(currentPose.getX(), currentPose.getY(), 0)
       // add mount location of arm, after converting to field-relative coordinates
       .plus(
-        ShooterConstants.ARM_PIVOT_LOCATION.rotateBy(
+        ArmConstants.ARM_PIVOT_LOCATION.rotateBy(
           new Rotation3d(0, 0, -currentPose.getRotation().getRadians())
         )
       );  
