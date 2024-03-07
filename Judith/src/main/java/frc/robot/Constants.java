@@ -431,8 +431,10 @@ public final class Constants {
     }
     public static final class CommandDebugFlags {
         public static final int ALIGN_TO_POSE = 0b1000000;
-        public static final int AUTO_SHOOT = 0b10000000;
-        public static final int NOTE_HANDLER = 0b100000000;
+        public static final int AUTO_SHOOT =    0b10000000;
+        public static final int NOTE_HANDLER =  0b100000000;
+        public static final int AUTO_AMP =      0b1000000000;
+        public static final int ABS_DRIVE =     0b10000000000;
     }
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;
