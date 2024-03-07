@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
@@ -54,7 +55,7 @@ public class Shooter extends SubsystemBase {
   private Rotation2d armGoal;
   private final Timer timer;
   private TrapezoidProfile.State armSetpoint, profileStart;
-  private int cyclesSinceArmNotAtGoal;
+  private int cyclesSinceArmNotAtGoal, debugFlags;
 
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
@@ -165,6 +166,8 @@ public class Shooter extends SubsystemBase {
 
     cyclesSinceArmNotAtGoal = 0;
 
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
     shoulderCharacterizer = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
@@ -264,6 +267,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
     if (bottomLimitSwitch.get()) {
       shoulderEncoder.setPosition(ArmConstants.ARM_LOWER_LIMIT.getRadians());
     }
@@ -296,21 +301,25 @@ public class Shooter extends SubsystemBase {
       cyclesSinceArmNotAtGoal + 1 :
       0;
 
-    SmartDashboard.putNumber("ProportionalTerm",
-        ArmConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
-    SmartDashboard.putNumber("FeedforwardValue", armFeedforwardValue);
-    SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
-    SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
-    SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
-    SmartDashboard.putNumber("ShooterShoulderSetpointVel", Math.toDegrees(armSetpoint.velocity));
-    SmartDashboard.putNumber("ShooterShoulderPos", Math.toDegrees(shoulderEncoder.getPosition()));
-    SmartDashboard.putNumber("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
-    SmartDashboard.putBoolean("ShoulderAtGoal", armAtGoal());
-    SmartDashboard.putNumber("CycleCounter", cyclesSinceArmNotAtGoal);
-    SmartDashboard.putNumber("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
-    SmartDashboard.putNumber("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
-    SmartDashboard.putNumber("PortRPM", portShooterEncoder.getVelocity());
-    SmartDashboard.putNumber("StarboardRPM", starboardShooterEncoder.getVelocity());
+    if ((debugFlags & ArmConstants.DEBUG_FLAG) != 0) {
+      SmartDashboard.putNumber("ProportionalTerm",
+      ArmConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
+      SmartDashboard.putNumber("FeedforwardValue", armFeedforwardValue);
+      SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
+      SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
+      SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
+      SmartDashboard.putNumber("ShooterShoulderSetpointVel", Math.toDegrees(armSetpoint.velocity));
+      SmartDashboard.putNumber("ShooterShoulderPos", Math.toDegrees(shoulderEncoder.getPosition()));
+      SmartDashboard.putNumber("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
+      SmartDashboard.putBoolean("ShoulderAtGoal", armAtGoal());
+      SmartDashboard.putNumber("CycleCounter", cyclesSinceArmNotAtGoal);
+    }
+    if ((debugFlags & ShooterConstants.DEBUG_FLAG) != 0) {
+      SmartDashboard.putNumber("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
+      SmartDashboard.putNumber("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
+      SmartDashboard.putNumber("PortRPM", portShooterEncoder.getVelocity());
+      SmartDashboard.putNumber("StarboardRPM", starboardShooterEncoder.getVelocity());
+    }
   }
 
   public Command sysIdQuasiShoulder(SysIdRoutine.Direction direction) {

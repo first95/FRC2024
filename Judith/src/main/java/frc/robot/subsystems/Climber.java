@@ -8,13 +8,16 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.CommandDebugFlags;
 
 public class Climber extends SubsystemBase {
   private CANSparkMax winch, winch2;
+  private int debugFlags;
   /** Creates a new Climber. */
   public Climber() {
     winch = new CANSparkMax(ClimberConstants.WINCH_ID, MotorType.kBrushless);
@@ -32,6 +35,8 @@ public class Climber extends SubsystemBase {
     winch2.follow(winch, true);
 
     winch.setInverted(ClimberConstants.INVERT_WINCH);
+
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
   }
 
   public Command runWinches(double speed) {
@@ -40,6 +45,10 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
+    if ((debugFlags & ClimberConstants.DEBUG_FLAG) != 0) {
+      // Put SmartDashboard debug here
+    }
   }
 }

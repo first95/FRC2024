@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.IntakeConstants;
@@ -195,6 +196,7 @@ public class RobotContainer {
     debugMode.addOption("Drive & Vision",
       CommandDebugFlags.AUTO_SHOOT | CommandDebugFlags.ALIGN_TO_POSE | CommandDebugFlags.AUTO_AMP |
       CommandDebugFlags.ABS_DRIVE | Drivebase.DEBUG_FLAG | Vision.DEBUG_FLAG);
+    debugMode.addOption("Climber", ClimberConstants.DEBUG_FLAG);
     debugMode.addOption("ALL", ~0);
     SmartDashboard.putData(debugMode);
     SmartDashboard.putNumber(CommandDebugFlags.FLAGS_KEY, 0);
