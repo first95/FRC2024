@@ -52,7 +52,6 @@ public final class Constants {
     0,
     0,
     0.15);
-
     public static final class Drivebase {
         public static final int DEBUG_FLAG = 0b1;
         // Hold time on motor brakes when disabled
@@ -195,7 +194,6 @@ public final class Constants {
 
         public static final int PIGEON = 30;
     }
-
     public static final class Vision {
         public static final int DEBUG_FLAG = 0b10;
 
@@ -243,7 +241,6 @@ public final class Constants {
             2.2585
         );
     }
-
     public static final class ShooterConstants {
         public static final int DEBUG_FLAG = 0b100;
 
@@ -277,7 +274,6 @@ public final class Constants {
         public static final double FLYWHEEL_KV = 0.0018042; // V * min / rotation
         public static final double FLYWHEEL_KA = 0.00028741;
     }
-
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
 
@@ -380,7 +376,6 @@ public final class Constants {
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }
-
     public static final class IntakeConstants {
         public static final int DEBUG_FLAG = 0b10000;
 
@@ -395,7 +390,6 @@ public final class Constants {
 
         public static final int CURRENT_LIMIT = 50;
     }
-
     public static final class NoteHandlerSpeeds {
         public static final double INTAKE_IDLE = 0;
         public static final double INTAKE_UNJAM = -1;
@@ -419,7 +413,6 @@ public final class Constants {
 
         public static final double SHOOTER_TOLERANCE = 100;
     }
-
     public static final class ClimberConstants {
         public static final int DEBUG_FLAG = 0b100000;
         public static final int WINCH_ID = 16;

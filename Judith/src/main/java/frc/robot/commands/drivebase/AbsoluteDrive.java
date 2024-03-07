@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.subsystems.SwerveBase;
 
@@ -29,6 +30,7 @@ public class AbsoluteDrive extends Command {
   private final boolean isOpenLoop;
   private Translation2d horizontalCG;
   private Translation3d robotCG;
+  private int debugFlags;
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply 
@@ -71,11 +73,13 @@ public class AbsoluteDrive extends Command {
     lastAngle = swerve.getTelePose().getRotation().getRadians();
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     swerve.drive(new Translation2d(), 0, true, false);
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
     // Checks if the gyro was reset, and, if so, sets the commanded heading to zero.
     // This allows the field refrence frame (which way is away from the alliance wall) to be
     // reset without the robot immediately rotating to the previously-commanded angle in the new
@@ -115,8 +119,6 @@ public class AbsoluteDrive extends Command {
       // Calculates an angular rate using a PIDController and the commanded angle.;
       omega = thetaController.calculate(swerve.getTelePose().getRotation().getRadians(), angle);
       omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
-      SmartDashboard.putNumber("HeadingSetpoint", angle);
-      SmartDashboard.putNumber("CommandedOmega", omega);
 
       // Convert joystick inputs to m/s by scaling by max linear speed.  Also uses a cubic function
       // to allow for precise control and fast movement.
@@ -125,11 +127,18 @@ public class AbsoluteDrive extends Command {
 
       // Limit velocity to prevent tippy
       Translation2d translation = limitVelocity(new Translation2d(x, y));
-      SmartDashboard.putNumber("DriveInputX", translation.getX());
-      SmartDashboard.putNumber("DriveInputY", translation.getY());
+      
 
       // Make the robot move
       swerve.drive(translation, omega, true, isOpenLoop);
+
+      if ((debugFlags & CommandDebugFlags.ABS_DRIVE) != 0) {
+        SmartDashboard.putNumber("HeadingSetpoint", angle);
+        SmartDashboard.putNumber("CommandedOmega", omega);
+        SmartDashboard.putNumber("DriveInputX", translation.getX());
+        SmartDashboard.putNumber("DriveInputY", translation.getY());
+      }
+      
     }
     
     // Used for the position hold feature
@@ -206,7 +215,6 @@ public class AbsoluteDrive extends Command {
     Translation2d currentVelocity = new Translation2d(
         vel.vxMetersPerSecond,
         vel.vyMetersPerSecond);
-    SmartDashboard.putNumber("currentVelocity", currentVelocity.getX());
 
     // Calculate the commanded change in velocity by subtracting current velocity
     // from commanded velocity

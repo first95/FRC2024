@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveBase;
@@ -31,6 +32,7 @@ public class AutoShoot extends Command {
   private double angle, omega;
   private Pose2d currentPose;
   private Translation3d speakerLocation;
+  private int debugFlags;
 
   /**
    * Creates a new ExampleCommand.
@@ -60,6 +62,8 @@ public class AutoShoot extends Command {
   public void initialize() {
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, true);
+
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
 
     if (timeout >= 0) {
       timer.reset();
@@ -104,12 +108,16 @@ public class AutoShoot extends Command {
 
     thetaController.reset();
 
-    SmartDashboard.putNumber("AutoShootHeading", angle);
+    if ((debugFlags & CommandDebugFlags.AUTO_SHOOT) != 0) {
+      SmartDashboard.putNumber("AutoShootHeading", angle);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
     omega = thetaController.calculate(swerve.getPose().getRotation().getRadians(), angle);
     omega = (Math.abs(omega) < Drivebase.HEADING_MIN_ANGULAR_CONTROL_EFFORT) ? 0 : omega;
     swerve.drive(new Translation2d(), omega, true, false);
@@ -117,6 +125,10 @@ public class AutoShoot extends Command {
     if (thetaController.atSetpoint()) {
       SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, true);
       swerve.setDriveBrake();
+    }
+
+    if ((debugFlags & CommandDebugFlags.AUTO_SHOOT) != 0) {
+      // Put SmartDashboard debug here
     }
   }
 
