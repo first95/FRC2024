@@ -435,6 +435,7 @@ public final class Constants {
         public static final int NOTE_HANDLER =  0b100000000;
         public static final int AUTO_AMP =      0b1000000000;
         public static final int ABS_DRIVE =     0b10000000000;
+        public static final String FLAGS_KEY = "Debug Flags";
     }
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;

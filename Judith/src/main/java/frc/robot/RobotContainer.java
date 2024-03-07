@@ -4,9 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.Vision;
 //import frc.robot.commands.AutoAmp;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Autos;
@@ -68,7 +73,7 @@ public class RobotContainer {
   
   private Command autoCommand;
   SendableChooser<Command> autoChooser = new SendableChooser<>();
-  SendableChooser<String> debugMode = new SendableChooser<>();
+  SendableChooser<Integer> debugMode = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -172,8 +177,30 @@ public class RobotContainer {
       SmartDashboard.putString("Selected Auto:", autoCommand.getName());
     }).ignoringDisable(true));
 
-    debugMode.setDefaultOption("None (For Competition)", "");
-    debugMode.addOption("Arm", "arm");
+    debugMode.setDefaultOption("None (For Competition)", 0);
+    debugMode.addOption("Arm", ArmConstants.DEBUG_FLAG);
+    debugMode.addOption("Shooter", ShooterConstants.DEBUG_FLAG);
+    debugMode.addOption("Intake", IntakeConstants.DEBUG_FLAG);
+    debugMode.addOption("Note Pathway", ArmConstants.DEBUG_FLAG | ShooterConstants.DEBUG_FLAG | IntakeConstants.DEBUG_FLAG);
+    debugMode.addOption("StateMachine", CommandDebugFlags.NOTE_HANDLER);
+    debugMode.addOption("NotePath & StateMachine", 
+      ArmConstants.DEBUG_FLAG | ShooterConstants.DEBUG_FLAG | IntakeConstants.DEBUG_FLAG | CommandDebugFlags.NOTE_HANDLER);
+    debugMode.addOption("Swerve", Drivebase.DEBUG_FLAG);
+    debugMode.addOption("Vision", Vision.DEBUG_FLAG);
+    debugMode.addOption("AbsoluteDrive", CommandDebugFlags.ABS_DRIVE);
+    debugMode.addOption("AutoDrives", CommandDebugFlags.AUTO_SHOOT | CommandDebugFlags.ALIGN_TO_POSE | CommandDebugFlags.AUTO_AMP);
+    debugMode.addOption("AllDrive",
+      CommandDebugFlags.AUTO_SHOOT | CommandDebugFlags.ALIGN_TO_POSE | CommandDebugFlags.AUTO_AMP |
+      CommandDebugFlags.ABS_DRIVE | Drivebase.DEBUG_FLAG);
+    debugMode.addOption("Drive & Vision",
+      CommandDebugFlags.AUTO_SHOOT | CommandDebugFlags.ALIGN_TO_POSE | CommandDebugFlags.AUTO_AMP |
+      CommandDebugFlags.ABS_DRIVE | Drivebase.DEBUG_FLAG | Vision.DEBUG_FLAG);
+    debugMode.addOption("ALL", ~0);
+    SmartDashboard.putData(debugMode);
+    SmartDashboard.putNumber(CommandDebugFlags.FLAGS_KEY, 0);
+    SmartDashboard.putData("Set Debug Mode", new InstantCommand(() -> 
+      SmartDashboard.putNumber(CommandDebugFlags.FLAGS_KEY, debugMode.getSelected())).ignoringDisable(true)
+    );
 
     SmartDashboard.putData("setGains", new InstantCommand(drivebase::setVelocityModuleGains));
     SmartDashboard.putData("SendAlliance",
