@@ -135,7 +135,7 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void initializeDashboard() {
-    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ArmConstants.ARM_LOWER_LIMIT.getRadians());
+    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, ArmConstants.LOWER_LIMIT.getRadians());
     SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, false);
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
     SmartDashboard.putBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);

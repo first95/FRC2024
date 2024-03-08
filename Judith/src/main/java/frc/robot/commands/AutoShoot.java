@@ -86,7 +86,7 @@ public class AutoShoot extends Command {
       new Translation3d(currentPose.getX(), currentPose.getY(), 0)
       // add mount location of arm, after converting to field-relative coordinates
       .plus(
-        ArmConstants.ARM_PIVOT_LOCATION.rotateBy(
+        ArmConstants.PIVOT_LOCATION.rotateBy(
           new Rotation3d(0, 0, -currentPose.getRotation().getRadians())
         )
       );  

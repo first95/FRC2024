@@ -105,10 +105,10 @@ public class Shooter extends SubsystemBase {
     starboardShooterEncoder = starboardShooter.getEncoder();
     shoulderEncoder = shoulder.getEncoder();
 
-    shoulderEncoder.setPositionConversionFactor(ArmConstants.ARM_RADIANS_PER_MOTOR_ROTATION);
-    shoulderEncoder.setVelocityConversionFactor(ArmConstants.ARM_RADIANS_PER_MOTOR_ROTATION / 60);
+    shoulderEncoder.setPositionConversionFactor(ArmConstants.RADIANS_PER_MOTOR_ROTATION);
+    shoulderEncoder.setVelocityConversionFactor(ArmConstants.RADIANS_PER_MOTOR_ROTATION / 60);
 
-    shoulderEncoder.setPosition(ArmConstants.ARM_LOWER_LIMIT.getRadians());
+    shoulderEncoder.setPosition(ArmConstants.LOWER_LIMIT.getRadians());
 
     portShooterPID = portShooter.getPIDController();
     starboardShooterPID = starboardShooter.getPIDController();
@@ -124,13 +124,13 @@ public class Shooter extends SubsystemBase {
     starboardShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
     starboardShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
 
-    shoulderPID.setP(ArmConstants.SHOULDER_KP);
-    shoulderPID.setI(ArmConstants.SHOULDER_KI);
-    shoulderPID.setD(ArmConstants.SHOULDER_KD);
-    shoulderPID.setFF(ArmConstants.SHOULDER_KF);
+    shoulderPID.setP(ArmConstants.KP);
+    shoulderPID.setI(ArmConstants.KI);
+    shoulderPID.setD(ArmConstants.KD);
+    shoulderPID.setFF(ArmConstants.KF);
 
-    shoulderPID.setOutputRange(ArmConstants.SHOULDER_MIN_CONTROL_EFFORT,
-        ArmConstants.SHOULDER_MAX_CONTROL_EFFORT);
+    shoulderPID.setOutputRange(ArmConstants.MIN_CONTROL_EFFORT,
+        ArmConstants.MAX_CONTROL_EFFORT);
 
     bottomLimitSwitch = new DigitalInput(ArmConstants.LIMIT_SWITCH_ID);
 
@@ -138,14 +138,14 @@ public class Shooter extends SubsystemBase {
         new TrapezoidProfile.Constraints(
             ArmConstants.MAX_SPEED,
             ArmConstants.MAX_ACCELERATION));
-    armGoal = ArmConstants.ARM_LOWER_LIMIT;
-    profileStart = new TrapezoidProfile.State(ArmConstants.ARM_LOWER_LIMIT.getRadians(), 0);
+    armGoal = ArmConstants.LOWER_LIMIT;
+    profileStart = new TrapezoidProfile.State(ArmConstants.LOWER_LIMIT.getRadians(), 0);
 
     shoulderFeedforward = new ArmFeedforward(
-        ArmConstants.SHOULDER_KS,
-        ArmConstants.SHOULDER_KG,
-        ArmConstants.SHOULDER_KV,
-        ArmConstants.SHOULDER_KA);
+        ArmConstants.KS,
+        ArmConstants.KG,
+        ArmConstants.KV,
+        ArmConstants.KA);
     
     armFeedforwardValue = 0;
 
@@ -270,21 +270,21 @@ public class Shooter extends SubsystemBase {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
 
     if (bottomLimitSwitch.get()) {
-      shoulderEncoder.setPosition(ArmConstants.ARM_LOWER_LIMIT.getRadians());
+      shoulderEncoder.setPosition(ArmConstants.LOWER_LIMIT.getRadians());
     }
-    if (armGoal.getRadians() >= ArmConstants.ARM_UPPER_LIMIT.getRadians()) {
-      armGoal = ArmConstants.ARM_UPPER_LIMIT;
+    if (armGoal.getRadians() >= ArmConstants.UPPER_LIMIT.getRadians()) {
+      armGoal = ArmConstants.UPPER_LIMIT;
     }
     armSetpoint = shoulderProfile.calculate(
         timer.get(),
         profileStart,
         new TrapezoidProfile.State(armGoal.getRadians(), 0));
     // This really shouldn't be necessary
-    armSetpoint = (armSetpoint.position >= ArmConstants.ARM_UPPER_LIMIT.getRadians())
-        ? new TrapezoidProfile.State(ArmConstants.ARM_UPPER_LIMIT.getRadians(), 0)
+    armSetpoint = (armSetpoint.position >= ArmConstants.UPPER_LIMIT.getRadians())
+        ? new TrapezoidProfile.State(ArmConstants.UPPER_LIMIT.getRadians(), 0)
         : armSetpoint;
 
-    if (Math.abs(armSetpoint.position - ArmConstants.ARM_LOWER_LIMIT.getRadians()) <= ArmConstants.ARM_DEADBAND) {
+    if (Math.abs(armSetpoint.position - ArmConstants.LOWER_LIMIT.getRadians()) <= ArmConstants.DEADBAND) {
       shoulder.set(0);
       armFeedforwardValue = 0;
     } else {
@@ -297,13 +297,13 @@ public class Shooter extends SubsystemBase {
           ArbFFUnits.kVoltage);
     }
 
-    cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ArmConstants.ARM_TOLERANCE ?
+    cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ArmConstants.TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
       0;
 
     if ((debugFlags & ArmConstants.DEBUG_FLAG) != 0) {
       SmartDashboard.putNumber("ProportionalTerm",
-      ArmConstants.SHOULDER_KP * (armSetpoint.position - shoulderEncoder.getPosition()));
+      ArmConstants.KP * (armSetpoint.position - shoulderEncoder.getPosition()));
       SmartDashboard.putNumber("FeedforwardValue", armFeedforwardValue);
       SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
       SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());

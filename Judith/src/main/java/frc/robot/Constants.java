@@ -284,39 +284,41 @@ public final class Constants {
 
         public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
-        public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14.0 / (44 * 5 * 5));
-        public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
+        public static final double ROTATIONS_PER_MOTOR_ROTATION = (14.0 / (44 * 5 * 5));
+        public static final double RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ROTATIONS_PER_MOTOR_ROTATION;
 
-        public static final Rotation2d ARM_UPPER_LIMIT = Rotation2d.fromDegrees(120);
-        public static final Rotation2d ARM_LOWER_LIMIT = Rotation2d.fromDegrees(28.6);
+        public static final Rotation2d ZERO_OFFSET = new Rotation2d();
 
-        public static final Rotation2d ARM_MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
-        public static final Rotation2d ARM_AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
-        public static final Rotation2d ARM_AMP_SCORE_ANGLE = Rotation2d.fromDegrees(101);
-        public static final Rotation2d ARM_HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
-        public static final Rotation2d ARM_CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
+        public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(120);
+        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.6);
 
-        public static final Translation3d ARM_PIVOT_LOCATION = new Translation3d(
+        public static final Rotation2d MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
+        public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
+        public static final Rotation2d AMP_SCORE_ANGLE = Rotation2d.fromDegrees(101);
+        public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
+        public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
+
+        public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
             0,
             0.24765);
 
-        public static final double SHOULDER_MAX_CONTROL_EFFORT = 1;
-        public static final double SHOULDER_MIN_CONTROL_EFFORT = -0.2;
+        public static final double MAX_CONTROL_EFFORT = 1;
+        public static final double MIN_CONTROL_EFFORT = -0.2;
 
-        public static final double ARM_DEADBAND = Math.toRadians(0.5);
+        public static final double DEADBAND = Math.toRadians(0.5);
 
-        public static final double ARM_TOLERANCE = Math.toRadians(0.5);
+        public static final double TOLERANCE = Math.toRadians(0.5);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double SHOULDER_KP = 4;
-        public static final double SHOULDER_KI = 0;
-        public static final double SHOULDER_KD = 1;
-        public static final double SHOULDER_KF = 0;
-        public static final double SHOULDER_KS = 0.186865;
-        public static final double SHOULDER_KG = 0.63945; // Volts
-        public static final double SHOULDER_KV = (12 * 60) / (ARM_RADIANS_PER_MOTOR_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
-        public static final double SHOULDER_KA = 0.5; // V * s^2 / rad
+        public static final double KP = 4;
+        public static final double KI = 0;
+        public static final double KD = 1;
+        public static final double KF = 0;
+        public static final double KS = 0.186865;
+        public static final double KG = 0.63945; // Volts
+        public static final double KV = (12 * 60) / (RADIANS_PER_MOTOR_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
+        public static final double KA = 0.5; // V * s^2 / rad
 
         public static final double MAX_ACCELERATION = 40;
         public static final double MAX_SPEED = 10;
