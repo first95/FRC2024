@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -12,6 +13,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -41,7 +43,8 @@ public class Shooter extends SubsystemBase {
 
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
   private final CANSparkMax loader; // shoulder2;
-  private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
+  private final RelativeEncoder portShooterEncoder, starboardShooterEncoder;
+  private final AbsoluteEncoder shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
   private final DigitalInput bottomLimitSwitch;
@@ -103,12 +106,14 @@ public class Shooter extends SubsystemBase {
 
     portShooterEncoder = portShooter.getEncoder();
     starboardShooterEncoder = starboardShooter.getEncoder();
-    shoulderEncoder = shoulder.getEncoder();
+    shoulderEncoder = shoulder.getAbsoluteEncoder(Type.kDutyCycle);
 
-    shoulderEncoder.setPositionConversionFactor(ArmConstants.RADIANS_PER_MOTOR_ROTATION);
-    shoulderEncoder.setVelocityConversionFactor(ArmConstants.RADIANS_PER_MOTOR_ROTATION / 60);
+    shoulderEncoder.setPositionConversionFactor(ArmConstants.RADIANS_PER_ENCODER_ROTATION);
+    shoulderEncoder.setVelocityConversionFactor(ArmConstants.RADIANS_PER_ENCODER_ROTATION / 60);
 
-    shoulderEncoder.setPosition(ArmConstants.LOWER_LIMIT.getRadians());
+    shoulderEncoder.setInverted(ArmConstants.INVERT_ENCODER);
+
+    shoulderEncoder.setZeroOffset(ArmConstants.ZERO_OFFSET.getRadians());
 
     portShooterPID = portShooter.getPIDController();
     starboardShooterPID = starboardShooter.getPIDController();
@@ -269,9 +274,6 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
 
-    if (bottomLimitSwitch.get()) {
-      shoulderEncoder.setPosition(ArmConstants.LOWER_LIMIT.getRadians());
-    }
     if (armGoal.getRadians() >= ArmConstants.UPPER_LIMIT.getRadians()) {
       armGoal = ArmConstants.UPPER_LIMIT;
     }

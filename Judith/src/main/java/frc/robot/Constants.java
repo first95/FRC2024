@@ -281,13 +281,14 @@ public final class Constants {
         public static final int LIMIT_SWITCH_ID = 1;
 
         public static final boolean INVERT_SHOULDER = false;
+        public static final boolean INVERT_ENCODER = false;
 
         public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
-        public static final double ROTATIONS_PER_MOTOR_ROTATION = (14.0 / (44 * 5 * 5));
-        public static final double RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ROTATIONS_PER_MOTOR_ROTATION;
+        public static final double ROTATIONS_PER_ENCODER_ROTATION = 14.0 / 44; // (14.0 / (44 * 5 * 5)) for the motor internal encoder
+        public static final double RADIANS_PER_ENCODER_ROTATION = 2 * Math.PI * ROTATIONS_PER_ENCODER_ROTATION;
 
-        public static final Rotation2d ZERO_OFFSET = new Rotation2d();
+        public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(0);
 
         public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(120);
         public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.6);
@@ -317,7 +318,7 @@ public final class Constants {
         public static final double KF = 0;
         public static final double KS = 0.186865;
         public static final double KG = 0.63945; // Volts
-        public static final double KV = (12 * 60) / (RADIANS_PER_MOTOR_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
+        public static final double KV = (12 * 60) / (RADIANS_PER_ENCODER_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
         public static final double KA = 0.5; // V * s^2 / rad
 
         public static final double MAX_ACCELERATION = 40;
