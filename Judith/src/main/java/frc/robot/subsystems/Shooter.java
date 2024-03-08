@@ -114,15 +114,15 @@ public class Shooter extends SubsystemBase {
     starboardShooterPID = starboardShooter.getPIDController();
     shoulderPID = shoulder.getPIDController();
 
-    portShooterPID.setP(ShooterConstants.FLYWHEEL_KP);
-    portShooterPID.setI(ShooterConstants.FLYWHEEL_KI);
-    portShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
-    portShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
+    portShooterPID.setP(ShooterConstants.KP);
+    portShooterPID.setI(ShooterConstants.KI);
+    portShooterPID.setD(ShooterConstants.KD);
+    portShooterPID.setFF(ShooterConstants.KF);
 
-    starboardShooterPID.setP(ShooterConstants.FLYWHEEL_KP);
-    starboardShooterPID.setI(ShooterConstants.FLYWHEEL_KI);
-    starboardShooterPID.setD(ShooterConstants.FLYWHEEL_KD);
-    starboardShooterPID.setFF(ShooterConstants.FLYWHEEL_KF);
+    starboardShooterPID.setP(ShooterConstants.KP);
+    starboardShooterPID.setI(ShooterConstants.KI);
+    starboardShooterPID.setD(ShooterConstants.KD);
+    starboardShooterPID.setFF(ShooterConstants.KF);
 
     shoulderPID.setP(ArmConstants.KP);
     shoulderPID.setI(ArmConstants.KI);
@@ -150,9 +150,9 @@ public class Shooter extends SubsystemBase {
     armFeedforwardValue = 0;
 
     flywheelFeedforward = new SimpleMotorFeedforward(
-        ShooterConstants.FLYWHEEL_KS,
-        ShooterConstants.FLYWHEEL_KV,
-        ShooterConstants.FLYWHEEL_KA);
+        ShooterConstants.KS,
+        ShooterConstants.KV,
+        ShooterConstants.KA);
 
     noteSensor = new DigitalInput(ShooterConstants.NOTE_SENSOR_ID);
 

@@ -266,13 +266,13 @@ public final class Constants {
 
         public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
 
-        public static final double FLYWHEEL_KP = 2E-4;
-        public static final double FLYWHEEL_KI = 0;
-        public static final double FLYWHEEL_KD = 0;
-        public static final double FLYWHEEL_KF = 0;
-        public static final double FLYWHEEL_KS = 0.1506; // Volts -- Measured 2024-02-15
-        public static final double FLYWHEEL_KV = 0.0018042; // V * min / rotation
-        public static final double FLYWHEEL_KA = 0.00028741;
+        public static final double KP = 2E-4;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KF = 0;
+        public static final double KS = 0.1506; // Volts -- Measured 2024-02-15
+        public static final double KV = 0.0018042; // V * min / rotation
+        public static final double KA = 0.00028741;
     }
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
