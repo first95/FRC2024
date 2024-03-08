@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.SwerveModuleConstants;
 import frc.robot.Constants.Drivebase;
 
@@ -101,21 +100,21 @@ public class SwerveModule {
         setDesiredState(desiredState, isOpenLoop, true);
     }
 
-    public void setGains(double kp, double ki, double kd, double ks, double kv, double ka) {
-        //feedforward = new SimpleMotorFeedforward(ks, kv, ka);
-        //driveController.setP(kp);
-        //driveController.setI(ki);
-        //driveController.setD(kd);
+    public void setVelocityGains(double kp, double ki, double kd, double ks, double kv, double ka) {
+        feedforward = new SimpleMotorFeedforward(ks, kv, ka);
+        driveController.setP(kp);
+        driveController.setI(ki);
+        driveController.setD(kd);
+    }
+    public void setAzimuthGains(double kp, double ki, double kd) {
+        angleController.setP(kp);
+        angleController.setI(ki);
+        angleController.setD(kd);
     }
     
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean antijitter) {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         this.desiredState = desiredState;
-        SmartDashboard.putNumber("Optimized " + moduleNumber + " Speed Setpoint: ", desiredState.speedMetersPerSecond);
-        SmartDashboard.putNumber("Optimized " + moduleNumber + " Angle Setpoint: ", desiredState.angle.getDegrees());
-        SmartDashboard.putNumber("Module " + moduleNumber + "CurrentDraw", driveMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Module " + moduleNumber + " Volts", driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
-        SmartDashboard.putNumber("Module " + moduleNumber + "Speed", driveEncoder.getVelocity());
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Drivebase.MAX_SPEED;
@@ -153,6 +152,10 @@ public class SwerveModule {
         return driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     }
 
+    public double getDriveCurrent() {
+        return driveMotor.getOutputCurrent();
+    }
+
     public Translation2d getModuleLocation() {
         return moduleLocation;
     }
@@ -184,8 +187,6 @@ public class SwerveModule {
             position = fakePos;
             azimuth = Rotation2d.fromDegrees(angle);
         }
-        SmartDashboard.putNumber("Module " + moduleNumber + "Angle", azimuth.getDegrees());
-        SmartDashboard.putNumber("Module " + moduleNumber + " Wheel Pos", position);
         return new SwerveModulePosition(position, azimuth);
     }
 
@@ -199,7 +200,5 @@ public class SwerveModule {
 
     public void turnModule(double speed) {
         angleMotor.set(speed);
-        SmartDashboard.putNumber("AbsoluteEncoder" + moduleNumber, absoluteEncoder.getVelocity());
-        SmartDashboard.putNumber("ControlEffort" + moduleNumber, angleMotor.getAppliedOutput());
     }
 }

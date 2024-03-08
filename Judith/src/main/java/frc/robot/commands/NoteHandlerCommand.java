@@ -4,9 +4,10 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.NoteHandlerSpeeds;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
@@ -30,11 +31,11 @@ public class NoteHandlerCommand extends Command {
   }
 
   private State currentState;
-  private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed, portSpeed,
-      starboardSpeed;
+  private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed;
   private Rotation2d autoArmAngle, armAngle;
   private boolean sensorvalue, shooterbutton, shooterAtSpeed, autoShooting, onTarget, armInPosition,
     ampAligning, ampScoring, hpLoading, ejectButton, unjamButton, climbButton;
+  private int debugFlags;
 
   public NoteHandlerCommand(
       Shooter shooter,
@@ -58,7 +59,6 @@ public class NoteHandlerCommand extends Command {
     this.unjamSupplier = unjamSupplier;
     this.climbSupplier = climbSupplier;
 
-
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter, intake);
   }
@@ -67,8 +67,8 @@ public class NoteHandlerCommand extends Command {
   @Override
   public void initialize() {
     currentState = State.IDLE;
-    portSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
-    starboardSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
+
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
 
     shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
   }
@@ -84,12 +84,10 @@ public class NoteHandlerCommand extends Command {
         &&
         (Math.abs(starboardShootingSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE);
     armInPosition = shooter.armAtGoal();
-    portSpeed = SmartDashboard.getNumber("PortSpeed", portSpeed);
-    starboardSpeed = SmartDashboard.getNumber("StarboardSpeed", starboardSpeed);
     autoShooting = SmartDashboard.getBoolean(Auton.AUTO_SHOOTING_KEY, false);
     onTarget = SmartDashboard.getBoolean(Auton.ON_TARGET_KEY, false);
     autoArmAngle = Rotation2d
-        .fromRadians(SmartDashboard.getNumber(Auton.ARM_ANGLE_KEY, ShooterConstants.ARM_LOWER_LIMIT.getRadians()));
+        .fromRadians(SmartDashboard.getNumber(Auton.ARM_ANGLE_KEY, ArmConstants.ARM_LOWER_LIMIT.getRadians()));
     ampAligning = ampAlignSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
     ampScoring = ampScoreSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
     hpLoading = hpStationLoadSupplier.getAsBoolean();
@@ -106,7 +104,7 @@ public class NoteHandlerCommand extends Command {
             : NoteHandlerSpeeds.LOADER_IDLE;
         portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
         starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+        armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
         // Determine if we neeed to change state
         if (sensorvalue) {
@@ -145,9 +143,9 @@ public class NoteHandlerCommand extends Command {
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
             : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = portSpeed;
-        starboardShootingSpeed = starboardSpeed;
-        armAngle = ShooterConstants.ARM_MANUAL_SHOT_ANGLE;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
+        armAngle = ArmConstants.ARM_MANUAL_SHOT_ANGLE;
 
         if (!shooterbutton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -162,8 +160,8 @@ public class NoteHandlerCommand extends Command {
         intakeSpeed = commandedIntakeSpeed;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
             : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = portSpeed;
-        starboardShootingSpeed = starboardSpeed;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
         armAngle = autoArmAngle;
 
         if (!autoShooting) {
@@ -178,9 +176,9 @@ public class NoteHandlerCommand extends Command {
       case SHOOTING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
         loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-        portShootingSpeed = portSpeed;
-        starboardShootingSpeed = starboardSpeed;
-        armAngle = ShooterConstants.ARM_MANUAL_SHOT_ANGLE;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
+        armAngle = ArmConstants.ARM_MANUAL_SHOT_ANGLE;
 
         if (!shooterbutton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -191,8 +189,8 @@ public class NoteHandlerCommand extends Command {
       case AUTO_SHOOTING:
         intakeSpeed = commandedIntakeSpeed;
         loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-        portShootingSpeed = portSpeed;
-        starboardShootingSpeed = starboardSpeed;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
         armAngle = autoArmAngle;
 
         if (!autoShooting) {
@@ -206,7 +204,7 @@ public class NoteHandlerCommand extends Command {
         loaderSpeed = -NoteHandlerSpeeds.LOADER_INDEXING;
         portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
         starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+        armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
         if (!sensorvalue) {
           currentState = State.INDEXING_FWD;
@@ -240,7 +238,7 @@ public class NoteHandlerCommand extends Command {
         loaderSpeed = NoteHandlerSpeeds.LOADER_INDEXING;
         portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
         starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+        armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
         if (sensorvalue) {
           currentState = State.HOLDING;
@@ -273,9 +271,9 @@ public class NoteHandlerCommand extends Command {
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
         loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
             : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = portSpeed;
-        starboardShootingSpeed = starboardSpeed;
-        armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
+        armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
         if (climbButton) {
           currentState = State.CLIMB;
@@ -307,7 +305,7 @@ public class NoteHandlerCommand extends Command {
               : NoteHandlerSpeeds.LOADER_IDLE;
           portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
           starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
-          armAngle = ShooterConstants.ARM_AMP_ALIGNMENT_ANGLE;
+          armAngle = ArmConstants.ARM_AMP_ALIGNMENT_ANGLE;
 
           if (!ampAligning) {
             currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -330,7 +328,7 @@ public class NoteHandlerCommand extends Command {
               : NoteHandlerSpeeds.LOADER_IDLE;
           portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
           starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
-          armAngle = ShooterConstants.ARM_AMP_SCORE_ANGLE;
+          armAngle = ArmConstants.ARM_AMP_SCORE_ANGLE;
 
           if (!ampScoring) {
             currentState = State.AMP_ALIGNING;
@@ -355,7 +353,7 @@ public class NoteHandlerCommand extends Command {
           loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
           portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
           starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
-          armAngle = ShooterConstants.ARM_AMP_SCORE_ANGLE;
+          armAngle = ArmConstants.ARM_AMP_SCORE_ANGLE;
 
           if (!ampScoring) {
             currentState = State.AMP_ALIGNING;
@@ -377,7 +375,7 @@ public class NoteHandlerCommand extends Command {
           loaderSpeed = -NoteHandlerSpeeds.LOADER_FIRING;
           portShootingSpeed = NoteHandlerSpeeds.SHOOTER_INTAKE;
           starboardShootingSpeed = NoteHandlerSpeeds.SHOOTER_INTAKE;
-          armAngle = ShooterConstants.ARM_HP_COLLECT_ANGLE;
+          armAngle = ArmConstants.ARM_HP_COLLECT_ANGLE;
 
           if (!hpLoading) {
             currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -399,7 +397,7 @@ public class NoteHandlerCommand extends Command {
               : NoteHandlerSpeeds.LOADER_IDLE;
           portShootingSpeed = NoteHandlerSpeeds.PORT_EJECT;
           starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_EJECT;
-          armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+          armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
           if (shooterAtSpeed) {
             currentState = State.EJECT;
@@ -417,7 +415,7 @@ public class NoteHandlerCommand extends Command {
             loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
             portShootingSpeed = NoteHandlerSpeeds.PORT_EJECT;
             starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_EJECT;
-            armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+            armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
             if (!ejectButton) {
               currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -432,7 +430,7 @@ public class NoteHandlerCommand extends Command {
             loaderSpeed = NoteHandlerSpeeds.LOADER_INTAKE;
             portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
             starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-            armAngle = ShooterConstants.ARM_LOWER_LIMIT;
+            armAngle = ArmConstants.ARM_LOWER_LIMIT;
 
             if (!unjamButton) {
               currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -453,7 +451,7 @@ public class NoteHandlerCommand extends Command {
             loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE : NoteHandlerSpeeds.LOADER_IDLE;
             portShootingSpeed = NoteHandlerSpeeds.PORT_CLIMB;
             starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_CLIMB;
-            armAngle = ShooterConstants.ARM_CLIMB_ANGLE;
+            armAngle = ArmConstants.ARM_CLIMB_ANGLE;
 
             if (!climbButton) {
               currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -470,11 +468,17 @@ public class NoteHandlerCommand extends Command {
     shooter.runLoader(loaderSpeed);
     shooter.setArmAngle(armAngle);
 
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+    
     SmartDashboard.putString("currentState", currentState.toString());
-    SmartDashboard.putNumber("intakeSpeed", intakeSpeed);
-    SmartDashboard.putNumber("shooterSpeed", portShootingSpeed);
-    SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
     SmartDashboard.putBoolean("sensor", sensorvalue);
+
+    if ((debugFlags & CommandDebugFlags.NOTE_HANDLER) != 0) {
+      SmartDashboard.putNumber("intakeSpeed", intakeSpeed);
+      SmartDashboard.putNumber("portShooterSpeed", portShootingSpeed);
+      SmartDashboard.putNumber("starboardShooterSpeed", starboardShootingSpeed);
+      SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
+    }
   }
 
   // Called once the command ends or is interrupted.

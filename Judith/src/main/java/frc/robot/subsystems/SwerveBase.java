@@ -32,6 +32,7 @@ import frc.lib.util.CamData;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.SwerveModule;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.Vision;
 
@@ -56,7 +57,7 @@ public class SwerveBase extends SubsystemBase {
   private double[] moduleStates = new double[8];
   private double[] moduleSetpoints = new double[8];
 
-  private int poseErrorCounter;
+  private int poseErrorCounter, debugFlags;
 
   private Timer timer;
 
@@ -130,6 +131,8 @@ public class SwerveBase extends SubsystemBase {
     poseErrorCounter = 0;
     LimelightHelpers.setCameraMode_Driver(Vision.NOTE_LIMELIGHT_NAME);
 
+    debugFlags = (int)SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
     driveCharacterizer = new SysIdRoutine(
       new SysIdRoutine.Config(),
       new SysIdRoutine.Mechanism(
@@ -180,9 +183,6 @@ public class SwerveBase extends SubsystemBase {
    * @param isOpenLoop  Whether or not to use closed-loop velocity control.  Set to true to disable closed-loop.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-
-    SmartDashboard.putString("InputCommands", translation.toString() + ", Omega: " + rotation);
-    
     // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if necessary.
     ChassisSpeeds velocity = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
       correctForDynamics(
@@ -201,7 +201,10 @@ public class SwerveBase extends SubsystemBase {
     );
 
     // Display commanded speed for testing
-    SmartDashboard.putString("RobotVelocity", velocity.toString());
+    if ((debugFlags & Drivebase.DEBUG_FLAG) != 0) {
+      SmartDashboard.putString("InputCommands", translation.toString() + ", Omega: " + rotation);
+      SmartDashboard.putString("DesiredRobotVelocity", velocity.toString());
+    }
 
     // Calculate required module states via kinematics
     SwerveModuleState[] swerveModuleStates = 
@@ -214,8 +217,6 @@ public class SwerveBase extends SubsystemBase {
 
     // Command and display desired states
     for (SwerveModule module : swerveModules) {
-      SmartDashboard.putNumber("Module " + module.moduleNumber + " Speed Setpoint: ", swerveModuleStates[module.moduleNumber].speedMetersPerSecond);
-      SmartDashboard.putNumber("Module " + module.moduleNumber + " Angle Setpoint: ", swerveModuleStates[module.moduleNumber].angle.getDegrees());
       module.setDesiredState(swerveModuleStates[module.moduleNumber], isOpenLoop);
     }
   }
@@ -395,7 +396,7 @@ public class SwerveBase extends SubsystemBase {
 
   public void setVelocityModuleGains() {
     for (SwerveModule swerveModule : swerveModules) {
-      swerveModule.setGains(
+      swerveModule.setVelocityGains(
         SmartDashboard.getNumber("KP", Drivebase.VELOCITY_KP),
         SmartDashboard.getNumber("KI", Drivebase.VELOCITY_KI),
         SmartDashboard.getNumber("KD", Drivebase.VELOCITY_KD),
@@ -414,12 +415,16 @@ public class SwerveBase extends SubsystemBase {
     if (!visionMeasurement.valid
     || visionMeasurement.pipeline != Vision.APRILTAG_PIPELINE_NUMBER
     || (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR)) {
-      SmartDashboard.putBoolean(limelightName + " Tests", false);
+      if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
+        SmartDashboard.putBoolean(limelightName + " Tests", false);
+      }
       return visionMeasurement;
     }
     /*if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (poseErrorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
       poseErrorCounter++;
-      SmartDashboard.putBoolean(limelightName + " Tests", false);
+      if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
+        SmartDashboard.putBoolean(limelightName + " Tests", false);
+      }
       return visionMeasurement;
     } else if (poseErrorCounter >= Vision.LOOP_CYCLES_BEFORE_RESET) {
       wasOdometrySeeded = false;
@@ -434,7 +439,9 @@ public class SwerveBase extends SubsystemBase {
         xyStds = Vision.VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV;
         angStds = Vision.VISION_FAR_MULTITARGET_ANGULAR_STD_DEV;
       } else {
+        if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
+        }
         return visionMeasurement;
       }
     } else {
@@ -445,11 +452,15 @@ public class SwerveBase extends SubsystemBase {
         xyStds = Vision.VISION_FAR_TRANSLATIONAL_STD_DEV;
         angStds = Vision.VISION_FAR_ANGULAR_STD_DEV;
       } else {
+        if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
+        }
         return visionMeasurement;
       }
     }
-    SmartDashboard.putBoolean(limelightName + " Tests", true);
+    if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
+        SmartDashboard.putBoolean(limelightName + " Tests", true);
+        }
     double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, angStds));
     odometry.addVisionMeasurement(visionMeasurement.pose2d, timestamp);
@@ -459,17 +470,28 @@ public class SwerveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Read active flags
+    debugFlags = (int)SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
     // Update odometry and current pose/velocity
     for (SwerveModule module : swerveModules) {
       currentModulePositions[module.moduleNumber] = module.getPosition();
       currentModuleStates[module.moduleNumber] = module.getState();
 
-      SmartDashboard.putNumber("Module " + module.moduleNumber + " Absolute Encoder", module.getAbsoluteEncoder());
-      var desState = module.getDesiredState();
-      moduleStates[module.moduleNumber] = currentModuleStates[module.moduleNumber].angle.getRadians();
-      moduleSetpoints[module.moduleNumber] = desState.angle.getRadians();
-      moduleStates[module.moduleNumber + 1] = currentModuleStates[module.moduleNumber].speedMetersPerSecond;
-      moduleSetpoints[module.moduleNumber + 1] = desState.speedMetersPerSecond;
+      if ((debugFlags & Drivebase.DEBUG_FLAG) != 0) {
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Absolute Encoder", module.getAbsoluteEncoder());
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Speed", module.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Drive Current", module.getDriveCurrent());
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Drive Voltage", module.getDriveVolts());
+        
+        var desState = module.getDesiredState();
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Target Angle", desState.angle.getDegrees());
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Target Speed", desState.speedMetersPerSecond);
+        moduleStates[module.moduleNumber] = currentModuleStates[module.moduleNumber].angle.getRadians();
+        moduleSetpoints[module.moduleNumber] = desState.angle.getRadians();
+        moduleStates[module.moduleNumber + 1] = currentModuleStates[module.moduleNumber].speedMetersPerSecond;
+        moduleSetpoints[module.moduleNumber + 1] = desState.speedMetersPerSecond;
+      }
     }
     odometry.update(getYaw(), currentModulePositions);
     currentPose = odometry.getEstimatedPosition();
@@ -482,17 +504,10 @@ public class SwerveBase extends SubsystemBase {
     ? new ChassisSpeeds(-currentFieldVelocity.vxMetersPerSecond, -currentFieldVelocity.vyMetersPerSecond, currentFieldVelocity.omegaRadiansPerSecond)
     : currentFieldVelocity;
 
-    SmartDashboard.putString("Gyro", getYaw().toString());
     SmartDashboard.putString("alliance", (alliance != null) ? alliance.toString() : "NULL");
     SmartDashboard.putString("OdometryPos", currentPose.toString());
-    ChassisSpeeds robotVelocity = getRobotVelocity();
-    SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
-    SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
-    SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);
-
-    SmartDashboard.putNumber("PoseErrorCounter", poseErrorCounter);
-
     SmartDashboard.putBoolean("seeded", wasOdometrySeeded);
+    
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded && alliance != null) { 
       CamData bowSeed = new CamData(LimelightHelpers.getLatestResults(Vision.BOW_LIMELIGHT_NAME));
@@ -531,23 +546,7 @@ public class SwerveBase extends SubsystemBase {
 
     field.setRobotPose(currentPose);
     bowCam.setRobotPose(bowCamPose.pose2d);
-    SmartDashboard.putNumber("BowCamZ", bowCamPose.pose3d.getZ());
-    SmartDashboard.putBoolean("BowValid", bowCamPose.valid);
-    SmartDashboard.putNumber("BowTa", bowCamPose.ta);
-    SmartDashboard.putNumber("BowNumTarg", bowCamPose.numTargets);
-    SmartDashboard.putNumber("BowPipe", bowCamPose.pipeline);
-    SmartDashboard.putNumber("BowLatency", bowCamPose.latency);
     sternCam.setRobotPose(sternCamPose.pose2d);
-    SmartDashboard.putNumber("SternCamZ", sternCamPose.pose3d.getZ());
-    SmartDashboard.putBoolean("SternValid", sternCamPose.valid);
-    SmartDashboard.putNumber("SternTa", sternCamPose.ta);
-    SmartDashboard.putNumber("SternNumTarg", sternCamPose.numTargets);
-    SmartDashboard.putNumber("SternPipe", sternCamPose.pipeline);
-    SmartDashboard.putNumber("SternLatency", sternCamPose.latency);
-    /*ChassisSpeeds robotVelocity = getRobotVelocity();
-    SmartDashboard.putNumber("Robot X Vel", robotVelocity.vxMetersPerSecond);
-    SmartDashboard.putNumber("Robot Y Vel", robotVelocity.vyMetersPerSecond);
-    SmartDashboard.putNumber("Robot Ang Vel", robotVelocity.omegaRadiansPerSecond);*/
 
     // Update angle accumulator if the robot is simulated
     if (!Robot.isReal()) {
@@ -556,9 +555,32 @@ public class SwerveBase extends SubsystemBase {
       
     }
 
-    SmartDashboard.putNumberArray("moduleStates", moduleStates);
-    SmartDashboard.putNumberArray("moduleSetpoints", moduleSetpoints);
-    SmartDashboard.putNumber("OdomHeading", currentPose.getRotation().getRadians());
+    if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
+      SmartDashboard.putNumber("BowCamZ", bowCamPose.pose3d.getZ());
+      SmartDashboard.putBoolean("BowValid", bowCamPose.valid);
+      SmartDashboard.putNumber("BowTa", bowCamPose.ta);
+      SmartDashboard.putNumber("BowNumTarg", bowCamPose.numTargets);
+      SmartDashboard.putNumber("BowPipe", bowCamPose.pipeline);
+      SmartDashboard.putNumber("BowLatency", bowCamPose.latency);
+
+      SmartDashboard.putNumber("SternCamZ", sternCamPose.pose3d.getZ());
+      SmartDashboard.putBoolean("SternValid", sternCamPose.valid);
+      SmartDashboard.putNumber("SternTa", sternCamPose.ta);
+      SmartDashboard.putNumber("SternNumTarg", sternCamPose.numTargets);
+      SmartDashboard.putNumber("SternPipe", sternCamPose.pipeline);
+      SmartDashboard.putNumber("SternLatency", sternCamPose.latency);
+
+      SmartDashboard.putNumber("PoseErrorCounter", poseErrorCounter);
+    }
+    if ((debugFlags & Drivebase.DEBUG_FLAG) != 0) {
+      SmartDashboard.putNumberArray("moduleStates", moduleStates);
+      SmartDashboard.putNumberArray("moduleSetpoints", moduleSetpoints);
+      SmartDashboard.putNumber("OdomHeading", currentPose.getRotation().getRadians());
+      SmartDashboard.putString("Gyro", getYaw().toString());
+      SmartDashboard.putNumber("Robot X Vel", currentRobotVelocity.vxMetersPerSecond);
+      SmartDashboard.putNumber("Robot Y Vel", currentRobotVelocity.vyMetersPerSecond);
+      SmartDashboard.putNumber("Robot Ang Vel", currentRobotVelocity.omegaRadiansPerSecond);
+    }
   }
 
   @Override

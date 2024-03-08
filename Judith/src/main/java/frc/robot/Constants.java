@@ -52,8 +52,8 @@ public final class Constants {
     0,
     0,
     0.15);
-
     public static final class Drivebase {
+        public static final int DEBUG_FLAG = 0b1;
         // Hold time on motor brakes when disabled
         public static final double WHEEL_LOCK_TIME = 10; // seconds
 
@@ -194,8 +194,9 @@ public final class Constants {
 
         public static final int PIGEON = 30;
     }
-
     public static final class Vision {
+        public static final int DEBUG_FLAG = 0b10;
+
         public static final int APRILTAG_PIPELINE_NUMBER = 0;
         public static final String BOW_LIMELIGHT_NAME = "limelight-bow";
         public static final String STERN_LIMELIGHT_NAME = "limelight-stern";
@@ -240,14 +241,13 @@ public final class Constants {
             2.2585
         );
     }
-
     public static final class ShooterConstants {
+        public static final int DEBUG_FLAG = 0b100;
+
         public static final int PORT_SHOOTER_ID = 12;
         public static final int STARBOARD_SHOOTER_ID = 13;
         public static final int LOADER_ID = 14;
-        public static final int SHOULDER_ID = 15;
         public static final int NOTE_SENSOR_ID = 0;
-        public static final int LIMIT_SWITCH_ID = 1;
 
         public static final int LOADER_STATUS_FRAME_0_PERIOD = 10;
         public static final int LOADER_STATUS_FRAME_1_PERIOD = 58000;
@@ -260,13 +260,29 @@ public final class Constants {
         public static final boolean INVERT_PORT_SHOOTER = false;
         public static final boolean INVERT_STARBOARD_SHOOTER = true;
         public static final boolean INVERT_LOADER = true;
-        public static final boolean INVERT_SHOULDER = false;
 
         public static final int SHOOTER_CURRENT_LIMIT = 50; // A
         public static final int LOADER_CURRENT_LIMIT = 40; // A
-        public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
         public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
+
+        public static final double FLYWHEEL_KP = 2E-4;
+        public static final double FLYWHEEL_KI = 0;
+        public static final double FLYWHEEL_KD = 0;
+        public static final double FLYWHEEL_KF = 0;
+        public static final double FLYWHEEL_KS = 0.1506; // Volts -- Measured 2024-02-15
+        public static final double FLYWHEEL_KV = 0.0018042; // V * min / rotation
+        public static final double FLYWHEEL_KA = 0.00028741;
+    }
+    public static final class ArmConstants {
+        public static final int DEBUG_FLAG = 0b1000;
+
+        public static final int SHOULDER_ID = 15;
+        public static final int LIMIT_SWITCH_ID = 1;
+
+        public static final boolean INVERT_SHOULDER = false;
+
+        public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
         public static final double ARM_ROTATIONS_PER_MOTOR_ROTATION = (14.0 / (44 * 5 * 5));
         public static final double ARM_RADIANS_PER_MOTOR_ROTATION = 2 * Math.PI * ARM_ROTATIONS_PER_MOTOR_ROTATION;
@@ -302,18 +318,9 @@ public final class Constants {
         public static final double SHOULDER_KV = (12 * 60) / (ARM_RADIANS_PER_MOTOR_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
         public static final double SHOULDER_KA = 0.5; // V * s^2 / rad
 
-        public static final double FLYWHEEL_KP = 2E-4;
-        public static final double FLYWHEEL_KI = 0;
-        public static final double FLYWHEEL_KD = 0;
-        public static final double FLYWHEEL_KF = 0;
-        public static final double FLYWHEEL_KS = 0.1506; // Volts -- Measured 2024-02-15
-        public static final double FLYWHEEL_KV = 0.0018042; // V * min / rotation
-        public static final double FLYWHEEL_KA = 0.00028741;
-
         public static final double MAX_ACCELERATION = 40;
         public static final double MAX_SPEED = 10;
     }
-
     public static final class Auton {
         // Plumbing via SmartDashboard
         public static final String ARM_ANGLE_KEY = "AutoArmAngleRadians";
@@ -369,8 +376,9 @@ public final class Constants {
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }
-
     public static final class IntakeConstants {
+        public static final int DEBUG_FLAG = 0b10000;
+
         public static final int TOP_ROLLER_ID = 10;
         public static final int BOTTOM_ROLLER_ID = 11;
 
@@ -382,7 +390,6 @@ public final class Constants {
 
         public static final int CURRENT_LIMIT = 50;
     }
-
     public static final class NoteHandlerSpeeds {
         public static final double INTAKE_IDLE = 0;
         public static final double INTAKE_UNJAM = -1;
@@ -406,14 +413,22 @@ public final class Constants {
 
         public static final double SHOOTER_TOLERANCE = 100;
     }
-
     public static final class ClimberConstants {
+        public static final int DEBUG_FLAG = 0b100000;
         public static final int WINCH_ID = 16;
         public static final int WINCH2_ID = 17;
 
         public static final int CURRENT_LIMIT = 40;
 
         public static final boolean INVERT_WINCH = true;
+    }
+    public static final class CommandDebugFlags {
+        public static final int ALIGN_TO_POSE = 0b1000000;
+        public static final int AUTO_SHOOT =    0b10000000;
+        public static final int NOTE_HANDLER =  0b100000000;
+        public static final int AUTO_AMP =      0b1000000000;
+        public static final int ABS_DRIVE =     0b10000000000;
+        public static final String FLAGS_KEY = "Debug Flags";
     }
     public static final class OperatorConstants {
         public static final int driveControllerPort = 0;

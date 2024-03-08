@@ -8,11 +8,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
   private final CANSparkMax topIntakeRoller, bottomIntakeRoller;
+
+  private int debugFlags;
   /** Creates a new ExampleSubsystem. */
   public Intake() {
     topIntakeRoller = new CANSparkMax(IntakeConstants.TOP_ROLLER_ID, MotorType.kBrushless);
@@ -34,6 +38,8 @@ public class Intake extends SubsystemBase {
 
     topIntakeRoller.burnFlash();
     bottomIntakeRoller.burnFlash();
+
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
   }
 
   public void runRollers(double speed) {
@@ -43,7 +49,11 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+    
+    if ((debugFlags & IntakeConstants.DEBUG_FLAG) != 0) {
+      // Put SmartDashboard printouts here
+    }
   }
 
   @Override
