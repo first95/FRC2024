@@ -38,8 +38,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.ShooterConstants;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Logged {
 
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
   private final CANSparkMax loader; // shoulder2;
@@ -249,22 +251,27 @@ public class Shooter extends SubsystemBase {
     shoulder.setVoltage(volts);
   }
 
+  @Log.File
   public Rotation2d getArmAngle() {
     return Rotation2d.fromRadians(shoulderEncoder.getPosition());
   }
 
+  @Log.File
   public double getPortShooterSpeed() {
     return portShooterEncoder.getVelocity();
   }
 
+  @Log.File
   public double getStarboardShooterSpeed() {
     return starboardShooterEncoder.getVelocity();
   }
 
+  @Log.File
   public boolean getNoteSensor() {
     return noteSensor.get();
   }
 
+  @Log.File
   public boolean armAtGoal() {
     return cyclesSinceArmNotAtGoal >= ArmConstants.SETTLE_TIME_LOOP_CYCLES;
   }
