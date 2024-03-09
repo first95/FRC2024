@@ -39,6 +39,8 @@ public class Robot extends TimedRobot implements Logged {
     m_robotContainer = new RobotContainer();
     initializeDashboard();
 
+    DataLogManager.start();
+    DataLogManager.logNetworkTables(false);
     DriverStation.startDataLog(DataLogManager.getLog());
 
     // Grab the build computer, branchname, git commit ID and build timestamp from the Jar manifest

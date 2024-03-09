@@ -53,14 +53,19 @@ public class Shooter extends SubsystemBase implements Logged {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
+  @Log.File
   private double armFeedforwardValue;
 
   private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
+  @Log.File
   private Rotation2d armGoal;
   private final Timer timer;
+  @Log.File
   private TrapezoidProfile.State armSetpoint, profileStart;
-  private int cyclesSinceArmNotAtGoal, debugFlags;
+  @Log.File
+  private int cyclesSinceArmNotAtGoal;
+  private int debugFlags;
 
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
@@ -227,6 +232,13 @@ public class Shooter extends SubsystemBase implements Logged {
         ArbFFUnits.kVoltage);
     starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0,
         flywheelFeedforward.calculate(starboardRPM), ArbFFUnits.kVoltage);
+    
+    this.log("PortTargetRPM", portRPM);
+    this.log("StarboardTargetRPM", starboardRPM);
+    if ((debugFlags & ShooterConstants.DEBUG_FLAG) != 0) {
+      SmartDashboard.putNumber("PortTargetRPM", portRPM);
+      SmartDashboard.putNumber("StarboardTargetRPM", starboardRPM);
+    }
   }
 
   public void setPortShooterRaw(double speed) {
@@ -276,7 +288,6 @@ public class Shooter extends SubsystemBase implements Logged {
     return cyclesSinceArmNotAtGoal >= ArmConstants.SETTLE_TIME_LOOP_CYCLES;
   }
 
-
   @Override
   public void periodic() {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
@@ -309,6 +320,11 @@ public class Shooter extends SubsystemBase implements Logged {
     cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ArmConstants.TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
       0;
+    
+    this.log("PropotionalTerm", ArmConstants.KP * (armSetpoint.position - shoulderEncoder.getPosition()));
+    this.log("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
+    this.log("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
+    this.log("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
 
     if ((debugFlags & ArmConstants.DEBUG_FLAG) != 0) {
       SmartDashboard.putNumber("ProportionalTerm",
