@@ -39,9 +39,8 @@ public class Robot extends TimedRobot implements Logged {
     m_robotContainer = new RobotContainer();
     initializeDashboard();
 
-    DataLogManager.start();
-    DataLogManager.logNetworkTables(false);
     DriverStation.startDataLog(DataLogManager.getLog());
+    DataLogManager.logNetworkTables(false);
 
     // Grab the build computer, branchname, git commit ID and build timestamp from the Jar manifest
     // and toss the on the smart dashboard
@@ -61,7 +60,7 @@ public class Robot extends TimedRobot implements Logged {
     }
 
     boolean fileOnly = true;
-    boolean lazyLogging = true;
+    boolean lazyLogging = false;
     Monologue.setupMonologue(this, "Robot", fileOnly, lazyLogging);
   }
 
