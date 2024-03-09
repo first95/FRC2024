@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.IntakeConstants;
 import monologue.Logged;
-import monologue.Annotations.Log;
 
 public class Intake extends SubsystemBase implements Logged {
   private final CANSparkMax topIntakeRoller, bottomIntakeRoller;
