@@ -56,6 +56,8 @@ public class Intake extends SubsystemBase implements Logged {
   public void periodic() {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
     
+    this.log("topRollerSpeed", topIntakeRoller.getAppliedOutput());
+    this.log("bottomRollerSpeed", bottomIntakeRoller.getAppliedOutput());
     if ((debugFlags & IntakeConstants.DEBUG_FLAG) != 0) {
       // Put SmartDashboard printouts here
     }
