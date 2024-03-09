@@ -132,6 +132,8 @@ public class Shooter extends SubsystemBase {
     shoulderPID.setD(ArmConstants.KD);
     shoulderPID.setFF(ArmConstants.KF);
 
+    shoulderPID.setFeedbackDevice(shoulderEncoder);
+
     shoulderPID.setOutputRange(ArmConstants.MIN_CONTROL_EFFORT,
         ArmConstants.MAX_CONTROL_EFFORT);
 
