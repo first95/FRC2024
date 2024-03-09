@@ -15,8 +15,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.Drivebase;
 import frc.robot.subsystems.SwerveBase;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
-public class AlignToPose extends Command {
+public class AlignToPose extends Command  implements Logged {
+  @Log.File
   private Pose2d target, initialPose;
   private String targetName;
   private final SwerveBase swerve;
@@ -25,8 +28,11 @@ public class AlignToPose extends Command {
   private final Timer timer;
   private final boolean stringPose;
   
+  @Log.File
   private Pose2d currentRelativePose, currentPose;
+  @Log.File
   private double initialDistance, cosine, sine;
+  @Log.File
   private TrapezoidProfile.State goalState, initialState;
 
   /** Creates a new AlignToPose. */

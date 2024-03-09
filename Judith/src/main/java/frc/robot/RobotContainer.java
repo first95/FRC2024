@@ -23,6 +23,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveBase;
+import monologue.Logged;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,7 +57,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Logged {
   private final Map<String, ChoreoTrajectory> trajMap;
 
   // The robot's subsystems and commands are defined here...

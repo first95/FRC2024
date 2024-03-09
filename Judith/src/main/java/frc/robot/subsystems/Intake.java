@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.IntakeConstants;
+import monologue.Logged;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase implements Logged {
   private final CANSparkMax topIntakeRoller, bottomIntakeRoller;
 
   private int debugFlags;
@@ -43,6 +44,9 @@ public class Intake extends SubsystemBase {
   }
 
   public void runRollers(double speed) {
+    double scaledSpeed = speed * IntakeConstants.MAX_SPEED;
+    this.log("rollerCommandSpeed", speed);
+    this.log("rollerScaledSpeed", scaledSpeed);
     topIntakeRoller.set(speed * IntakeConstants.MAX_SPEED);
     bottomIntakeRoller.set(speed * IntakeConstants.MAX_SPEED);
   }
@@ -51,6 +55,8 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
     
+    this.log("topRollerSpeed", topIntakeRoller.getAppliedOutput());
+    this.log("bottomRollerSpeed", bottomIntakeRoller.getAppliedOutput());
     if ((debugFlags & IntakeConstants.DEBUG_FLAG) != 0) {
       // Put SmartDashboard printouts here
     }

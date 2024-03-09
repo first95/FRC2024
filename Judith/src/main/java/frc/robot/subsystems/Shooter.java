@@ -38,8 +38,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.ShooterConstants;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Logged {
 
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
   private final CANSparkMax loader; // shoulder2;
@@ -51,14 +53,19 @@ public class Shooter extends SubsystemBase {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
+  @Log.File
   private double armFeedforwardValue;
 
   private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
+  @Log.File
   private Rotation2d armGoal;
   private final Timer timer;
+  @Log.File
   private TrapezoidProfile.State armSetpoint, profileStart;
-  private int cyclesSinceArmNotAtGoal, debugFlags;
+  @Log.File
+  private int cyclesSinceArmNotAtGoal;
+  private int debugFlags;
 
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
@@ -223,6 +230,13 @@ public class Shooter extends SubsystemBase {
         ArbFFUnits.kVoltage);
     starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0,
         flywheelFeedforward.calculate(starboardRPM), ArbFFUnits.kVoltage);
+    
+    this.log("PortTargetRPM", portRPM);
+    this.log("StarboardTargetRPM", starboardRPM);
+    if ((debugFlags & ShooterConstants.DEBUG_FLAG) != 0) {
+      SmartDashboard.putNumber("PortTargetRPM", portRPM);
+      SmartDashboard.putNumber("StarboardTargetRPM", starboardRPM);
+    }
   }
 
   public void setPortShooterRaw(double speed) {
@@ -247,26 +261,30 @@ public class Shooter extends SubsystemBase {
     shoulder.setVoltage(volts);
   }
 
+  @Log.File
   public Rotation2d getArmAngle() {
     return Rotation2d.fromRadians(shoulderEncoder.getPosition() - ArmConstants.ZERO_OFFSET.getRadians());
   }
 
+  @Log.File
   public double getPortShooterSpeed() {
     return portShooterEncoder.getVelocity();
   }
 
+  @Log.File
   public double getStarboardShooterSpeed() {
     return starboardShooterEncoder.getVelocity();
   }
 
+  @Log.File
   public boolean getNoteSensor() {
     return noteSensor.get();
   }
 
+  @Log.File
   public boolean armAtGoal() {
     return cyclesSinceArmNotAtGoal >= ArmConstants.SETTLE_TIME_LOOP_CYCLES;
   }
-
 
   @Override
   public void periodic() {
@@ -300,6 +318,11 @@ public class Shooter extends SubsystemBase {
     cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - getArmAngle().getRadians()) <= ArmConstants.TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
       0;
+    
+    this.log("PropotionalTerm", ArmConstants.KP * (armSetpoint.position - shoulderEncoder.getPosition()));
+    this.log("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
+    this.log("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
+    this.log("StarboardVolts", starboardShooter.getAppliedOutput() * starboardShooter.getBusVoltage());
 
     if ((debugFlags & ArmConstants.DEBUG_FLAG) != 0) {
       SmartDashboard.putNumber("ProportionalTerm",
