@@ -14,9 +14,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CommandDebugFlags;
-import monologue.Logged;
 
-public class Climber extends SubsystemBase implements Logged {
+public class Climber extends SubsystemBase {
   private CANSparkMax winch, winch2;
   private int debugFlags;
   /** Creates a new Climber. */
@@ -48,16 +47,8 @@ public class Climber extends SubsystemBase implements Logged {
   public void periodic() {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
 
-    this.log("winchVoltage", winch.getAppliedOutput() * winch.getBusVoltage());
-    this.log("winch2Voltage", winch.getAppliedOutput() * winch.getBusVoltage());
-    this.log("winchCurrent", winch.getOutputCurrent());
-    this.log("winch2Current", winch2.getOutputCurrent());
-
     if ((debugFlags & ClimberConstants.DEBUG_FLAG) != 0) {
-      SmartDashboard.putNumber("winchVoltage", winch.getAppliedOutput() * winch.getBusVoltage());
-      SmartDashboard.putNumber("winch2Voltage", winch.getAppliedOutput() * winch.getBusVoltage());
-      SmartDashboard.putNumber("winchCurrent", winch.getOutputCurrent());
-      SmartDashboard.putNumber("winch2Current", winch2.getOutputCurrent());
+      // Put SmartDashboard debug here
     }
   }
 }

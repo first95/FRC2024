@@ -35,8 +35,6 @@ import frc.robot.SwerveModule;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.Vision;
-import monologue.Logged;
-import monologue.Annotations.Log;
 
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Meters;
@@ -44,15 +42,11 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-public class SwerveBase extends SubsystemBase implements Logged {
+public class SwerveBase extends SubsystemBase {
 
   private final SwerveModule[] swerveModules;
-  @Log.File
   private SwerveModulePosition[] currentModulePositions = new SwerveModulePosition[Drivebase.NUM_MODULES];
-  @Log.File
   private SwerveModuleState[] currentModuleStates = new SwerveModuleState[Drivebase.NUM_MODULES];
-  @Log.File
-  private SwerveModuleState[] desiredModuleStates = new SwerveModuleState[Drivebase.NUM_MODULES];
   private Pigeon2 imu;
   
   public Field2d field = new Field2d();
@@ -63,24 +57,18 @@ public class SwerveBase extends SubsystemBase implements Logged {
   private double[] moduleStates = new double[8];
   private double[] moduleSetpoints = new double[8];
 
-  @Log.File
-  private int poseErrorCounter;
-  private int debugFlags;
+  private int poseErrorCounter, debugFlags;
 
   private Timer timer;
 
-  @Log.File
   private boolean wasGyroReset, wasOdometrySeeded;
 
   private final SwerveDrivePoseEstimator odometry;
 
-  @Log.File
   private Pose2d currentPose, currentTelePose;
 
-  @Log.File
   private ChassisSpeeds currentRobotVelocity, currentFieldVelocity, currentTeleFieldVelocity;
 
-  @Log.File
   private Alliance alliance = null;
 
   private final SysIdRoutine driveCharacterizer, angleCharacterizer;
@@ -117,8 +105,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
     };
     for (SwerveModule module : swerveModules) {
       currentModulePositions[module.moduleNumber] = module.getPosition();
-      currentModuleStates[module.moduleNumber] = module.getState();
-      desiredModuleStates[module.moduleNumber] = module.getDesiredState();
     }
     
     odometry = new SwerveDrivePoseEstimator(
@@ -219,9 +205,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
       SmartDashboard.putString("InputCommands", translation.toString() + ", Omega: " + rotation);
       SmartDashboard.putString("DesiredRobotVelocity", velocity.toString());
     }
-    this.log("DriveInputCommandsTranslation", translation);
-    this.log("DriveInputCommandsRotation", rotation);
-    this.log("DesiredRobotVelocity", velocity);
 
     // Calculate required module states via kinematics
     SwerveModuleState[] swerveModuleStates = 
@@ -258,9 +241,8 @@ public class SwerveBase extends SubsystemBase implements Logged {
    * @param chassisSpeeds Robot-relative.
    */
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-    var states = Drivebase.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, Drivebase.MAX_SPEED);
-    setModuleStates(states);
+    setModuleStates(
+      Drivebase.KINEMATICS.toSwerveModuleStates(chassisSpeeds));
   }
 
   public void setFieldRelChassisSpeedsAndSkewCorrect(ChassisSpeeds chassisSpeeds) {
@@ -333,7 +315,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
    * Gets the current yaw angle of the robot, as reported by the imu.  CCW positive, not wrapped.
    * @return The yaw angle
    */
-  @Log.File
   private Rotation2d getYaw() {
     // Read the imu if the robot is real or the accumulator if the robot is simulated.
     if (Robot.isReal()) {
@@ -344,7 +325,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
     }
   }
 
-  @Log.File
   public Rotation2d getPitch() {
     if (Robot.isReal()) {
       return Rotation2d.fromDegrees(imu.getPitch().getValueAsDouble());
@@ -353,7 +333,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
     }
   }
 
-  @Log.File
   public Rotation2d getRoll() {
     if (Robot.isReal()) {
       return Rotation2d.fromDegrees(imu.getRoll().getValueAsDouble());
@@ -439,7 +418,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
       if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
       }
-      this.log(limelightName + " Tests", false);
       return visionMeasurement;
     }
     /*if ((poseDifference > Vision.POSE_ERROR_TOLERANCE) && (poseErrorCounter < Vision.LOOP_CYCLES_BEFORE_RESET)) {
@@ -447,7 +425,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
       if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
       }
-      this.log(limelightName + " Tests", false);
       return visionMeasurement;
     } else if (poseErrorCounter >= Vision.LOOP_CYCLES_BEFORE_RESET) {
       wasOdometrySeeded = false;
@@ -465,7 +442,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
         if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
         }
-        this.log(limelightName + " Tests", false);
         return visionMeasurement;
       }
     } else {
@@ -479,14 +455,12 @@ public class SwerveBase extends SubsystemBase implements Logged {
         if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
         }
-        this.log(limelightName + " Tests", false);
         return visionMeasurement;
       }
     }
     if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", true);
-    }
-    this.log(limelightName + " Tests", true);
+        }
     double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, angStds));
     odometry.addVisionMeasurement(visionMeasurement.pose2d, timestamp);
@@ -503,24 +477,20 @@ public class SwerveBase extends SubsystemBase implements Logged {
     for (SwerveModule module : swerveModules) {
       currentModulePositions[module.moduleNumber] = module.getPosition();
       currentModuleStates[module.moduleNumber] = module.getState();
-      desiredModuleStates[module.moduleNumber] = module.getDesiredState();
 
-      this.log("Module " + module.moduleNumber + " Absolute Encoder", module.getAbsoluteEncoder());
-      this.log("Module " + module.moduleNumber + " Speed", currentModuleStates[module.moduleNumber].speedMetersPerSecond);
-      this.log("Module " + module.moduleNumber + " Drive Current", module.getDriveCurrent());
-      this.log("Module " + module.moduleNumber + " Drive Voltage", module.getDriveVolts());
       if ((debugFlags & Drivebase.DEBUG_FLAG) != 0) {
         SmartDashboard.putNumber("Module " + module.moduleNumber + " Absolute Encoder", module.getAbsoluteEncoder());
         SmartDashboard.putNumber("Module " + module.moduleNumber + " Speed", module.getState().speedMetersPerSecond);
         SmartDashboard.putNumber("Module " + module.moduleNumber + " Drive Current", module.getDriveCurrent());
         SmartDashboard.putNumber("Module " + module.moduleNumber + " Drive Voltage", module.getDriveVolts());
         
-        SmartDashboard.putNumber("Module " + module.moduleNumber + " Target Angle", desiredModuleStates[module.moduleNumber].angle.getDegrees());
-        SmartDashboard.putNumber("Module " + module.moduleNumber + " Target Speed", desiredModuleStates[module.moduleNumber].speedMetersPerSecond);
+        var desState = module.getDesiredState();
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Target Angle", desState.angle.getDegrees());
+        SmartDashboard.putNumber("Module " + module.moduleNumber + " Target Speed", desState.speedMetersPerSecond);
         moduleStates[module.moduleNumber] = currentModuleStates[module.moduleNumber].angle.getRadians();
-        moduleSetpoints[module.moduleNumber] = desiredModuleStates[module.moduleNumber].angle.getRadians();
+        moduleSetpoints[module.moduleNumber] = desState.angle.getRadians();
         moduleStates[module.moduleNumber + 1] = currentModuleStates[module.moduleNumber].speedMetersPerSecond;
-        moduleSetpoints[module.moduleNumber + 1] = desiredModuleStates[module.moduleNumber].speedMetersPerSecond;
+        moduleSetpoints[module.moduleNumber + 1] = desState.speedMetersPerSecond;
       }
     }
     odometry.update(getYaw(), currentModulePositions);
@@ -585,20 +555,6 @@ public class SwerveBase extends SubsystemBase implements Logged {
       
     }
 
-    this.log("BowCamZ", bowCamPose.pose3d.getZ());
-    this.log("BowValid", bowCamPose.valid);
-    this.log("BowTa", bowCamPose.ta);
-    this.log("BowNumTarg", bowCamPose.numTargets);
-    this.log("BowPipe", bowCamPose.pipeline);
-    this.log("BowLatency", bowCamPose.latency);
-
-    this.log("SternCamZ", sternCamPose.pose3d.getZ());
-    this.log("SternValid", sternCamPose.valid);
-    this.log("SternTa", sternCamPose.ta);
-    this.log("SternNumTarg", sternCamPose.numTargets);
-    this.log("SternPipe", sternCamPose.pipeline);
-    this.log("SternLatency", sternCamPose.latency);
-    
     if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
       SmartDashboard.putNumber("BowCamZ", bowCamPose.pose3d.getZ());
       SmartDashboard.putBoolean("BowValid", bowCamPose.valid);

@@ -21,19 +21,15 @@ import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveBase;
-import monologue.Logged;
-import monologue.Annotations.Log;
 
 /** An example command that uses an example subsystem. */
-public class AutoShoot extends Command implements Logged {
+public class AutoShoot extends Command {
   private final PIDController thetaController;
   private final SwerveBase swerve;
   private final double timeout;
   private final Timer timer;
 
-  @Log.File
   private double angle, omega;
-  @Log.File
   private Pose2d currentPose;
   private Translation3d speakerLocation;
   private int debugFlags;

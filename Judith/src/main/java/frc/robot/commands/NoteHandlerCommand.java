@@ -10,8 +10,6 @@ import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import monologue.Logged;
-import monologue.Annotations.Log;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -21,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class NoteHandlerCommand extends Command implements Logged {
+public class NoteHandlerCommand extends Command {
   private final Shooter shooter;
   private final Intake intake;
   private final DoubleSupplier intakeSpeedAxis;
@@ -32,13 +30,9 @@ public class NoteHandlerCommand extends Command implements Logged {
     AMP_SCORING_A, AMP_SCORING_B, HP_STATION_LOAD, CLIMB, UNJAM, EJECT_DOWNSPOOL, EJECT;
   }
 
-  @Log.File
   private State currentState;
-  @Log.File
   private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed;
-  @Log.File
   private Rotation2d autoArmAngle, armAngle;
-  @Log.File
   private boolean sensorvalue, shooterbutton, shooterAtSpeed, autoShooting, onTarget, armInPosition,
     ampAligning, ampScoring, hpLoading, ejectButton, unjamButton, climbButton;
   private int debugFlags;
