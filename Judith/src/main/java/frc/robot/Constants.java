@@ -281,17 +281,17 @@ public final class Constants {
         public static final int LIMIT_SWITCH_ID = 1;
 
         public static final boolean INVERT_SHOULDER = false;
-        public static final boolean INVERT_ENCODER = false;
+        public static final boolean INVERT_ENCODER = true;
 
         public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
-        public static final double ROTATIONS_PER_ENCODER_ROTATION = 14.0 / 44; // (14.0 / (44 * 5 * 5)) for the motor internal encoder
+        public static final double ROTATIONS_PER_ENCODER_ROTATION = 22.0 / 44; // (14.0 / (44 * 5 * 5)) for the motor internal encoder
         public static final double RADIANS_PER_ENCODER_ROTATION = 2 * Math.PI * ROTATIONS_PER_ENCODER_ROTATION;
 
-        public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(-14.75); // Set to zero, read arm pos at hardstop, then subtract the lower limit
+        public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(16.93); // Set to zero, read arm pos at hardstop, then subtract the lower limit
 
         public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(120);
-        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.6);
+        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.2);
 
         public static final Rotation2d MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
