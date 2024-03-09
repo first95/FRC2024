@@ -1,9 +1,9 @@
 package frc.robot;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -23,7 +23,7 @@ public class SwerveModule {
     private final double angleOffset;
     private final CANSparkMax angleMotor;
     private final CANSparkFlex driveMotor;
-    private final AbsoluteEncoder absoluteEncoder;
+    private final SparkAbsoluteEncoder absoluteEncoder;
     private final RelativeEncoder driveEncoder;
     private final SparkPIDController angleController, driveController;
     private final Timer time;

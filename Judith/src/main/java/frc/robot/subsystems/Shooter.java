@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -44,7 +44,7 @@ public class Shooter extends SubsystemBase {
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
   private final CANSparkMax loader; // shoulder2;
   private final RelativeEncoder portShooterEncoder, starboardShooterEncoder;
-  private final AbsoluteEncoder shoulderEncoder;
+  private final SparkAbsoluteEncoder shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
   private final DigitalInput bottomLimitSwitch;
