@@ -18,17 +18,22 @@ import frc.robot.Constants;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
 import frc.robot.subsystems.SwerveBase;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
 /** An example command that uses an example subsystem. */
-public class AbsoluteDrive extends Command {
+public class AbsoluteDrive extends Command implements Logged {
   private final SwerveBase swerve;
   private final PIDController thetaController;
   private final DoubleSupplier vX, vY, headingHorizontal, headingVertical;
   private final BooleanSupplier brakeMode;
+  @Log.File
   private double omega, angle, lastAngle, x, y, xMoment, yMoment, zMoment,
     armHeight, armExtension; //maxAngularVelocity, maxAngularAccel;
   private final boolean isOpenLoop;
-  private Translation2d horizontalCG;
+  @Log.File
+  private Translation2d horizontalCG, translation;
+  @Log.File
   private Translation3d robotCG;
   private int debugFlags;
 
@@ -126,7 +131,7 @@ public class AbsoluteDrive extends Command {
       y = Math.pow(vY.getAsDouble(), 3) * Drivebase.MAX_SPEED;
 
       // Limit velocity to prevent tippy
-      Translation2d translation = limitVelocity(new Translation2d(x, y));
+      translation = limitVelocity(new Translation2d(x, y));
       
 
       // Make the robot move
