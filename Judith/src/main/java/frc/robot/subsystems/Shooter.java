@@ -113,6 +113,8 @@ public class Shooter extends SubsystemBase {
 
     shoulderEncoder.setInverted(ArmConstants.INVERT_ENCODER);
 
+    shoulderEncoder.setZeroOffset(ArmConstants.ZERO_OFFSET.getRadians());
+
     portShooterPID = portShooter.getPIDController();
     starboardShooterPID = starboardShooter.getPIDController();
     shoulderPID = shoulder.getPIDController();
@@ -180,7 +182,7 @@ public class Shooter extends SubsystemBase {
             log -> {
               log.motor("shoulder")
                   .voltage(Volts.of(shoulder.getAppliedOutput() * shoulder.getBusVoltage()))
-                  .angularPosition(Radians.of(getArmAngle().getRadians()))
+                  .angularPosition(Radians.of(shoulderEncoder.getPosition()))
                   .angularVelocity(RadiansPerSecond.of(shoulderEncoder.getVelocity()));
             },
             this));
@@ -236,7 +238,7 @@ public class Shooter extends SubsystemBase {
   public void setArmAngle(Rotation2d angle) {
     if (angle.getRadians() != armGoal.getRadians()) {
       armGoal = angle;
-      profileStart = new TrapezoidProfile.State(getArmAngle().getRadians(), shoulderEncoder.getVelocity());
+      profileStart = new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity());
       timer.stop();
       timer.reset();
       timer.start();
@@ -248,7 +250,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Rotation2d getArmAngle() {
-    return Rotation2d.fromRadians(shoulderEncoder.getPosition() - ArmConstants.ZERO_OFFSET.getRadians());
+    return Rotation2d.fromRadians(shoulderEncoder.getPosition());
   }
 
   public double getPortShooterSpeed() {
@@ -297,19 +299,19 @@ public class Shooter extends SubsystemBase {
           ArbFFUnits.kVoltage);
     }
 
-    cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - getArmAngle().getRadians()) <= ArmConstants.TOLERANCE ?
+    cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ArmConstants.TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
       0;
 
     if ((debugFlags & ArmConstants.DEBUG_FLAG) != 0) {
       SmartDashboard.putNumber("ProportionalTerm",
-      ArmConstants.KP * (armSetpoint.position - getArmAngle().getRadians()));
+      ArmConstants.KP * (armSetpoint.position - shoulderEncoder.getPosition()));
       SmartDashboard.putNumber("FeedforwardValue", armFeedforwardValue);
       SmartDashboard.putBoolean("LimitSwitch", bottomLimitSwitch.get());
       SmartDashboard.putNumber("ShooterShoulderGoal", armGoal.getDegrees());
       SmartDashboard.putNumber("ShooterShoulderSetpoint", Math.toDegrees(armSetpoint.position));
       SmartDashboard.putNumber("ShooterShoulderSetpointVel", Math.toDegrees(armSetpoint.velocity));
-      SmartDashboard.putNumber("ShooterShoulderPos", getArmAngle().getDegrees());
+      SmartDashboard.putNumber("ShooterShoulderPos", Math.toDegrees(shoulderEncoder.getPosition()));
       SmartDashboard.putNumber("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
       SmartDashboard.putBoolean("ShoulderAtGoal", armAtGoal());
       SmartDashboard.putNumber("CycleCounter", cyclesSinceArmNotAtGoal);
