@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
-import frc.robot.Constants.NoteHandlerSpeeds;
-import frc.robot.Constants.ShooterConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -37,10 +35,10 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     initializeDashboard();
+    m_robotContainer.setIsAuto(false);
 
     // Grab the build computer, branchname, git commit ID and build timestamp from the Jar manifest
     // and toss the on the smart dashboard
-    
     String hostbranch = Robot.class.getPackage().getImplementationTitle();
     if ( hostbranch != null && ! hostbranch.isEmpty()) {
       SmartDashboard.putString("BuildHost-BranchName", hostbranch);
@@ -79,7 +77,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.setIsAuto(false);
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.setIsAuto(true);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -110,6 +111,7 @@ public class Robot extends TimedRobot {
     }
     initializeDashboard();
     m_robotContainer.stopDrive();
+    m_robotContainer.setIsAuto(false);
   }
 
   /** This function is called periodically during operator control. */
@@ -120,6 +122,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.setIsAuto(false);
   }
 
   /** This function is called periodically during test mode. */
@@ -128,7 +131,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    m_robotContainer.setIsAuto(false);
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

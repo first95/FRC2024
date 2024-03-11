@@ -276,6 +276,10 @@ public class RobotContainer {
     drivebase.setAlliance(DriverStation.getAlliance().get());
   }
 
+  public void setIsAuto(boolean isAuto) {
+    drivebase.isAuto = isAuto;
+  }
+
   private Map<String, ChoreoTrajectory> loadTrajectories() {
     Set<String> trajNames;
     try {

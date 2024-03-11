@@ -71,6 +71,8 @@ public class SwerveBase extends SubsystemBase {
 
   private Alliance alliance = null;
 
+  public boolean isAuto;
+
   private final SysIdRoutine driveCharacterizer, angleCharacterizer;
 
   /** Creates a new swerve drivebase subsystem.  Robot is controlled via the drive() method,
@@ -113,7 +115,7 @@ public class SwerveBase extends SubsystemBase {
       currentModulePositions,
       new Pose2d(),
       VecBuilder.fill(Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_ANGULAR_STD_DEV),
-      VecBuilder.fill(Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_TRANSLATIONAL_STD_DEV, Vision.VISION_FAR_ANGULAR_STD_DEV));
+      VecBuilder.fill(Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV, Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV, Vision.AUTO_FAR_ANGULAR_STD_DEV));
     wasOdometrySeeded = false;
     wasGyroReset = false;
     currentPose = new Pose2d();
@@ -433,11 +435,11 @@ public class SwerveBase extends SubsystemBase {
     poseErrorCounter = 0;
     if (visionMeasurement.numTargets >= 2) {
       if (visionMeasurement.ta > Vision.MIN_CLOSE_MULTITARGET_AREA) {
-        xyStds = Vision.VISION_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
-        angStds = Vision.VISION_CLOSE_MULTITARGET_ANGULAR_STD_DEV;
+        xyStds = isAuto ? Vision.AUTO_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV : Vision.CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
+        angStds = isAuto ? Vision.AUTO_CLOSE_MULTITARGET_ANGULAR_STD_DEV : Vision.CLOSE_MULTITARGET_ANGULAR_STD_DEV;
       } else if (visionMeasurement.ta > Vision.MIN_FAR_MULTITARGET_AREA) {
-        xyStds = Vision.VISION_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV;
-        angStds = Vision.VISION_FAR_MULTITARGET_ANGULAR_STD_DEV;
+        xyStds = isAuto ? Vision.AUTO_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV : Vision.FAR_MULTITARGET_TRANSLATIONAL_STD_DEV;
+        angStds = isAuto ? Vision.AUTO_FAR_MULTITARGET_ANGULAR_STD_DEV : Vision.FAR_MULTITARGET_ANGULAR_STD_DEV;
       } else {
         if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
@@ -446,11 +448,11 @@ public class SwerveBase extends SubsystemBase {
       }
     } else {
       if (visionMeasurement.ta > Vision.MIN_CLOSE_TARGET_AREA) {
-        xyStds = Vision.VISION_CLOSE_TRANSLATIONAL_STD_DEV;
-        angStds = Vision.VISION_CLOSE_ANGULAR_STD_DEV;
+        xyStds = isAuto ? Vision.AUTO_CLOSE_TRANSLATIONAL_STD_DEV : Vision.CLOSE_TRANSLATIONAL_STD_DEV;
+        angStds = isAuto ? Vision.AUTO_CLOSE_ANGULAR_STD_DEV : Vision.CLOSE_ANGULAR_STD_DEV;
       } else if (visionMeasurement.ta > Vision.MIN_FAR_TARGET_AREA) {
-        xyStds = Vision.VISION_FAR_TRANSLATIONAL_STD_DEV;
-        angStds = Vision.VISION_FAR_ANGULAR_STD_DEV;
+        xyStds = isAuto ? Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV : Vision.FAR_TRANSLATIONAL_STD_DEV;
+        angStds = isAuto ? Vision.AUTO_FAR_ANGULAR_STD_DEV : Vision.FAR_ANGULAR_STD_DEV;
       } else {
         if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
