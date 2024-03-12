@@ -21,9 +21,15 @@ public class CamData {
 
   public CamData(String name) {
     this.name = name;
-    LimelightResults results = LimelightHelpers.getLatestResults(name);
-    valid = results.targetingResults.valid;
-    pipeline = (int) results.targetingResults.pipelineID;
+    pipeline = (int) LimelightHelpers.getCurrentPipelineIndex(name);
+    LimelightResults results;
+    if (LimelightHelpers.getTV(name)) {
+      results = LimelightHelpers.getLatestResults(name);
+      valid = results.targetingResults.valid;
+    } else {
+      valid = false;
+      results = null;
+    }
     if (valid) {
       pose3d = new Pose3d(
         new Translation3d(
