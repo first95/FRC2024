@@ -116,7 +116,7 @@ public class SwerveBase extends SubsystemBase {
       currentModulePositions,
       new Pose2d(),
       VecBuilder.fill(Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_ANGULAR_STD_DEV),
-      VecBuilder.fill(Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV, Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV, Vision.AUTO_FAR_ANGULAR_STD_DEV));
+      VecBuilder.fill(0.01, 0.01, 0.02));
     wasOdometrySeeded = false;
     wasGyroReset = false;
     currentPose = new Pose2d();
@@ -415,6 +415,7 @@ public class SwerveBase extends SubsystemBase {
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
     //double angDifference = estimatedPose.getRotation().minus(visionMeasurement.pose2d.getRotation()).getRadians();
     double xyStds, angStds;
+    boolean useTagTheta = false;
 
     if (!visionMeasurement.valid
     || visionMeasurement.pipeline != Vision.APRILTAG_PIPELINE_NUMBER
@@ -433,35 +434,16 @@ public class SwerveBase extends SubsystemBase {
     } else if (poseErrorCounter >= Vision.LOOP_CYCLES_BEFORE_RESET) {
       wasOdometrySeeded = false;
       return visionMeasurement;
-    }*/
-    poseErrorCounter = 0;
-    if (visionMeasurement.numTargets >= 2) {
-      if (visionMeasurement.ta > Vision.MIN_CLOSE_MULTITARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV : Vision.CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_CLOSE_MULTITARGET_ANGULAR_STD_DEV : Vision.CLOSE_MULTITARGET_ANGULAR_STD_DEV;
-      } else if (visionMeasurement.ta > Vision.MIN_FAR_MULTITARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV : Vision.FAR_MULTITARGET_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_FAR_MULTITARGET_ANGULAR_STD_DEV : Vision.FAR_MULTITARGET_ANGULAR_STD_DEV;
-      } else {
-        if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
-        SmartDashboard.putBoolean(limelightName + " Tests", false);
-        }
-        return visionMeasurement;
-      }
-    } else {
-      if (visionMeasurement.ta > Vision.MIN_CLOSE_TARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_CLOSE_TRANSLATIONAL_STD_DEV : Vision.CLOSE_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_CLOSE_ANGULAR_STD_DEV : Vision.CLOSE_ANGULAR_STD_DEV;
-      } else if (visionMeasurement.ta > Vision.MIN_FAR_TARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV : Vision.FAR_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_FAR_ANGULAR_STD_DEV : Vision.FAR_ANGULAR_STD_DEV;
-      } else {
-        if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
-        SmartDashboard.putBoolean(limelightName + " Tests", false);
-        }
-        return visionMeasurement;
-      }
     }
+    poseErrorCounter = 0;*/
+    
+    if (visionMeasurement.numTargets > 1) {
+      useTagTheta = true;
+    }
+
+    xyStds = Vision.XY_STD_DEV_COEFFICIENT * Math.pow(visionMeasurement.avgTagDist, 2) / visionMeasurement.numTargets;
+    angStds = useTagTheta ? Vision.ANG_STD_DEV_COEFFICIENT * Math.pow(visionMeasurement.avgTagDist, 2) / visionMeasurement.numTargets : Double.POSITIVE_INFINITY;
+
     if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", true);
         }
