@@ -410,6 +410,10 @@ public class SwerveBase extends SubsystemBase {
   }
   
   private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
+    return addVisionMeasurement(limelightName, estimatedPose, 1);
+  }
+
+  private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose, int minTags) {
     CamData visionMeasurement = new CamData(limelightName);
 
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
@@ -420,7 +424,8 @@ public class SwerveBase extends SubsystemBase {
     if (!visionMeasurement.valid
     || visionMeasurement.pipeline != Vision.APRILTAG_PIPELINE_NUMBER
     || (Math.abs(visionMeasurement.pose3d.getZ()) > Vision.MAX_ALLOWABLE_Z_ERROR)
-    || (Math.abs(angDifference) > Vision.ANGULAR_ERROR_TOLERANCE)) {
+    || (Math.abs(angDifference) > Vision.ANGULAR_ERROR_TOLERANCE)
+    || (visionMeasurement.numTargets < minTags)) {
       if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
       }
@@ -530,8 +535,8 @@ public class SwerveBase extends SubsystemBase {
       DriverStation.reportError("Alliance not set!!  Odometry not seeded!", false);
     }
     
-    CamData bowCamPose = addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, currentPose);
     CamData sternCamPose = addVisionMeasurement(Vision.STERN_LIMELIGHT_NAME, currentPose);
+    CamData bowCamPose = addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, currentPose, sternCamPose.numTargets);
 
     field.setRobotPose(currentPose);
     bowCam.setRobotPose(bowCamPose.pose2d);
