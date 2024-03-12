@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.LimelightHelpers;
+import frc.lib.util.LimelightHelpers.PoseEstimate;
 import frc.lib.util.CamData;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -409,9 +410,10 @@ public class SwerveBase extends SubsystemBase {
   }
   
   private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
-    CamData visionMeasurement = new CamData(LimelightHelpers.getLatestResults(limelightName));
+    CamData visionMeasurement = new CamData(limelightName);
 
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
+    //double angDifference = estimatedPose.getRotation().minus(visionMeasurement.pose2d.getRotation()).getRadians();
     double xyStds, angStds;
 
     if (!visionMeasurement.valid
@@ -512,8 +514,8 @@ public class SwerveBase extends SubsystemBase {
     
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded && alliance != null) { 
-      CamData bowSeed = new CamData(LimelightHelpers.getLatestResults(Vision.BOW_LIMELIGHT_NAME));
-      CamData sternSeed = new CamData(LimelightHelpers.getLatestResults(Vision.STERN_LIMELIGHT_NAME));
+      CamData bowSeed = new CamData(Vision.BOW_LIMELIGHT_NAME);
+      CamData sternSeed = new CamData(Vision.STERN_LIMELIGHT_NAME);
       if ((bowSeed.valid) && (sternSeed.valid)) {
         // Average poses together
         Translation2d translation = bowSeed.pose2d.getTranslation().plus(sternSeed.pose2d.getTranslation()).div(2);
