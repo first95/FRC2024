@@ -413,13 +413,14 @@ public class SwerveBase extends SubsystemBase {
     CamData visionMeasurement = new CamData(limelightName);
 
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
-    //double angDifference = estimatedPose.getRotation().minus(visionMeasurement.pose2d.getRotation()).getRadians();
+    double angDifference = estimatedPose.getRotation().minus(visionMeasurement.pose2d.getRotation()).getRadians();
     double xyStds, angStds;
     boolean useTagTheta = false;
 
     if (!visionMeasurement.valid
     || visionMeasurement.pipeline != Vision.APRILTAG_PIPELINE_NUMBER
-    || (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR)) {
+    || (Math.abs(visionMeasurement.pose3d.getZ()) > Vision.MAX_ALLOWABLE_Z_ERROR)
+    || (Math.abs(angDifference) > Vision.ANGULAR_ERROR_TOLERANCE)) {
       if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
       }
@@ -446,6 +447,8 @@ public class SwerveBase extends SubsystemBase {
 
     if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", true);
+        SmartDashboard.putNumber(limelightName + "XyStdDev", xyStds);
+        SmartDashboard.putNumber(limelightName + "AngStds", angStds);
         }
     double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, angStds));
