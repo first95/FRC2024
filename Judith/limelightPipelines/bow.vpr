@@ -58,7 +58,7 @@ image_source:0
 img_to_show:0
 intersection_filter:0
 invert_hue:0
-lcgain:1
+lcgain:5
 multigroup_max:7
 multigroup_min:1
 multigroup_rejector:0
