@@ -253,8 +253,8 @@ public class RobotContainer {
     }));*/
     headingController.button(1).onTrue(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
     .onFalse(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-    operatorController.povDown().onTrue(climber.runWinches(-0.7));
-    operatorController.povUp().onTrue(climber.runWinches(0.7));
+    operatorController.povDown().onTrue(climber.runWinches(-1));
+    operatorController.povUp().onTrue(climber.runWinches(0.5));
     operatorController.povCenter().onTrue(climber.runWinches(0));
   }
 

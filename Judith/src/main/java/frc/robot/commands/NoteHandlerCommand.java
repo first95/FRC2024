@@ -275,6 +275,9 @@ public class NoteHandlerCommand extends Command {
         starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
         armAngle = ArmConstants.LOWER_LIMIT;
 
+        if (!sensorvalue) {
+          currentState = State.IDLE;
+        }
         if (climbButton) {
           currentState = State.CLIMB;
         }

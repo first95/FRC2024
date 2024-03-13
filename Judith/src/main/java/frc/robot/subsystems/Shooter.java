@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.ShooterConstants;
@@ -314,6 +315,8 @@ public class Shooter extends SubsystemBase {
           armFeedforwardValue,
           ArbFFUnits.kVoltage);
     }
+
+    //LimelightHelpers.set
 
     cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ArmConstants.TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
