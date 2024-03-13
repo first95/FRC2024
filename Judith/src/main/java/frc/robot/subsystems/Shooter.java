@@ -84,6 +84,9 @@ public class Shooter extends SubsystemBase {
     loader.setPeriodicFramePeriod(PeriodicFrame.kStatus1, ShooterConstants.LOADER_STATUS_FRAME_1_PERIOD);
     loader.setPeriodicFramePeriod(PeriodicFrame.kStatus2, ShooterConstants.LOADER_STATUS_FRAME_2_PERIOD);
 
+    shoulder.setPeriodicFramePeriod(PeriodicFrame.kStatus5, ArmConstants.ABS_ENCODER_STATUS_FRAME_PERIOD_MS);
+    shoulder.setPeriodicFramePeriod(PeriodicFrame.kStatus6, ArmConstants.ABS_ENCODER_STATUS_FRAME_PERIOD_MS);
+
     portShooter.setInverted(ShooterConstants.INVERT_PORT_SHOOTER);
     starboardShooter.setInverted(ShooterConstants.INVERT_STARBOARD_SHOOTER);
     loader.setInverted(ShooterConstants.INVERT_LOADER);

@@ -289,6 +289,8 @@ public final class Constants {
         public static final int SHOULDER_ID = 15;
         public static final int LIMIT_SWITCH_ID = 1;
 
+        public static final int ABS_ENCODER_STATUS_FRAME_PERIOD_MS = 20;
+
         public static final boolean INVERT_SHOULDER = false;
         public static final boolean INVERT_ENCODER = true;
 
