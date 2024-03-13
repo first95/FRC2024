@@ -51,7 +51,7 @@ public class Shooter extends SubsystemBase {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
-  private double armFeedforwardValue;
+  private double armFeedforwardValue, lastArmVelocitySetpoint, armAccel;
 
   private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
@@ -149,6 +149,8 @@ public class Shooter extends SubsystemBase {
             ArmConstants.MAX_ACCELERATION));
     armGoal = ArmConstants.LOWER_LIMIT;
     profileStart = new TrapezoidProfile.State(ArmConstants.LOWER_LIMIT.getRadians(), 0);
+    lastArmVelocitySetpoint = 0;
+    armAccel = 0;
 
     shoulderFeedforward = new ArmFeedforward(
         ArmConstants.KS,
@@ -290,11 +292,21 @@ public class Shooter extends SubsystemBase {
         ? new TrapezoidProfile.State(ArmConstants.UPPER_LIMIT.getRadians(), 0)
         : armSetpoint;
 
+    if (armSetpoint.velocity > lastArmVelocitySetpoint) {
+      armAccel = ArmConstants.MAX_ACCELERATION;
+    } else if (armSetpoint.velocity < lastArmVelocitySetpoint) {
+      armAccel = -ArmConstants.MAX_ACCELERATION;
+    } else {
+      armAccel = 0;
+    }
+
+    lastArmVelocitySetpoint = armSetpoint.velocity;
+
     if (Math.abs(armSetpoint.position - ArmConstants.LOWER_LIMIT.getRadians()) <= ArmConstants.DEADBAND) {
       shoulder.set(0);
       armFeedforwardValue = 0;
     } else {
-      armFeedforwardValue = shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity);
+      armFeedforwardValue = shoulderFeedforward.calculate(armSetpoint.position, armSetpoint.velocity, armAccel);
       shoulderPID.setReference(
           armSetpoint.position,
           ControlType.kPosition,
@@ -319,6 +331,7 @@ public class Shooter extends SubsystemBase {
       SmartDashboard.putNumber("ShoulderControlEffort", shoulder.getAppliedOutput() * shoulder.getBusVoltage());
       SmartDashboard.putBoolean("ShoulderAtGoal", armAtGoal());
       SmartDashboard.putNumber("CycleCounter", cyclesSinceArmNotAtGoal);
+      SmartDashboard.putNumber("ShooterSetpointAccel", Math.toDegrees(armAccel));
     }
     if ((debugFlags & ShooterConstants.DEBUG_FLAG) != 0) {
       SmartDashboard.putNumber("PortVolts", portShooter.getAppliedOutput() * portShooter.getBusVoltage());
