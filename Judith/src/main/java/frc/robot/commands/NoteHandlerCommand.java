@@ -324,8 +324,7 @@ public class NoteHandlerCommand extends Command {
 
         case AMP_SCORING_A:
           intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-          loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-              : NoteHandlerSpeeds.LOADER_IDLE;
+          loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
           portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
           starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
           armAngle = ArmConstants.AMP_SCORE_ANGLE;
