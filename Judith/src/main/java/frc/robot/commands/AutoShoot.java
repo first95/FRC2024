@@ -97,7 +97,7 @@ public class AutoShoot extends Command {
       Math.atan(
         posDelta.getZ() /
         posDelta.toTranslation2d().getNorm()
-      )
+      ) + ArmConstants.AUTO_SHOOT_FUDGE.getRadians()
     );
 
     // Azimuth:

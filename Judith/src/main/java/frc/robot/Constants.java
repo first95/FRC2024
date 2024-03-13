@@ -285,16 +285,18 @@ public final class Constants {
         public static final double ROTATIONS_PER_ENCODER_ROTATION = 22.0 / 44; // (14.0 / (44 * 5 * 5)) for the motor internal encoder
         public static final double RADIANS_PER_ENCODER_ROTATION = 2 * Math.PI * ROTATIONS_PER_ENCODER_ROTATION;
 
-        public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(16.93); // Set to zero, read arm pos at hardstop, then subtract the lower limit
+        public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(17.43); // Set to zero, read arm pos at hardstop, then subtract the lower limit
 
-        public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(120);
+        public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(110);
         public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.2);
 
         public static final Rotation2d MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
-        public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(80);
-        public static final Rotation2d AMP_SCORE_ANGLE = Rotation2d.fromDegrees(101);
+        public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(108);
+        public static final Rotation2d AMP_SCORE_ANGLE = Rotation2d.fromDegrees(108);
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
+
+        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(2);
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -302,23 +304,23 @@ public final class Constants {
             0.24765);
 
         public static final double MAX_CONTROL_EFFORT = 1;
-        public static final double MIN_CONTROL_EFFORT = -0.2;
+        public static final double MIN_CONTROL_EFFORT = -1;
 
         public static final double DEADBAND = Math.toRadians(0.5);
 
         public static final double TOLERANCE = Math.toRadians(0.5);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double KP = 4;
+        public static final double KP = 2;
         public static final double KI = 0;
-        public static final double KD = 1;
+        public static final double KD = 0.2;
         public static final double KF = 0;
         public static final double KS = 0.186865;
         public static final double KG = 0.63945; // Volts
-        public static final double KV = (12 * 60) / (RADIANS_PER_ENCODER_ROTATION * VORTEX_FREE_SPEED); // V * s / rad
-        public static final double KA = 0.5; // V * s^2 / rad
+        public static final double KV = 2.0 * ((12 * 60) / (RADIANS_PER_ENCODER_ROTATION * VORTEX_FREE_SPEED)); // V * s / rad
+        public static final double KA = 0.1; // V * s^2 / rad
 
-        public static final double MAX_ACCELERATION = 40;
+        public static final double MAX_ACCELERATION = 10; //40
         public static final double MAX_SPEED = 10;
     }
     public static final class Auton {
