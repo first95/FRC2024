@@ -216,13 +216,9 @@ public final class Constants {
         public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.01; // Meters and radians
         public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.001);
 
-        public static final double XY_STD_DEV_COEFFICIENT = 0.005;
+        public static final double XY_STD_DEV_COEFFICIENT = 0.01;
         public static final double ANG_STD_DEV_COEFFICIENT = 0.01;
 
-        public static final double MIN_CLOSE_TARGET_AREA = 0.005; // Units unknown
-        public static final double MIN_FAR_TARGET_AREA = 0.002;
-        public static final double MIN_CLOSE_MULTITARGET_AREA = 0.004;
-        public static final double MIN_FAR_MULTITARGET_AREA = 0.001;
         public static final double MAX_ALLOWABLE_Z_ERROR = 0.25; // Meters
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
@@ -308,10 +304,10 @@ public final class Constants {
 
         public static final double DEADBAND = Math.toRadians(0.5);
 
-        public static final double TOLERANCE = Math.toRadians(0.5);
+        public static final double TOLERANCE = Math.toRadians(0.4);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double KP = 2;
+        public static final double KP = 3;
         public static final double KI = 0;
         public static final double KD = 0.2;
         public static final double KF = 0;
