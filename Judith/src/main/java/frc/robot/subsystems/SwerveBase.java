@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.LimelightHelpers;
+import frc.lib.util.LimelightHelpers.PoseEstimate;
 import frc.lib.util.CamData;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -115,7 +116,7 @@ public class SwerveBase extends SubsystemBase {
       currentModulePositions,
       new Pose2d(),
       VecBuilder.fill(Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_TRANSLATIONAL_STD_DEV, Vision.ODOMETRY_ANGULAR_STD_DEV),
-      VecBuilder.fill(Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV, Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV, Vision.AUTO_FAR_ANGULAR_STD_DEV));
+      VecBuilder.fill(0.01, 0.01, 0.02));
     wasOdometrySeeded = false;
     wasGyroReset = false;
     currentPose = new Pose2d();
@@ -409,14 +410,22 @@ public class SwerveBase extends SubsystemBase {
   }
   
   private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose) {
-    CamData visionMeasurement = new CamData(LimelightHelpers.getLatestResults(limelightName));
+    return addVisionMeasurement(limelightName, estimatedPose, 1);
+  }
+
+  private CamData addVisionMeasurement(String limelightName, Pose2d estimatedPose, int minTags) {
+    CamData visionMeasurement = new CamData(limelightName);
 
     //double poseDifference = estimatedPose.getTranslation().getDistance(visionMeasurement.pose2d.getTranslation());
+    double angDifference = estimatedPose.getRotation().minus(visionMeasurement.pose2d.getRotation()).getRadians();
     double xyStds, angStds;
+    boolean useTagTheta = false;
 
     if (!visionMeasurement.valid
     || visionMeasurement.pipeline != Vision.APRILTAG_PIPELINE_NUMBER
-    || (Math.abs(visionMeasurement.pose3d.getZ()) >= Vision.MAX_ALLOWABLE_Z_ERROR)) {
+    || (Math.abs(visionMeasurement.pose3d.getZ()) > Vision.MAX_ALLOWABLE_Z_ERROR)
+    || (Math.abs(angDifference) > Vision.ANGULAR_ERROR_TOLERANCE)
+    || (visionMeasurement.numTargets < minTags)) {
       if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", false);
       }
@@ -431,37 +440,20 @@ public class SwerveBase extends SubsystemBase {
     } else if (poseErrorCounter >= Vision.LOOP_CYCLES_BEFORE_RESET) {
       wasOdometrySeeded = false;
       return visionMeasurement;
-    }*/
-    poseErrorCounter = 0;
-    if (visionMeasurement.numTargets >= 2) {
-      if (visionMeasurement.ta > Vision.MIN_CLOSE_MULTITARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV : Vision.CLOSE_MULTITARGET_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_CLOSE_MULTITARGET_ANGULAR_STD_DEV : Vision.CLOSE_MULTITARGET_ANGULAR_STD_DEV;
-      } else if (visionMeasurement.ta > Vision.MIN_FAR_MULTITARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_FAR_MULTITARGET_TRANSLATIONAL_STD_DEV : Vision.FAR_MULTITARGET_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_FAR_MULTITARGET_ANGULAR_STD_DEV : Vision.FAR_MULTITARGET_ANGULAR_STD_DEV;
-      } else {
-        if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
-        SmartDashboard.putBoolean(limelightName + " Tests", false);
-        }
-        return visionMeasurement;
-      }
-    } else {
-      if (visionMeasurement.ta > Vision.MIN_CLOSE_TARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_CLOSE_TRANSLATIONAL_STD_DEV : Vision.CLOSE_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_CLOSE_ANGULAR_STD_DEV : Vision.CLOSE_ANGULAR_STD_DEV;
-      } else if (visionMeasurement.ta > Vision.MIN_FAR_TARGET_AREA) {
-        xyStds = isAuto ? Vision.AUTO_FAR_TRANSLATIONAL_STD_DEV : Vision.FAR_TRANSLATIONAL_STD_DEV;
-        angStds = isAuto ? Vision.AUTO_FAR_ANGULAR_STD_DEV : Vision.FAR_ANGULAR_STD_DEV;
-      } else {
-        if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
-        SmartDashboard.putBoolean(limelightName + " Tests", false);
-        }
-        return visionMeasurement;
-      }
     }
+    poseErrorCounter = 0;*/
+    
+    if (visionMeasurement.numTargets > 1) {
+      useTagTheta = true;
+    }
+
+    xyStds = Vision.XY_STD_DEV_COEFFICIENT * Math.pow(visionMeasurement.avgTagDist, 2) / visionMeasurement.numTargets;
+    angStds = useTagTheta ? Vision.ANG_STD_DEV_COEFFICIENT * Math.pow(visionMeasurement.avgTagDist, 2) / visionMeasurement.numTargets : Double.POSITIVE_INFINITY;
+
     if ((debugFlags & Vision.DEBUG_FLAG) != 0) {
         SmartDashboard.putBoolean(limelightName + " Tests", true);
+        SmartDashboard.putNumber(limelightName + "XyStdDev", xyStds);
+        SmartDashboard.putNumber(limelightName + "AngStds", angStds);
         }
     double timestamp = Timer.getFPGATimestamp() - (visionMeasurement.latency / 1000);
     odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, angStds));
@@ -512,8 +504,8 @@ public class SwerveBase extends SubsystemBase {
     
     // Seed odometry if this has not been done
     if (!wasOdometrySeeded && alliance != null) { 
-      CamData bowSeed = new CamData(LimelightHelpers.getLatestResults(Vision.BOW_LIMELIGHT_NAME));
-      CamData sternSeed = new CamData(LimelightHelpers.getLatestResults(Vision.STERN_LIMELIGHT_NAME));
+      CamData bowSeed = new CamData(Vision.BOW_LIMELIGHT_NAME);
+      CamData sternSeed = new CamData(Vision.STERN_LIMELIGHT_NAME);
       if ((bowSeed.valid) && (sternSeed.valid)) {
         // Average poses together
         Translation2d translation = bowSeed.pose2d.getTranslation().plus(sternSeed.pose2d.getTranslation()).div(2);
@@ -543,8 +535,8 @@ public class SwerveBase extends SubsystemBase {
       DriverStation.reportError("Alliance not set!!  Odometry not seeded!", false);
     }
     
-    CamData bowCamPose = addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, currentPose);
     CamData sternCamPose = addVisionMeasurement(Vision.STERN_LIMELIGHT_NAME, currentPose);
+    CamData bowCamPose = addVisionMeasurement(Vision.BOW_LIMELIGHT_NAME, currentPose, sternCamPose.numTargets);
 
     field.setRobotPose(currentPose);
     bowCam.setRobotPose(bowCamPose.pose2d);
