@@ -450,7 +450,7 @@ public class NoteHandlerCommand extends Command {
             loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE : NoteHandlerSpeeds.LOADER_IDLE;
             portShootingSpeed = NoteHandlerSpeeds.PORT_CLIMB;
             starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_CLIMB;
-            armAngle = ArmConstants.CLIMB_ANGLE;
+            armAngle = ArmConstants.LOWER_LIMIT;
 
             if (!climbButton) {
               currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
