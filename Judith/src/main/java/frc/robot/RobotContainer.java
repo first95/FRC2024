@@ -256,6 +256,7 @@ public class RobotContainer {
     operatorController.povDown().onTrue(climber.runWinches(-1));
     operatorController.povUp().onTrue(climber.runWinches(0.5));
     operatorController.povCenter().onTrue(climber.runWinches(0));
+    operatorController.back().onTrue(new InstantCommand(shooter::zeroEncoder).ignoringDisable(true));
   }
 
   /**

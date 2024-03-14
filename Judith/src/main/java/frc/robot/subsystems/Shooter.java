@@ -276,6 +276,10 @@ public class Shooter extends SubsystemBase {
     return cyclesSinceArmNotAtGoal >= ArmConstants.SETTLE_TIME_LOOP_CYCLES;
   }
 
+  public void zeroEncoder() {
+    shoulderEncoder.setZeroOffset((shoulderEncoder.getPosition() + shoulderEncoder.getZeroOffset()) - ArmConstants.LOWER_LIMIT.getRadians());
+  }
+
 
   @Override
   public void periodic() {

@@ -100,7 +100,7 @@ public final class Autos {
       .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst1"), drive, false, true))
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-    command.setName("Center Amp");
+    command.setName("Amp Center");
     command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
     return command;
   }
