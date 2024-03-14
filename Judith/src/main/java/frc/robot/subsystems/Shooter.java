@@ -39,6 +39,7 @@ import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.Vision;
 
 public class Shooter extends SubsystemBase {
 
@@ -320,7 +321,11 @@ public class Shooter extends SubsystemBase {
           ArbFFUnits.kVoltage);
     }
 
-    //LimelightHelpers.set
+    if (noteSensor.get()) {
+      LimelightHelpers.setLEDMode_ForceOn(Vision.NOTE_LIMELIGHT_NAME);
+    } else {
+      LimelightHelpers.setLEDMode_ForceOff(Vision.NOTE_LIMELIGHT_NAME);
+    }
 
     cyclesSinceArmNotAtGoal = Math.abs(armGoal.getRadians() - shoulderEncoder.getPosition()) <= ArmConstants.TOLERANCE ?
       cyclesSinceArmNotAtGoal + 1 :
