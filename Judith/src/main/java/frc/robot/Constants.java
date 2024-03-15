@@ -59,7 +59,7 @@ public final class Constants {
 
         public static final int SWERVE_MODULE_CURRENT_LIMIT = 60;
 
-        public static final double HEADING_TOLERANCE = Math.toRadians(3);
+        public static final double HEADING_TOLERANCE = Math.toRadians(2);
 
         // Motor and encoder inversions
         public static final boolean ABSOLUTE_ENCODER_INVERT = true;
@@ -210,7 +210,7 @@ public final class Constants {
         private static final int NOTE_IP = 14;
 
         public static final double POSE_ERROR_TOLERANCE = 1;
-        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(7);
+        public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
         public static final int LOOP_CYCLES_BEFORE_RESET = 20;
 
         public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.01; // Meters and radians
