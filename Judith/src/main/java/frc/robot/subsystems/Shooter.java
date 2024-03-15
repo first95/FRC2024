@@ -45,8 +45,8 @@ public class Shooter extends SubsystemBase {
 
   private final CANSparkFlex portShooter, starboardShooter, shoulder;
   private final CANSparkMax loader; // shoulder2;
-  private final RelativeEncoder portShooterEncoder, starboardShooterEncoder;
-  private final SparkAbsoluteEncoder shoulderEncoder;
+  private final RelativeEncoder portShooterEncoder, starboardShooterEncoder, shoulderEncoder;
+  //private final SparkAbsoluteEncoder shoulderEncoder;
   private final SparkPIDController portShooterPID, starboardShooterPID, shoulderPID;
   private final TrapezoidProfile shoulderProfile;
   private final DigitalInput bottomLimitSwitch;
@@ -111,13 +111,14 @@ public class Shooter extends SubsystemBase {
 
     portShooterEncoder = portShooter.getEncoder();
     starboardShooterEncoder = starboardShooter.getEncoder();
-    shoulderEncoder = shoulder.getAbsoluteEncoder(Type.kDutyCycle);
+    //shoulderEncoder = shoulder.getAbsoluteEncoder(Type.kDutyCycle);
+    shoulderEncoder = shoulder.getEncoder();
 
     shoulderEncoder.setPositionConversionFactor(ArmConstants.RADIANS_PER_ENCODER_ROTATION);
     shoulderEncoder.setVelocityConversionFactor(ArmConstants.RADIANS_PER_ENCODER_ROTATION / 60);
     shoulderEncoder.setInverted(ArmConstants.INVERT_ENCODER);
-    shoulderEncoder.setZeroOffset(ArmConstants.ZERO_OFFSET.getRadians());
-    shoulderEncoder.setAverageDepth(1);
+    //shoulderEncoder.setZeroOffset(ArmConstants.ZERO_OFFSET.getRadians());
+    //shoulderEncoder.setAverageDepth(1);
 
     portShooterPID = portShooter.getPIDController();
     starboardShooterPID = starboardShooter.getPIDController();
@@ -278,13 +279,17 @@ public class Shooter extends SubsystemBase {
   }
 
   public void zeroEncoder() {
-    shoulderEncoder.setZeroOffset((shoulderEncoder.getPosition() + shoulderEncoder.getZeroOffset()) - ArmConstants.LOWER_LIMIT.getRadians());
+    //shoulderEncoder.setZeroOffset((shoulderEncoder.getPosition() + shoulderEncoder.getZeroOffset()) - ArmConstants.LOWER_LIMIT.getRadians());
   }
 
 
   @Override
   public void periodic() {
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
+
+    if (bottomLimitSwitch.get()) {
+      shoulderEncoder.setPosition(ArmConstants.LOWER_LIMIT.getRadians());
+    }
 
     if (armGoal.getRadians() >= ArmConstants.UPPER_LIMIT.getRadians()) {
       armGoal = ArmConstants.UPPER_LIMIT;

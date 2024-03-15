@@ -278,7 +278,7 @@ public final class Constants {
 
         public static final int SHOULDER_CURRENT_LIMIT = 50; // A
 
-        public static final double ROTATIONS_PER_ENCODER_ROTATION = 22.0 / 44; // (14.0 / (44 * 5 * 5)) for the motor internal encoder
+        public static final double ROTATIONS_PER_ENCODER_ROTATION = (14.0 / (44 * 5 * 5)); // 22.0 / 44 for the absolute encoder
         public static final double RADIANS_PER_ENCODER_ROTATION = 2 * Math.PI * ROTATIONS_PER_ENCODER_ROTATION;
 
         public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(17.1); // Set to zero, read arm pos at hardstop, then subtract the lower limit
