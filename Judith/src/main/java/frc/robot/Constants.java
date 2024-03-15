@@ -397,7 +397,7 @@ public final class Constants {
         public static final double LOADER_INDEXING = 0.1;
 
         public static final double PORT_SHOOTER = 5000;
-        public static final double STARBOARD_SHOOTER = 4000;
+        public static final double STARBOARD_SHOOTER = 3500;
         public static final double PORT_IDLE = 3500;
         public static final double STARBOARD_IDLE = 2000;
         public static final double PORT_AMP_SCORE = 500;
