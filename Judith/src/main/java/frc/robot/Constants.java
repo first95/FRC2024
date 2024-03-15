@@ -59,7 +59,7 @@ public final class Constants {
 
         public static final int SWERVE_MODULE_CURRENT_LIMIT = 60;
 
-        public static final double HEADING_TOLERANCE = Math.toRadians(2);
+        public static final double HEADING_TOLERANCE = Math.toRadians(4);
 
         // Motor and encoder inversions
         public static final boolean ABSOLUTE_ENCODER_INVERT = true;
