@@ -116,7 +116,7 @@ public class Shooter extends SubsystemBase {
 
     shoulderEncoder.setPositionConversionFactor(ArmConstants.RADIANS_PER_ENCODER_ROTATION);
     shoulderEncoder.setVelocityConversionFactor(ArmConstants.RADIANS_PER_ENCODER_ROTATION / 60);
-    shoulderEncoder.setInverted(ArmConstants.INVERT_ENCODER);
+    //shoulderEncoder.setInverted(ArmConstants.INVERT_ENCODER);
     //shoulderEncoder.setZeroOffset(ArmConstants.ZERO_OFFSET.getRadians());
     //shoulderEncoder.setAverageDepth(1);
 
