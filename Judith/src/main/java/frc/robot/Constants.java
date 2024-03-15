@@ -291,7 +291,7 @@ public final class Constants {
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
 
-        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(2.5);
+        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(2.2);
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
