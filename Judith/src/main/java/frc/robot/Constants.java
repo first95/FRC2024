@@ -315,7 +315,7 @@ public final class Constants {
         public static final double KV = 2.0 * ((12 * 60) / (RADIANS_PER_ENCODER_ROTATION * VORTEX_FREE_SPEED)); // V * s / rad
         public static final double KA = 0.1; // V * s^2 / rad
 
-        public static final double MAX_ACCELERATION = 10; //40
+        public static final double MAX_ACCELERATION = 15; //40
         public static final double MAX_SPEED = 10;
     }
     public static final class Auton {
