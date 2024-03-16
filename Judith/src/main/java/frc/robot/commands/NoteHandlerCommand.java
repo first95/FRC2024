@@ -167,7 +167,7 @@ public class NoteHandlerCommand extends Command {
         if (!autoShooting) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
         }
-        if (autoShooting && shooterAtSpeed && armInPosition && onTarget) {
+        if (armInPosition && shooterAtSpeed && onTarget && autoShooting) {
           currentState = State.AUTO_SHOOTING;
         }
 
