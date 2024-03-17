@@ -419,7 +419,7 @@ public final class Constants {
 
         public static final boolean INVERT_WINCH = true;
 
-        public static final double WINCH_UP_SPEED = 0.5;
+        public static final double WINCH_UP_SPEED = 1;
         public static final double WINCH_DOWN_SPEED = -1;
     }
     public static final class CommandDebugFlags {
