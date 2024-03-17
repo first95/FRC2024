@@ -132,19 +132,19 @@ public class RobotContainer {
         () -> -headingController.getX(),
         () -> -headingController.getY(),
         false,
-        () -> driveController.button(3).getAsBoolean());
+        () -> driveController.getHID().getRawButton(3));
 
     NoteHandlerCommand noteManager = new NoteHandlerCommand(
         shooter,
         intake,
         () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
-        () -> operatorController.y().getAsBoolean(),
-        () -> operatorController.leftBumper().getAsBoolean(),
-        () -> operatorController.rightBumper().getAsBoolean(),
-        () -> headingController.button(2).getAsBoolean(),
-        () -> operatorController.b().getAsBoolean(),
-        () -> operatorController.a().getAsBoolean(),
-        () -> operatorController.x().getAsBoolean());
+        () -> operatorController.getHID().getYButton(),
+        () -> operatorController.getHID().getLeftBumper(),
+        () -> operatorController.getHID().getRightBumper(),
+        () -> headingController.getHID().getRawButton(2),
+        () -> operatorController.getHID().getBButton(),
+        () -> operatorController.getHID().getAButton(),
+        () -> operatorController.getHID().getXButton());
 
     shooter.setDefaultCommand(noteManager);
 
