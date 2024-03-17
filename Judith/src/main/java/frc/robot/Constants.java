@@ -418,6 +418,9 @@ public final class Constants {
         public static final int CURRENT_LIMIT = 40;
 
         public static final boolean INVERT_WINCH = true;
+
+        public static final double WINCH_UP_SPEED = 0.5;
+        public static final double WINCH_DOWN_SPEED = -1;
     }
     public static final class CommandDebugFlags {
         public static final int ALIGN_TO_POSE = 0b1000000;
