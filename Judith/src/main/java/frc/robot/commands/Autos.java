@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
@@ -39,7 +40,7 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
       command.setName("Center");
-      command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+      command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       return command;
   }
 
@@ -50,7 +51,7 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
       command.setName("Amp");
-      command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+      command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       return command;
   }
 
@@ -61,7 +62,7 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
       command.setName("Podium");
-      command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+      command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       return command;
   }
   
@@ -75,7 +76,7 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
     command.setName("Center Amp");
-    command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
@@ -88,7 +89,7 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
     command.setName("Center Podium");
-    command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
@@ -101,11 +102,11 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 5))
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
     command.setName("Amp Center");
-    command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
-  public static Command fourNearNotes(SwerveBase drive, Intake intake, Map<String, ChoreoTrajectory> trajMap) {
+  public static Command fourNearNotes(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
     Command command = new AutoShoot(drive, 2.5)
     .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
     .andThen(new AlignToPose("AmpNote", drive))
@@ -116,7 +117,26 @@ public final class Autos {
     .andThen(new AutoShoot(drive, 4))
     .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
     command.setName("Four Note Auto");
-    command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
+    return command;
+  }
+
+  public static Command midlineDisruptor(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
+    Command command = new InstantCommand(() -> SmartDashboard.putBoolean(Auton.PURGE_MODE_KEY, true))
+    .andThen(new FollowTrajectory(trajMap.get("CenterRocket"), drive, false, true))
+    .alongWith(
+      new WaitCommand(4.5)
+      .andThen(new InstantCommand(() -> {
+        SmartDashboard.putBoolean(Auton.PURGE_MODE_KEY, false);
+        SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
+      }))
+    )
+    .andThen(new AutoShoot(drive, 5));
+    command.setName("Centerline Disruptor");
+    command.finallyDo(() -> {
+      SmartDashboard.putBoolean(Auton.PURGE_MODE_KEY, false);
+      SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
+    });
     return command;
   }
 
