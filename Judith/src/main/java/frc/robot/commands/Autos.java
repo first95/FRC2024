@@ -115,7 +115,6 @@ public final class Autos {
     .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst2"), drive, false, true))
     .andThen(new AutoShoot(drive, 4))
     .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-    //.andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst3"), drive, false, true)));
     command.setName("Four Note Auto");
     command.end(SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
     return command;
