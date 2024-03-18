@@ -213,8 +213,8 @@ public final class Constants {
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
         public static final int LOOP_CYCLES_BEFORE_RESET = 20;
 
-        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.01; // Meters and radians
-        public static final double ODOMETRY_ANGULAR_STD_DEV = Math.toRadians(0.001);
+        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.003; // Meters and radians
+        public static final double ODOMETRY_ANGULAR_STD_DEV = 0.0002;
 
         public static final double XY_STD_DEV_COEFFICIENT = 0.01;
         public static final double ANG_STD_DEV_COEFFICIENT = 0.01;
@@ -418,6 +418,9 @@ public final class Constants {
         public static final int CURRENT_LIMIT = 40;
 
         public static final boolean INVERT_WINCH = true;
+
+        public static final double WINCH_UP_SPEED = 1;
+        public static final double WINCH_DOWN_SPEED = -1;
     }
     public static final class CommandDebugFlags {
         public static final int ALIGN_TO_POSE = 0b1000000;

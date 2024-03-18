@@ -132,19 +132,19 @@ public class RobotContainer {
         () -> -headingController.getX(),
         () -> -headingController.getY(),
         false,
-        () -> driveController.button(3).getAsBoolean());
+        () -> driveController.getHID().getRawButton(3));
 
     NoteHandlerCommand noteManager = new NoteHandlerCommand(
         shooter,
         intake,
         () -> (operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis()),
-        () -> operatorController.y().getAsBoolean(),
-        () -> operatorController.leftBumper().getAsBoolean(),
-        () -> operatorController.rightBumper().getAsBoolean(),
-        () -> headingController.button(2).getAsBoolean(),
-        () -> operatorController.b().getAsBoolean(),
-        () -> operatorController.a().getAsBoolean(),
-        () -> operatorController.x().getAsBoolean());
+        () -> operatorController.getHID().getYButton(),
+        () -> operatorController.getHID().getLeftBumper(),
+        () -> operatorController.getHID().getRightBumper(),
+        () -> headingController.getHID().getRawButton(2),
+        () -> operatorController.getHID().getBButton(),
+        () -> operatorController.getHID().getAButton(),
+        () -> operatorController.getHID().getXButton());
 
     shooter.setDefaultCommand(noteManager);
 
@@ -253,8 +253,8 @@ public class RobotContainer {
     }));*/
     headingController.button(1).onTrue(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
     .onFalse(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
-    operatorController.povDown().onTrue(climber.runWinches(-1));
-    operatorController.povUp().onTrue(climber.runWinches(0.5));
+    operatorController.povDown().onTrue(climber.runWinches(ClimberConstants.WINCH_DOWN_SPEED));
+    operatorController.povUp().onTrue(climber.runWinches(ClimberConstants.WINCH_UP_SPEED));
     operatorController.povCenter().onTrue(climber.runWinches(0));
     operatorController.back().onTrue(new InstantCommand(shooter::zeroEncoder).ignoringDisable(true));
   }
