@@ -91,7 +91,7 @@ public class NoteHandlerCommand extends Command {
     ampAligning = ampAlignSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.AUTO_AMP_ALIGN_KEY, false);
     ampScoring = ampScoreSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.AUTO_AMP_SCORE_KEY, false);
     hpLoading = hpStationLoadSupplier.getAsBoolean();
-    ejectButton = ejectSupplier.getAsBoolean();
+    ejectButton = ejectSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.EJECT_MODE_KEY, false);
     unjamButton = unjamSupplier.getAsBoolean();
     climbButton = climbSupplier.getAsBoolean();
 

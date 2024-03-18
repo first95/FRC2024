@@ -122,19 +122,19 @@ public final class Autos {
   }
 
   public static Command midlineDisruptor(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
-    Command command = new InstantCommand(() -> SmartDashboard.putBoolean(Auton.PURGE_MODE_KEY, true))
+    Command command = new InstantCommand(() -> {
+      SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, true);
+      SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
+    })
     .andThen(new FollowTrajectory(trajMap.get("CenterRocket"), drive, false, true))
     .alongWith(
       new WaitCommand(4.5)
-      .andThen(new InstantCommand(() -> {
-        SmartDashboard.putBoolean(Auton.PURGE_MODE_KEY, false);
-        SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
-      }))
+      .andThen(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false)))
     )
     .andThen(new AutoShoot(drive, 5));
     command.setName("Centerline Disruptor");
     command.finallyDo(() -> {
-      SmartDashboard.putBoolean(Auton.PURGE_MODE_KEY, false);
+      SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
     });
     return command;
