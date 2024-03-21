@@ -165,6 +165,7 @@ public class RobotContainer {
     Command ampCenterAuto = Autos.threeNoteAmpCenter(drivebase, intake, trajMap);
     Command centerPodium = Autos.threeNoteCenterPodium(drivebase, intake, trajMap);
     Command centerLineDisruptor = Autos.midlineDisruptor(drivebase, trajMap);
+    Command source3 = Autos.sourceThree(drivebase, trajMap);
     autoChooser.addOption(oneNoteAuto.getName(), oneNoteAuto);
     autoChooser.addOption(centerAuto.getName(), centerAuto);
     autoChooser.addOption(centerAmpAuto.getName(), centerAmpAuto);
@@ -173,6 +174,7 @@ public class RobotContainer {
     autoChooser.addOption(ampCenterAuto.getName(), ampCenterAuto);
     autoChooser.addOption(centerPodium.getName(), centerPodium);
     autoChooser.addOption(centerLineDisruptor.getName(), centerLineDisruptor);
+    autoChooser.addOption(source3.getName(), source3);
     autoChooser.setDefaultOption(fourNoteAuto.getName(), fourNoteAuto);
     SmartDashboard.putData(autoChooser);
     SmartDashboard.putData("SetAuto", new InstantCommand(() -> {

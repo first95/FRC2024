@@ -38,9 +38,9 @@ public final class Autos {
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new AlignToPose("CenterNearNote", drive))
       .andThen(new AutoShoot(drive, 5))
-      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+      .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       command.setName("Center");
-      command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       return command;
   }
 
@@ -49,9 +49,9 @@ public final class Autos {
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new AlignToPose("AmpNote", drive))
       .andThen(new AutoShoot(drive, 5))
-      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+      .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       command.setName("Amp");
-      command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       return command;
   }
 
@@ -60,9 +60,9 @@ public final class Autos {
       .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, Auton.AUTO_INTAKE_SPEED)))
       .andThen(new AlignToPose("PodiumNote", drive))
       .andThen(new AutoShoot(drive, 5))
-      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+      .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       command.setName("Podium");
-      command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
       return command;
   }
   
@@ -74,9 +74,9 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 2))
       .andThen(new FollowTrajectory(trajMap.get("3NoteCenterAmp"), drive, false, true))
       .andThen(new AutoShoot(drive, 5))
-      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+      .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     command.setName("Center Amp");
-    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
@@ -87,9 +87,9 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 2))
       .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst2"), drive, false, true))
       .andThen(new AutoShoot(drive, 5))
-      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+      .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     command.setName("Center Podium");
-    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
@@ -100,9 +100,9 @@ public final class Autos {
       .andThen(new AutoShoot(drive, 2))
       .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst1"), drive, false, true))
       .andThen(new AutoShoot(drive, 5))
-      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+      .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+      .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     command.setName("Amp Center");
-    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
@@ -115,9 +115,9 @@ public final class Autos {
     .andThen(new AutoShoot(drive, 2))
     .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst2"), drive, false, true))
     .andThen(new AutoShoot(drive, 4))
-    .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)));
+    .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
+    .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     command.setName("Four Note Auto");
-    command.finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
     return command;
   }
 
@@ -126,17 +126,33 @@ public final class Autos {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, true);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
     })
+    .andThen(new AlignToPose("DisruptorStart", drive))
     .andThen(new FollowTrajectory(trajMap.get("CenterRocket"), drive, false, true))
     .alongWith(
-      new WaitCommand(4.5)
+      new WaitCommand(7)
       .andThen(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false)))
     )
-    .andThen(new AutoShoot(drive, 5));
-    command.setName("Centerline Disruptor");
-    command.finallyDo(() -> {
+    .andThen(new AutoShoot(drive, 5))
+    .finallyDo(() -> {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
     });
+    command.setName("Centerline Disruptor");
+    return command;
+  }
+
+  public static Command sourceThree(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
+    Command command = new AutoShoot(drive, 3)
+    .andThen(new AlignToPose("Source3Start", drive))
+    .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
+    .andThen(new FollowTrajectory(trajMap.get("Source3Note1"), drive, false, true))
+    .andThen(new FollowTrajectory(trajMap.get("Source3Note2"), drive, false, true))
+    .andThen(new AutoShoot(drive, 2))
+    .andThen(new FollowTrajectory(trajMap.get("Source3Note3"), drive, false, true))
+    .andThen(new FollowTrajectory(trajMap.get("Source3Note4"), drive, false, true))
+    .andThen(new AutoShoot(drive, 5))
+    .finallyDo(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    command.setName("Source Side 3");
     return command;
   }
 

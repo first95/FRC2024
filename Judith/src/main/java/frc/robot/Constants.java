@@ -213,7 +213,7 @@ public final class Constants {
         public static final double ANGULAR_ERROR_TOLERANCE = Math.toRadians(5);
         public static final int LOOP_CYCLES_BEFORE_RESET = 20;
 
-        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.003; // Meters and radians
+        public static final double ODOMETRY_TRANSLATIONAL_STD_DEV = 0.01; // Meters and radians
         public static final double ODOMETRY_ANGULAR_STD_DEV = 0.0002;
 
         public static final double XY_STD_DEV_COEFFICIENT = 0.01;
@@ -346,7 +346,9 @@ public final class Constants {
             Map.entry("ScoreAmp", new Pose2d(new Translation2d(1.83, 7.5), Rotation2d.fromDegrees(90))),
             Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0))),
             Map.entry("AmpNote", new Pose2d(new Translation2d(2.66, 6.8), new Rotation2d(0.5))),
-            Map.entry("PodiumNote", new Pose2d(new Translation2d(2.637, 4.219), new Rotation2d(-0.464)))
+            Map.entry("PodiumNote", new Pose2d(new Translation2d(2.637, 4.219), new Rotation2d(-0.464))),
+            Map.entry("DisruptorStart", new Pose2d(new Translation2d(1.193, 3.237), new Rotation2d(-1.012))),
+            Map.entry("Source3Start", new Pose2d(new Translation2d(1.473, 3.325), new Rotation2d(-0.983)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
         private static final Map<String, Pose2d> RED_MAP =
