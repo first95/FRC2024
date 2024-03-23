@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.CommandDebugFlags;
+import frc.robot.Constants.NoteHandlerSpeeds;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Vision;
 
@@ -53,7 +54,7 @@ public class Shooter extends SubsystemBase {
   private final DigitalInput noteSensor;
   private final SimpleMotorFeedforward flywheelFeedforward;
   private final ArmFeedforward shoulderFeedforward;
-  private double armFeedforwardValue, lastArmVelocitySetpoint, armAccel;
+  private double armFeedforwardValue, lastArmVelocitySetpoint, armAccel, portTargetRPM, starboardTargetRPM;
 
   private final SysIdRoutine shoulderCharacterizer, portShootCharacterizer, starboardShootCharacterizer;
 
@@ -133,6 +134,9 @@ public class Shooter extends SubsystemBase {
     starboardShooterPID.setI(ShooterConstants.KI);
     starboardShooterPID.setD(ShooterConstants.KD);
     starboardShooterPID.setFF(ShooterConstants.KF);
+
+    portTargetRPM = NoteHandlerSpeeds.PORT_IDLE;
+    starboardTargetRPM = NoteHandlerSpeeds.STARBOARD_IDLE;
 
     shoulderPID.setP(ArmConstants.KP);
     shoulderPID.setI(ArmConstants.KI);
@@ -230,10 +234,17 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterSpeed(double portRPM, double starboardRPM) {
+    portTargetRPM = portRPM;
+    starboardTargetRPM = starboardRPM;
     portShooterPID.setReference(portRPM, ControlType.kVelocity, 0, flywheelFeedforward.calculate(portRPM),
         ArbFFUnits.kVoltage);
     starboardShooterPID.setReference(starboardRPM, ControlType.kVelocity, 0,
         flywheelFeedforward.calculate(starboardRPM), ArbFFUnits.kVoltage);
+  }
+
+  public boolean shootersAtSpeeds() {
+    return Math.abs(portTargetRPM - portShooterEncoder.getVelocity()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE
+      && Math.abs(starboardTargetRPM - starboardShooterEncoder.getVelocity()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE;
   }
 
   public void setPortShooterRaw(double speed) {

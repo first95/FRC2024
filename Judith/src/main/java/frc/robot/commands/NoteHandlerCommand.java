@@ -32,8 +32,8 @@ public class NoteHandlerCommand extends Command {
   }
 
   private State currentState;
-  private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed;
-  private Rotation2d autoArmAngle, armAngle;
+  private double commandedIntakeSpeed;
+  private Rotation2d autoArmAngle;
   private boolean sensorvalue, shooterbutton, shooterAtSpeed, autoShooting, onTarget, armInPosition,
     ampAligning, ampScoring, hpLoading, ejectButton, unjamButton, climbButton, feederButton;
   private int debugFlags;
@@ -83,10 +83,6 @@ public class NoteHandlerCommand extends Command {
     sensorvalue = shooter.getNoteSensor();
     shooterbutton = shooterButtonSupplier.getAsBoolean();
     commandedIntakeSpeed = intakeSpeedAxis.getAsDouble() + SmartDashboard.getNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
-    shooterAtSpeed = (Math.abs(portShootingSpeed - shooter.getPortShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE)
-        &&
-        (Math.abs(starboardShootingSpeed - shooter.getStarboardShooterSpeed()) <= NoteHandlerSpeeds.SHOOTER_TOLERANCE);
-    armInPosition = shooter.armAtGoal();
     autoShooting = SmartDashboard.getBoolean(Auton.AUTO_SHOOTING_KEY, false);
     onTarget = SmartDashboard.getBoolean(Auton.ON_TARGET_KEY, false);
     autoArmAngle = Rotation2d
@@ -103,12 +99,15 @@ public class NoteHandlerCommand extends Command {
     switch (currentState) {
       case IDLE:
         // Set desired outputs in this state
-        intakeSpeed = commandedIntakeSpeed;
-        loaderSpeed = (commandedIntakeSpeed > 0) ? NoteHandlerSpeeds.LOADER_INTAKE
-            : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ArmConstants.LOWER_LIMIT;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader((commandedIntakeSpeed > 0) ? NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        // Test output-dependent conditions
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         // Determine if we neeed to change state
         if (sensorvalue) {
@@ -144,15 +143,17 @@ public class NoteHandlerCommand extends Command {
 
         // Don't forget this-- things get real weird when every successive case can
         // execute
-        break;
+      break;
 
       case SPOOLING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-            : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
-        armAngle = ArmConstants.MANUAL_SHOT_ANGLE;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);
+        shooter.setArmAngle(ArmConstants.MANUAL_SHOT_ANGLE);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!shooterbutton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -161,15 +162,17 @@ public class NoteHandlerCommand extends Command {
           currentState = State.SHOOTING;
         }
 
-        break;
+      break;
 
       case AUTO_SPOOLING:
-        intakeSpeed = commandedIntakeSpeed;
-        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-            : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
-        armAngle = autoArmAngle;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);
+        shooter.setArmAngle(autoArmAngle);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!autoShooting) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -178,15 +181,17 @@ public class NoteHandlerCommand extends Command {
           currentState = State.AUTO_SHOOTING;
         }
 
-        break;
+      break;
       
       case FEEDER_SPOOLING:
-        intakeSpeed = commandedIntakeSpeed;
-        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-            : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ArmConstants.LOWER_LIMIT;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!feederButton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
@@ -195,53 +200,61 @@ public class NoteHandlerCommand extends Command {
           currentState = State.FEEDER_SHOOTING;
         }
 
-        break;
+      break;
 
       case SHOOTING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-        loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
-        armAngle = ArmConstants.MANUAL_SHOT_ANGLE;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);
+        shooter.setArmAngle(ArmConstants.MANUAL_SHOT_ANGLE);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!shooterbutton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
         }
 
-        break;
+      break;
 
       case AUTO_SHOOTING:
-        intakeSpeed = commandedIntakeSpeed;
-        loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
-        armAngle = autoArmAngle;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);
+        shooter.setArmAngle(autoArmAngle);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!autoShooting) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
         }
 
-        break;
+      break;
       
       case FEEDER_SHOOTING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-        loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ArmConstants.LOWER_LIMIT;
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!feederButton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
         }
 
-        break;
+      break;
 
       case INDEXING_REV:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-        loaderSpeed = -NoteHandlerSpeeds.LOADER_INDEXING;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ArmConstants.LOWER_LIMIT;
+        intake.runRollers(commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(-NoteHandlerSpeeds.LOADER_INDEXING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!sensorvalue) {
           currentState = State.INDEXING_FWD;
@@ -271,14 +284,16 @@ public class NoteHandlerCommand extends Command {
           currentState = State.AUTO_SPOOLING;
         }
 
-        break;
+      break;
 
       case INDEXING_FWD:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-        loaderSpeed = NoteHandlerSpeeds.LOADER_INDEXING;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-        armAngle = ArmConstants.LOWER_LIMIT;
+        intake.runRollers(commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_INDEXING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (sensorvalue) {
           currentState = State.HOLDING;
@@ -308,15 +323,17 @@ public class NoteHandlerCommand extends Command {
           currentState = State.AUTO_SPOOLING;
         }
 
-        break;
+      break;
 
       case HOLDING:
-        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-            : NoteHandlerSpeeds.LOADER_IDLE;
-        portShootingSpeed = NoteHandlerSpeeds.PORT_SHOOTER;
-        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_SHOOTER;
-        armAngle = ArmConstants.LOWER_LIMIT;
+        intake.runRollers(commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
         if (!sensorvalue) {
           currentState = State.IDLE;
@@ -346,187 +363,197 @@ public class NoteHandlerCommand extends Command {
           currentState = State.AUTO_SPOOLING;
         }
 
-        break;
+      break;
 
-        case AMP_ALIGNING:
-          intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-          loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-              : NoteHandlerSpeeds.LOADER_IDLE;
-          portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
-          starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
-          armAngle = ArmConstants.AMP_ALIGNMENT_ANGLE;
+      case AMP_ALIGNING:
+        intake.runRollers(commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+          : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_AMP_SCORE, NoteHandlerSpeeds.STARBOARD_AMP_SCORE);
+        shooter.setArmAngle(ArmConstants.AMP_ALIGNMENT_ANGLE);
 
-          if (!ampAligning) {
-            currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-          }
-          if (shooterbutton) {
-            currentState = State.SPOOLING;
-          }
-          if (feederButton) {
-            currentState = State.FEEDER_SPOOLING;
-          }
-          if (autoShooting) {
-            currentState = State.AUTO_SPOOLING;
-          }
-          if (ampAligning && ampScoring) {
-            currentState = State.AMP_SCORING_A;
-          }
-        
-        break;
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
-        case AMP_SCORING_A:
-          intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-          loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-          portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
-          starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
-          armAngle = ArmConstants.AMP_SCORE_ANGLE;
-
-          if (!ampScoring) {
-            currentState = State.AMP_ALIGNING;
-          }
-          if (!ampAligning) {
-            currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-          }
-          if (shooterbutton) {
-            currentState = State.SPOOLING;
-          }
-          if (feederButton) {
-            currentState = State.FEEDER_SPOOLING;
-          }
-          if (autoShooting) {
-            currentState = State.AUTO_SPOOLING;
-          }
-          if (ampScoring && ampAligning && armInPosition) {
-            currentState = State.AMP_SCORING_B;
-          }
-
-        break;
+        if (!ampAligning) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+        if (ampAligning && ampScoring) {
+          currentState = State.AMP_SCORING_A;
+        }
       
-        case AMP_SCORING_B:
-          intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
-          loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-          portShootingSpeed = NoteHandlerSpeeds.PORT_AMP_SCORE;
-          starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_AMP_SCORE;
-          armAngle = ArmConstants.AMP_SCORE_ANGLE;
+      break;
 
-          if (!ampScoring) {
-            currentState = State.AMP_ALIGNING;
-          }
-          if (!ampAligning) {
-            currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-          }
-          if (shooterbutton) {
-            currentState = State.SPOOLING;
-          }
-          if (feederButton) {
-            currentState = State.FEEDER_SPOOLING;
-          }
-          if (autoShooting) {
-            currentState = State.AUTO_SPOOLING;
-          }
-        
-        break;
+      case AMP_SCORING_A:
+        intake.runRollers(commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_AMP_SCORE, NoteHandlerSpeeds.STARBOARD_AMP_SCORE);
+        shooter.setArmAngle(ArmConstants.AMP_SCORE_ANGLE);
 
-        case HP_STATION_LOAD:
-          intakeSpeed = NoteHandlerSpeeds.INTAKE_IDLE;
-          loaderSpeed = -NoteHandlerSpeeds.LOADER_FIRING;
-          portShootingSpeed = NoteHandlerSpeeds.SHOOTER_INTAKE;
-          starboardShootingSpeed = NoteHandlerSpeeds.SHOOTER_INTAKE;
-          armAngle = ArmConstants.HP_COLLECT_ANGLE;
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
-          if (!hpLoading) {
-            currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-          }
-          if (sensorvalue) {
-            currentState = State.INDEXING_REV;
-          }
-          if (shooterbutton) {
-            currentState = State.SPOOLING;
-          }
-          if (feederButton) {
-            currentState = State.FEEDER_SPOOLING;
-          }
-          if (autoShooting) {
-            currentState = State.AUTO_SPOOLING;
-          }
-        break;
+        if (!ampScoring) {
+          currentState = State.AMP_ALIGNING;
+        }
+        if (!ampAligning) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+        if (ampScoring && ampAligning && armInPosition) {
+          currentState = State.AMP_SCORING_B;
+        }
+
+      break;
+    
+      case AMP_SCORING_B:
+        intake.runRollers(commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_AMP_SCORE, NoteHandlerSpeeds.STARBOARD_AMP_SCORE);
+        shooter.setArmAngle(ArmConstants.AMP_SCORE_ANGLE);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
+
+        if (!ampScoring) {
+          currentState = State.AMP_ALIGNING;
+        }
+        if (!ampAligning) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
       
-        case EJECT_DOWNSPOOL:
-          intakeSpeed = commandedIntakeSpeed;
-          loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
-              : NoteHandlerSpeeds.LOADER_IDLE;
-          portShootingSpeed = NoteHandlerSpeeds.PORT_EJECT;
-          starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_EJECT;
-          armAngle = ArmConstants.LOWER_LIMIT;
+      break;
 
-          if (shooterAtSpeed) {
-            currentState = State.EJECT;
-          }
+      case HP_STATION_LOAD:
+        intake.runRollers(NoteHandlerSpeeds.INTAKE_IDLE);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.SHOOTER_INTAKE, NoteHandlerSpeeds.SHOOTER_INTAKE);
+        shooter.setArmAngle(ArmConstants.HP_COLLECT_ANGLE);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
+
+        if (!hpLoading) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (sensorvalue) {
+          currentState = State.INDEXING_REV;
+        }
+        if (shooterbutton) {
+          currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+      break;
+    
+      case EJECT_DOWNSPOOL:
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_EJECT, NoteHandlerSpeeds.STARBOARD_EJECT);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
+
+        if (shooterAtSpeed) {
+          currentState = State.EJECT;
+        }
+        if (!ejectButton) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+      break;
+    
+      case EJECT:
+          intake.runRollers(commandedIntakeSpeed);
+          shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
+          shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_EJECT, NoteHandlerSpeeds.STARBOARD_EJECT);
+          shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
+
+          shooterAtSpeed = shooter.shootersAtSpeeds();
+          armInPosition = shooter.armAtGoal();
+
           if (!ejectButton) {
             currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
           }
           if (autoShooting) {
             currentState = State.AUTO_SPOOLING;
           }
-        break;
-      
-        case EJECT:
-            intakeSpeed = commandedIntakeSpeed;
-            loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
-            portShootingSpeed = NoteHandlerSpeeds.PORT_EJECT;
-            starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_EJECT;
-            armAngle = ArmConstants.LOWER_LIMIT;
+      break;
 
-            if (!ejectButton) {
-              currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-            }
-            if (autoShooting) {
-              currentState = State.AUTO_SPOOLING;
-            }
-          break;
+      case UNJAM:
+        intake.runRollers(NoteHandlerSpeeds.INTAKE_UNJAM);
+        shooter.runLoader(NoteHandlerSpeeds.LOADER_INTAKE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
 
-          case UNJAM:
-            intakeSpeed = NoteHandlerSpeeds.INTAKE_UNJAM;
-            loaderSpeed = NoteHandlerSpeeds.LOADER_INTAKE;
-            portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
-            starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
-            armAngle = ArmConstants.LOWER_LIMIT;
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
 
-            if (!unjamButton) {
-              currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-            }
-            if (sensorvalue) {
-              currentState = State.INDEXING_REV;
-            }
-            if (ejectButton) {
-              currentState = State.EJECT_DOWNSPOOL;
-            }
-            if (autoShooting) {
-              currentState = State.AUTO_SPOOLING;
-            }
-          break;
+        if (!unjamButton) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (sensorvalue) {
+          currentState = State.INDEXING_REV;
+        }
+        if (ejectButton) {
+          currentState = State.EJECT_DOWNSPOOL;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+      break;
 
-          case CLIMB:
-            intakeSpeed = commandedIntakeSpeed;
-            loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE : NoteHandlerSpeeds.LOADER_IDLE;
-            portShootingSpeed = NoteHandlerSpeeds.PORT_CLIMB;
-            starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_CLIMB;
-            armAngle = ArmConstants.LOWER_LIMIT;
+      case CLIMB:
+        intake.runRollers(commandedIntakeSpeed);
+        shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE : NoteHandlerSpeeds.LOADER_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_CLIMB, NoteHandlerSpeeds.STARBOARD_CLIMB);
+        shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
 
-            if (!climbButton) {
-              currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
-            }
-            if (autoShooting) {
-              currentState = State.AUTO_SPOOLING;
-            }
-          break;
+        shooterAtSpeed = shooter.shootersAtSpeeds();
+        armInPosition = shooter.armAtGoal();
+
+        if (!climbButton) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (autoShooting) {
+          currentState = State.AUTO_SPOOLING;
+        }
+      break;
     }
-
-    // Apply outputs
-    intake.runRollers(intakeSpeed);
-    shooter.setShooterSpeed(portShootingSpeed, starboardShootingSpeed);
-    shooter.runLoader(loaderSpeed);
-    shooter.setArmAngle(armAngle);
 
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
     
@@ -534,10 +561,6 @@ public class NoteHandlerCommand extends Command {
     SmartDashboard.putBoolean("sensor", sensorvalue);
 
     if ((debugFlags & CommandDebugFlags.NOTE_HANDLER) != 0) {
-      SmartDashboard.putNumber("intakeSpeed", intakeSpeed);
-      SmartDashboard.putNumber("portShooterSpeed", portShootingSpeed);
-      SmartDashboard.putNumber("starboardShooterSpeed", starboardShootingSpeed);
-      SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
       SmartDashboard.putBoolean("ShooterAtSpeed", shooterAtSpeed);
       SmartDashboard.putBoolean("ChassisOnTarget", onTarget);
       SmartDashboard.putBoolean("ArmAtGoal", armInPosition);
