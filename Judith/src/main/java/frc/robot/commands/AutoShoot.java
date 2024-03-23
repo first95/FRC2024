@@ -93,11 +93,12 @@ public class AutoShoot extends Command {
     var posDelta = speakerLocation.minus(shoulderLocation);
 
     // Elevation (linear approximation)
+    var range = posDelta.toTranslation2d().getNorm();
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY,
       Math.atan(
         posDelta.getZ() /
-        posDelta.toTranslation2d().getNorm()
-      ) + ArmConstants.AUTO_SHOOT_FUDGE.getRadians()
+        range
+      ) + (ArmConstants.AUTO_SHOOT_FUDGE.getRadians() * range)
     );
 
     // Azimuth:

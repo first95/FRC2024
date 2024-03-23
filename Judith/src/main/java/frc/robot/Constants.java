@@ -264,6 +264,8 @@ public final class Constants {
         public static final double KS = 0.1506; // Volts -- Measured 2024-02-15
         public static final double KV = 0.0018042; // V * min / rotation
         public static final double KA = 0.00028741;
+
+        public static final double LAUNCH_VELOCITY = (28 * 5280 * 12 * 2.54) / (3600 * 100); // m/s, measured via radar gun on 2024-03-23
     }
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
@@ -291,7 +293,7 @@ public final class Constants {
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
 
-        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(0);
+        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(0.2773); // per meter of range
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -373,7 +375,7 @@ public final class Constants {
         );
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
-        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(4);
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(3.5);
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }
