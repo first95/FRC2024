@@ -134,7 +134,7 @@ public final class Autos {
     )
     .andThen(new WaitCommand(0.4))
     .andThen(new AutoShoot(drive, 2))
-    .andThen(new AlignToPose("PodiumNote", drive))
+    .andThen(new FollowTrajectory(trajMap.get("CenterRocketEnd"), drive, false, true))
     .andThen(new AutoShoot(drive))
     .finallyDo(() -> {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false);

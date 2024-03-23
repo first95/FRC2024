@@ -331,7 +331,7 @@ public final class Constants {
         public static final String EJECT_MODE_KEY = "PurgeModeRequested";
 
         // Trapezoidal drive PID constants
-        public static final double DRIVE_ACCELERATION_LIMIT = 2.5; // m/s/s
+        public static final double DRIVE_ACCELERATION_LIMIT = 2.2; // m/s/s
         public static final double DRIVE_VELOCITY_LIMIT = 6; // m/s
         public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
             DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);
