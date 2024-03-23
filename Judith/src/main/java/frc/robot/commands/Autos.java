@@ -132,7 +132,10 @@ public final class Autos {
       new WaitCommand(5)
       .andThen(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false)))
     )
-    .andThen(new AutoShoot(drive, 5))
+    .andThen(new WaitCommand(0.3))
+    .andThen(new AutoShoot(drive, 2))
+    .andThen(new AlignToPose("PodiumNote", drive))
+    .andThen(new AutoShoot(drive))
     .finallyDo(() -> {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
