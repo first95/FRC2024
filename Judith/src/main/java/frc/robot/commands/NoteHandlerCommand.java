@@ -23,18 +23,19 @@ public class NoteHandlerCommand extends Command {
   private final Shooter shooter;
   private final Intake intake;
   private final DoubleSupplier intakeSpeedAxis;
-  private final BooleanSupplier shooterButtonSupplier, ampAlignSupplier, ampScoreSupplier, hpStationLoadSupplier, ejectSupplier, unjamSupplier, climbSupplier;
+  private final BooleanSupplier shooterButtonSupplier, ampAlignSupplier, ampScoreSupplier,
+    hpStationLoadSupplier, ejectSupplier, unjamSupplier, climbSupplier, feederSupplier;
 
   private enum State {
     SHOOTING, IDLE, HOLDING, SPOOLING, AUTO_SPOOLING, AUTO_SHOOTING, INDEXING_REV, INDEXING_FWD, AMP_ALIGNING,
-    AMP_SCORING_A, AMP_SCORING_B, HP_STATION_LOAD, CLIMB, UNJAM, EJECT_DOWNSPOOL, EJECT;
+    AMP_SCORING_A, AMP_SCORING_B, HP_STATION_LOAD, CLIMB, UNJAM, EJECT_DOWNSPOOL, EJECT, FEEDER_SHOOTING, FEEDER_SPOOLING;
   }
 
   private State currentState;
   private double intakeSpeed, portShootingSpeed, starboardShootingSpeed, loaderSpeed, commandedIntakeSpeed;
   private Rotation2d autoArmAngle, armAngle;
   private boolean sensorvalue, shooterbutton, shooterAtSpeed, autoShooting, onTarget, armInPosition,
-    ampAligning, ampScoring, hpLoading, ejectButton, unjamButton, climbButton;
+    ampAligning, ampScoring, hpLoading, ejectButton, unjamButton, climbButton, feederButton;
   private int debugFlags;
 
   public NoteHandlerCommand(
@@ -47,7 +48,8 @@ public class NoteHandlerCommand extends Command {
       BooleanSupplier playerStationLoadSupplier,
       BooleanSupplier ejectSupplier,
       BooleanSupplier unjamSupplier,
-      BooleanSupplier climbSupplier) {
+      BooleanSupplier climbSupplier,
+      BooleanSupplier feederSupplier) {
     this.shooter = shooter;
     this.intake = intake;
     this.intakeSpeedAxis = intakeSpeedAxis;
@@ -58,6 +60,7 @@ public class NoteHandlerCommand extends Command {
     this.ejectSupplier = ejectSupplier;
     this.unjamSupplier = unjamSupplier;
     this.climbSupplier = climbSupplier;
+    this.feederSupplier = feederSupplier;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter, intake);
@@ -94,6 +97,7 @@ public class NoteHandlerCommand extends Command {
     ejectButton = ejectSupplier.getAsBoolean() || SmartDashboard.getBoolean(Auton.EJECT_MODE_KEY, false);
     unjamButton = unjamSupplier.getAsBoolean();
     climbButton = climbSupplier.getAsBoolean();
+    feederButton = feederSupplier.getAsBoolean();
 
     // Execute statemachine logic
     switch (currentState) {
@@ -130,6 +134,9 @@ public class NoteHandlerCommand extends Command {
         }
         if (shooterbutton) {
           currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
         }
         if (autoShooting) {
           currentState = State.AUTO_SPOOLING;
@@ -172,6 +179,23 @@ public class NoteHandlerCommand extends Command {
         }
 
         break;
+      
+      case FEEDER_SPOOLING:
+        intakeSpeed = commandedIntakeSpeed;
+        loaderSpeed = commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
+            : NoteHandlerSpeeds.LOADER_IDLE;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
+        armAngle = ArmConstants.LOWER_LIMIT;
+
+        if (!feederButton) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+        if (armInPosition && shooterAtSpeed && feederButton) {
+          currentState = State.FEEDER_SHOOTING;
+        }
+
+        break;
 
       case SHOOTING:
         intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
@@ -194,6 +218,19 @@ public class NoteHandlerCommand extends Command {
         armAngle = autoArmAngle;
 
         if (!autoShooting) {
+          currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
+        }
+
+        break;
+      
+      case FEEDER_SHOOTING:
+        intakeSpeed = commandedIntakeSpeed < 0 ? commandedIntakeSpeed : NoteHandlerSpeeds.INTAKE_IDLE;
+        loaderSpeed = NoteHandlerSpeeds.LOADER_FIRING;
+        portShootingSpeed = NoteHandlerSpeeds.PORT_IDLE;
+        starboardShootingSpeed = NoteHandlerSpeeds.STARBOARD_IDLE;
+        armAngle = ArmConstants.LOWER_LIMIT;
+
+        if (!feederButton) {
           currentState = sensorvalue ? State.INDEXING_REV : State.IDLE;
         }
 
@@ -226,6 +263,9 @@ public class NoteHandlerCommand extends Command {
         }
         if (shooterbutton) {
           currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
         }
         if (autoShooting) {
           currentState = State.AUTO_SPOOLING;
@@ -260,6 +300,9 @@ public class NoteHandlerCommand extends Command {
         }
         if (shooterbutton) {
           currentState = State.SPOOLING;
+        }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
         }
         if (autoShooting) {
           currentState = State.AUTO_SPOOLING;
@@ -296,6 +339,9 @@ public class NoteHandlerCommand extends Command {
         if (shooterbutton) {
           currentState = State.SPOOLING;
         }
+        if (feederButton) {
+          currentState = State.FEEDER_SPOOLING;
+        }
         if (autoShooting) {
           currentState = State.AUTO_SPOOLING;
         }
@@ -315,6 +361,9 @@ public class NoteHandlerCommand extends Command {
           }
           if (shooterbutton) {
             currentState = State.SPOOLING;
+          }
+          if (feederButton) {
+            currentState = State.FEEDER_SPOOLING;
           }
           if (autoShooting) {
             currentState = State.AUTO_SPOOLING;
@@ -341,6 +390,9 @@ public class NoteHandlerCommand extends Command {
           if (shooterbutton) {
             currentState = State.SPOOLING;
           }
+          if (feederButton) {
+            currentState = State.FEEDER_SPOOLING;
+          }
           if (autoShooting) {
             currentState = State.AUTO_SPOOLING;
           }
@@ -366,6 +418,9 @@ public class NoteHandlerCommand extends Command {
           if (shooterbutton) {
             currentState = State.SPOOLING;
           }
+          if (feederButton) {
+            currentState = State.FEEDER_SPOOLING;
+          }
           if (autoShooting) {
             currentState = State.AUTO_SPOOLING;
           }
@@ -387,6 +442,9 @@ public class NoteHandlerCommand extends Command {
           }
           if (shooterbutton) {
             currentState = State.SPOOLING;
+          }
+          if (feederButton) {
+            currentState = State.FEEDER_SPOOLING;
           }
           if (autoShooting) {
             currentState = State.AUTO_SPOOLING;
@@ -480,6 +538,9 @@ public class NoteHandlerCommand extends Command {
       SmartDashboard.putNumber("portShooterSpeed", portShootingSpeed);
       SmartDashboard.putNumber("starboardShooterSpeed", starboardShootingSpeed);
       SmartDashboard.putNumber("loaderSpeed", loaderSpeed);
+      SmartDashboard.putBoolean("ShooterAtSpeed", shooterAtSpeed);
+      SmartDashboard.putBoolean("ChassisOnTarget", onTarget);
+      SmartDashboard.putBoolean("ArmAtGoal", armInPosition);
     }
   }
 
