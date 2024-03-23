@@ -283,7 +283,7 @@ public final class Constants {
 
         public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(17.1); // Set to zero, read arm pos at hardstop, then subtract the lower limit
         public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(110);
-        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(29.9);
+        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.2);
 
         public static final Rotation2d MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(108);
@@ -291,7 +291,7 @@ public final class Constants {
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
 
-        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(1);
+        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(0);
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -303,7 +303,7 @@ public final class Constants {
 
         public static final double DEADBAND = Math.toRadians(0.5);
 
-        public static final double TOLERANCE = Math.toRadians(0.5);
+        public static final double TOLERANCE = Math.toRadians(0.3);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
         public static final double KP = 3;
