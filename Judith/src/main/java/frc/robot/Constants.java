@@ -222,14 +222,14 @@ public final class Constants {
         public static final double MAX_ALLOWABLE_Z_ERROR = 0.25; // Meters
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
-            0,
+            0.25,
             5.5474,
-            2.2585
+            2.0828
         );
         public static final Translation3d RED_SPEAKER_POS = new Translation3d(
-            FIELD_LENGTH,
+            FIELD_LENGTH - 0.25,
             5.5474,
-            2.2585
+            2.0828
         );
     }
     public static final class ShooterConstants {
