@@ -129,7 +129,7 @@ public final class Autos {
     .andThen(new AlignToPose("DisruptorStart", drive))
     .andThen(new FollowTrajectory(trajMap.get("CenterRocket"), drive, false, true))
     .alongWith(
-      new WaitCommand(7)
+      new WaitCommand(5)
       .andThen(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false)))
     )
     .andThen(new AutoShoot(drive, 5))

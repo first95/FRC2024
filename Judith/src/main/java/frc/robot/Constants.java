@@ -331,8 +331,8 @@ public final class Constants {
         public static final String EJECT_MODE_KEY = "PurgeModeRequested";
 
         // Trapezoidal drive PID constants
-        public static final double DRIVE_ACCELERATION_LIMIT = 1; // m/s/s
-        public static final double DRIVE_VELOCITY_LIMIT = 1; // m/s
+        public static final double DRIVE_ACCELERATION_LIMIT = 3; // m/s/s
+        public static final double DRIVE_VELOCITY_LIMIT = 5; // m/s
         public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
             DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);
         
@@ -347,7 +347,7 @@ public final class Constants {
             Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0))),
             Map.entry("AmpNote", new Pose2d(new Translation2d(2.66, 6.8), new Rotation2d(0.5))),
             Map.entry("PodiumNote", new Pose2d(new Translation2d(2.637, 4.219), new Rotation2d(-0.464))),
-            Map.entry("DisruptorStart", new Pose2d(new Translation2d(1.193, 3.237), new Rotation2d(-1.012))),
+            Map.entry("DisruptorStart", new Pose2d(new Translation2d(7.93, 0.713), new Rotation2d(0.016))),
             Map.entry("Source3Start", new Pose2d(new Translation2d(1.473, 3.325), new Rotation2d(-0.983)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
@@ -406,7 +406,7 @@ public final class Constants {
         public static final double PORT_AMP_SCORE = 500;
         public static final double STARBOARD_AMP_SCORE = PORT_AMP_SCORE;
         public static final double SHOOTER_INTAKE = -500;
-        public static final double PORT_EJECT = 500;
+        public static final double PORT_EJECT = 800;
         public static final double STARBOARD_EJECT = PORT_EJECT;
         public static final double PORT_CLIMB = 0;
         public static final double STARBOARD_CLIMB = PORT_CLIMB;
