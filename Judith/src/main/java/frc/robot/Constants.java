@@ -347,7 +347,7 @@ public final class Constants {
             Map.entry("CenterNearNote", new Pose2d(new Translation2d(2.63, 5.55), Rotation2d.fromDegrees(0))),
             Map.entry("AmpNote", new Pose2d(new Translation2d(2.66, 6.8), new Rotation2d(0.5))),
             Map.entry("PodiumNote", new Pose2d(new Translation2d(2.637, 4.219), new Rotation2d(-0.464))),
-            Map.entry("DisruptorStart", new Pose2d(new Translation2d(7.93, 0.713), new Rotation2d(0.016))),
+            Map.entry("DisruptorStart", new Pose2d(new Translation2d(7.964, 0.865), new Rotation2d(-0.489))),
             Map.entry("Source3Start", new Pose2d(new Translation2d(1.473, 3.325), new Rotation2d(-0.983)))
         );
         // Iterates through every element in the pose map and mirrors them for the red alliance
