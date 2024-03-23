@@ -145,6 +145,23 @@ public final class Autos {
     return command;
   }
 
+  public static Command ampMidLineThree(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
+    Command command = new AlignToPose("AmpZoneStart", drive)
+    .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
+    .andThen(new FollowTrajectory(trajMap.get("AmpSideMid1"), drive, false, true))
+    .andThen(new WaitCommand(0.3))
+    .andThen(new AutoShoot(drive, 1.8))
+    .andThen(new FollowTrajectory(trajMap.get("AmpSideMid2"), drive, false, true))
+    .andThen(new WaitCommand(0.3))
+    .andThen(new AutoShoot(drive, 1.8))
+    .andThen(new FollowTrajectory(trajMap.get("AmpSideMid3"), drive, false, true))
+    .andThen(new WaitCommand(0.3))
+    .andThen(new AutoShoot(drive))
+    .finallyDo(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0));
+    command.setName("Midfield Amp 3");
+    return command;
+  }
+
   public static Command sourceThree(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
     Command command = new AutoShoot(drive, 3)
     .andThen(new AlignToPose("Source3Start", drive))
