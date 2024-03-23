@@ -291,7 +291,7 @@ public final class Constants {
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
 
-        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(0);
+        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(1);
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -372,7 +372,7 @@ public final class Constants {
         );
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
-        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(3);
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(4);
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }

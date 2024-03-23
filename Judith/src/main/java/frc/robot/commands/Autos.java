@@ -114,6 +114,7 @@ public final class Autos {
     .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst1"), drive, false, true))
     .andThen(new AutoShoot(drive, 2))
     .andThen(new FollowTrajectory(trajMap.get("4NoteAmpFirst2"), drive, false, true))
+    .andThen(new WaitCommand(0.4))
     .andThen(new AutoShoot(drive, 4))
     .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0)))
     .finallyDo(() -> {SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);});
