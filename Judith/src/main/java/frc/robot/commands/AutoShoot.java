@@ -98,6 +98,11 @@ public class AutoShoot extends Command {
     var range = posDelta.toTranslation2d().getNorm();
     var height = posDelta.getZ();
 
+    if (range > Auton.AUTO_SHOOT_MAX_RANGE) {
+      DriverStation.reportError("AutoShoot aborted! Outside maximum range!", false);
+      cancel();
+    }
+
     // Coefficients for quadratic to do physics stuff
     var A = -(Constants.GRAVITY * Math.pow(range, 2)) / (2 * Math.pow(ShooterConstants.LAUNCH_VELOCITY, 2));
     var B = range;
