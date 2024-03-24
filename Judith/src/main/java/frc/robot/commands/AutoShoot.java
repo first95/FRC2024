@@ -15,10 +15,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.Auton;
 import frc.robot.Constants.CommandDebugFlags;
 import frc.robot.Constants.Drivebase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveBase;
 
@@ -92,14 +94,22 @@ public class AutoShoot extends Command {
       );  
     var posDelta = speakerLocation.minus(shoulderLocation);
 
-    // Elevation (linear approximation)
+    // Elevation (now with gravity!)
     var range = posDelta.toTranslation2d().getNorm();
-    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY,
-      Math.atan(
-        posDelta.getZ() /
-        range
-      ) + (ArmConstants.AUTO_SHOOT_FUDGE.getRadians() * range)
-    );
+    var height = posDelta.getZ();
+
+    // Coefficients for quadratic to do physics stuff
+    var A = -(Constants.GRAVITY * Math.pow(range, 2)) / (2 * Math.pow(ShooterConstants.LAUNCH_VELOCITY, 2));
+    var B = range;
+    var C = A - height;
+    // Discriminant
+    var D = Math.sqrt(Math.pow(B, 2) - 4 * A * C);
+    // Quadratic formula; simulating in desmos shows the addition root is the one we want
+    var root = (-B + D) / (2 * A);
+    // Solving the quadratic gives the tangent of the angle
+    double elevation = Math.atan(root);
+
+    SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, elevation);
 
     // Azimuth:
     // Note that we shoot from the back of the robot, so it may seem like this is backwards what it should be.
