@@ -145,6 +145,28 @@ public final class Autos {
     return command;
   }
 
+  public static Command ampMidlineDisruptor(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
+    Command command = new InstantCommand(() -> {
+      SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, true);
+      SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
+    })
+    .andThen(new FollowTrajectory(trajMap.get("AmpSideDisruptor"), drive, false, true))
+    .alongWith(
+      new WaitCommand(5)
+      .andThen(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false)))
+    )
+    .andThen(new WaitCommand(0.4))
+    .andThen(new AutoShoot(drive, 2))
+    .andThen(new FollowTrajectory(trajMap.get("AmpSideDisruptorEnd"), drive, false, true))
+    .andThen(new AutoShoot(drive))
+    .finallyDo(() -> {
+      SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false);
+      SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
+    });
+    command.setName("Centerline Disruptor");
+    return command;
+  }
+
   public static Command ampMidLineThree(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
     Command command = new AlignToPose("AmpZoneStart", drive)
     .andThen(new InstantCommand(() -> SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1)))
