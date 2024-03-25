@@ -376,7 +376,7 @@ public final class Constants {
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
         public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(3.5);
-        public static final double AUTO_SHOOT_MAX_RANGE = 7; // meters
+        public static final double AUTO_SHOOT_MAX_RANGE = 6.8; // meters
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }
