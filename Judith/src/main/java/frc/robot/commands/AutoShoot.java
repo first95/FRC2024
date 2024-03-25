@@ -107,10 +107,8 @@ public class AutoShoot extends Command {
     var A = -(Constants.GRAVITY * Math.pow(range, 2)) / (2 * Math.pow(ShooterConstants.LAUNCH_VELOCITY, 2));
     var B = range;
     var C = A - height;
-    // Discriminant
-    var D = Math.sqrt(Math.pow(B, 2) - 4 * A * C);
     // Quadratic formula; simulating in desmos shows the addition root is the one we want
-    var root = (-B + D) / (2 * A);
+    var root = (-B + Math.sqrt(Math.pow(B, 2) - 4 * A * C)) / (2 * A);
     // Solving the quadratic gives the tangent of the angle
     double elevation = Math.atan(root);
 
