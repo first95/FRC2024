@@ -265,7 +265,7 @@ public final class Constants {
         public static final double KV = 0.0018042; // V * min / rotation
         public static final double KA = 0.00028741;
 
-        public static final double LAUNCH_VELOCITY = (28 * 5280 * 12 * 2.54) / (3600 * 100); // m/s, measured via radar gun on 2024-03-23
+        public static final double LAUNCH_VELOCITY = 21.6; // Calculated based on surface speeds; radar gun was wrong
     }
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
