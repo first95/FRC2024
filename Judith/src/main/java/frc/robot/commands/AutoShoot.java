@@ -63,7 +63,6 @@ public class AutoShoot extends Command {
   @Override
   public void initialize() {
     SmartDashboard.putBoolean(Auton.ON_TARGET_KEY, false);
-    SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, true);
 
     debugFlags = (int) SmartDashboard.getNumber(CommandDebugFlags.FLAGS_KEY, 0);
 
@@ -83,13 +82,23 @@ public class AutoShoot extends Command {
     }
 
     currentPose = swerve.getPose();
+
+    var centerPosDelta = speakerLocation.minus(new Translation3d(currentPose.getX(), currentPose.getY(), speakerLocation.getZ()));
+
+    // Calculate azimuth using position of center of robot:
+    // Azimuth:
+    // Note that we shoot from the back of the robot, so it may seem like this is backwards what it should be.
+    angle = new Rotation2d(centerPosDelta.getX(), centerPosDelta.getY())
+      .plus(Auton.AUTO_SHOOT_AZIMUTH_ADJUSTMENT)
+      .plus(Rotation2d.fromDegrees(180)).getRadians();
+
     var shoulderLocation = 
       // package current pose into translation3d
       new Translation3d(currentPose.getX(), currentPose.getY(), 0)
       // add mount location of arm, after converting to field-relative coordinates
       .plus(
         ArmConstants.PIVOT_LOCATION.rotateBy(
-          new Rotation3d(0, 0, -currentPose.getRotation().getRadians())
+          new Rotation3d(0, 0, -angle)
         )
       );  
     var posDelta = speakerLocation.minus(shoulderLocation);
@@ -114,16 +123,13 @@ public class AutoShoot extends Command {
 
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, elevation);
 
-    // Azimuth:
-    // Note that we shoot from the back of the robot, so it may seem like this is backwards what it should be.
-    angle = new Rotation2d(posDelta.getX(), posDelta.getY())
-      .plus(Auton.AUTO_SHOOT_AZIMUTH_ADJUSTMENT)
-      .plus(Rotation2d.fromDegrees(180)).getRadians();
-
     thetaController.reset();
+
+    SmartDashboard.putBoolean(Auton.AUTO_SHOOTING_KEY, true);
 
     if ((debugFlags & CommandDebugFlags.AUTO_SHOOT) != 0) {
       SmartDashboard.putNumber("AutoShootHeading", angle);
+      SmartDashboard.putNumber("AutoShootRange", range);
     }
   }
 

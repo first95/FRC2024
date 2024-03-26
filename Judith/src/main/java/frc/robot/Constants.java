@@ -285,7 +285,7 @@ public final class Constants {
 
         public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(17.1); // Set to zero, read arm pos at hardstop, then subtract the lower limit
         public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(110);
-        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.2);
+        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(30);
 
         public static final Rotation2d MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(108);
