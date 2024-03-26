@@ -266,6 +266,12 @@ public final class Constants {
         public static final double KA = 0.00028741;
 
         public static final double LAUNCH_VELOCITY = 21.6; // Calculated based on surface speeds; radar gun was wrong
+        private static final double MAX_RANGE_AVG_SPEED = 15;
+        public static final double AUTO_SHOOT_MAX_RANGE = 4;
+        private static final double MIN_RANGE_AVG_SPEED = 25;
+        private static final double MIN_RANGE = 1;
+        public static final double DRAG_INTERPOLATION_SLOPE = (MAX_RANGE_AVG_SPEED - MIN_RANGE_AVG_SPEED) / (AUTO_SHOOT_MAX_RANGE - MIN_RANGE);
+        public static final double DRAG_INTERPOLATION_INTERCEPT = MAX_RANGE_AVG_SPEED - (DRAG_INTERPOLATION_SLOPE * AUTO_SHOOT_MAX_RANGE);
     }
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
@@ -292,8 +298,6 @@ public final class Constants {
         public static final Rotation2d AMP_SCORE_ANGLE = Rotation2d.fromDegrees(108);
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
-
-        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(0.2773); // per meter of range
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -376,7 +380,6 @@ public final class Constants {
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
         public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(3.5);
-        public static final double AUTO_SHOOT_MAX_RANGE = 6.8; // meters
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }

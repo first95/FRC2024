@@ -107,13 +107,17 @@ public class AutoShoot extends Command {
     var range = posDelta.toTranslation2d().getNorm();
     var height = posDelta.getZ();
 
-    if (range > Auton.AUTO_SHOOT_MAX_RANGE) {
+    if (range > ShooterConstants.AUTO_SHOOT_MAX_RANGE) {
       DriverStation.reportError("AutoShoot aborted! Outside maximum range!", false);
       cancel();
     }
 
+    // Linearly scale speed to account for drag— we only care about average speed (drop => time-of-flight => avg. speed)
+    // so a linear interpolation is fine.
+    var speed = range * ShooterConstants.DRAG_INTERPOLATION_SLOPE + ShooterConstants.DRAG_INTERPOLATION_INTERCEPT;
+
     // Coefficients for quadratic to do physics stuff
-    var A = -(Constants.GRAVITY * Math.pow(range, 2)) / (2 * Math.pow(ShooterConstants.LAUNCH_VELOCITY, 2));
+    var A = -(Constants.GRAVITY * Math.pow(range, 2)) / (2 * Math.pow(speed, 2));
     var B = range;
     var C = A - height;
     // Quadratic formula; simulating in desmos shows the addition root is the one we want
