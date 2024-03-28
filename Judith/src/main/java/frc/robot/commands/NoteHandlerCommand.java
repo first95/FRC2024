@@ -187,7 +187,7 @@ public class NoteHandlerCommand extends Command {
         intake.runRollers(commandedIntakeSpeed);
         shooter.runLoader(commandedIntakeSpeed < 0 ? -NoteHandlerSpeeds.LOADER_INTAKE
             : NoteHandlerSpeeds.LOADER_IDLE);
-        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);//NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
         shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
 
         shooterAtSpeed = shooter.shootersAtSpeeds();
@@ -235,7 +235,7 @@ public class NoteHandlerCommand extends Command {
       case FEEDER_SHOOTING:
         intake.runRollers(commandedIntakeSpeed);
         shooter.runLoader(NoteHandlerSpeeds.LOADER_FIRING);
-        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
+        shooter.setShooterSpeed(NoteHandlerSpeeds.PORT_SHOOTER, NoteHandlerSpeeds.STARBOARD_SHOOTER);//NoteHandlerSpeeds.PORT_IDLE, NoteHandlerSpeeds.STARBOARD_IDLE);
         shooter.setArmAngle(ArmConstants.LOWER_LIMIT);
 
         shooterAtSpeed = shooter.shootersAtSpeeds();

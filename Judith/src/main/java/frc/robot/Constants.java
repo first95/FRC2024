@@ -406,10 +406,10 @@ public final class Constants {
         public static final double LOADER_IDLE = 0;
         public static final double LOADER_INDEXING = 0.1;
 
-        public static final double PORT_SHOOTER = 4000;
-        public static final double STARBOARD_SHOOTER = 3000;
-        public static final double PORT_IDLE = 3500;
-        public static final double STARBOARD_IDLE = 2000;
+        public static final double PORT_SHOOTER = 3400;
+        public static final double STARBOARD_SHOOTER = 2600;
+        public static final double PORT_IDLE = 3400;
+        public static final double STARBOARD_IDLE = 2600;
         public static final double PORT_AMP_SCORE = 500;
         public static final double STARBOARD_AMP_SCORE = PORT_AMP_SCORE;
         public static final double SHOOTER_INTAKE = -500;
@@ -418,7 +418,7 @@ public final class Constants {
         public static final double PORT_CLIMB = 0;
         public static final double STARBOARD_CLIMB = PORT_CLIMB;
 
-        public static final double SHOOTER_TOLERANCE = 100;
+        public static final double SHOOTER_TOLERANCE = 50;
     }
     public static final class ClimberConstants {
         public static final int DEBUG_FLAG = 0b100000;
