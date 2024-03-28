@@ -107,10 +107,10 @@ public class AutoShoot extends Command {
     var range = posDelta.toTranslation2d().getNorm();
     var height = posDelta.getZ();
 
-    if (range > ShooterConstants.AUTO_SHOOT_MAX_RANGE) {
+    /*if (range > ShooterConstants.AUTO_SHOOT_MAX_RANGE) {
       DriverStation.reportError("AutoShoot aborted! Outside maximum range!", false);
       cancel();
-    }
+    }*/
 
     // Linearly scale speed to account for drag— we only care about average speed (drop => time-of-flight => avg. speed)
     // so a linear interpolation is fine.
@@ -124,6 +124,10 @@ public class AutoShoot extends Command {
     var root = (-B + Math.sqrt(Math.pow(B, 2) - 4 * A * C)) / (2 * A);
     // Solving the quadratic gives the tangent of the angle
     double elevation = Math.atan(root);
+
+    if (elevation > (Math.PI) / 2) {
+      cancel();
+    }
 
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, elevation);
 
