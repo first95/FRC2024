@@ -259,6 +259,7 @@ public class Shooter extends SubsystemBase {
     if (angle.getRadians() != armGoal.getRadians()) {
       armGoal = angle;
       profileStart = new TrapezoidProfile.State(shoulderEncoder.getPosition(), shoulderEncoder.getVelocity());
+      cyclesSinceArmNotAtGoal = 0;
       timer.stop();
       timer.reset();
       timer.start();
