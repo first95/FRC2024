@@ -163,7 +163,7 @@ public final class Autos {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 0);
     });
-    command.setName("Centerline Disruptor");
+    command.setName("Amp Disruptor");
     return command;
   }
 
