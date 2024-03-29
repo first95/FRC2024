@@ -312,7 +312,7 @@ public final class Constants {
         public static final double TOLERANCE = Math.toRadians(0.3);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double KP = 5;
+        public static final double KP = 4;
         public static final double KI = 0;
         public static final double KD = 0.2;
         public static final double KF = 0;
