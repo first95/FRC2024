@@ -129,7 +129,7 @@ public class AutoShoot extends Command {
       cancel();
     }
     if (elevation < ArmConstants.LOWER_LIMIT.getRadians()) {
-      elevation = ArmConstants.LOWER_LIMIT.getRadians();
+      elevation = ArmConstants.LOWER_LIMIT.getRadians() + ShooterConstants.DEAD_ZONE_FUDGE_OFFSET.getRadians();
     }
 
     SmartDashboard.putNumber(Auton.ARM_ANGLE_KEY, elevation);

@@ -222,12 +222,12 @@ public final class Constants {
         public static final double MAX_ALLOWABLE_Z_ERROR = 0.25; // Meters
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
-            0.25,
+            0.15,
             5.5474,
             2.0828
         );
         public static final Translation3d RED_SPEAKER_POS = new Translation3d(
-            FIELD_LENGTH - 0.25,
+            FIELD_LENGTH - 0.15,
             5.5474,
             2.0828
         );
@@ -272,6 +272,7 @@ public final class Constants {
         private static final double MIN_RANGE = 1.44;
         public static final double DRAG_INTERPOLATION_SLOPE = (MAX_RANGE_AVG_SPEED - MIN_RANGE_AVG_SPEED) / (AUTO_SHOOT_MAX_RANGE - MIN_RANGE);
         public static final double DRAG_INTERPOLATION_INTERCEPT = MAX_RANGE_AVG_SPEED - (DRAG_INTERPOLATION_SLOPE * AUTO_SHOOT_MAX_RANGE);
+        public static final Rotation2d DEAD_ZONE_FUDGE_OFFSET = Rotation2d.fromDegrees(0.2);
     }
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
@@ -307,12 +308,12 @@ public final class Constants {
         public static final double MAX_CONTROL_EFFORT = 1;
         public static final double MIN_CONTROL_EFFORT = -1;
 
-        public static final double DEADBAND = Math.toRadians(0.5);
+        public static final double DEADBAND = Math.toRadians(0.1);
 
         public static final double TOLERANCE = Math.toRadians(0.3);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double KP = 4;
+        public static final double KP = 5;
         public static final double KI = 0;
         public static final double KD = 0.2;
         public static final double KF = 0;
