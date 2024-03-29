@@ -222,12 +222,12 @@ public final class Constants {
         public static final double MAX_ALLOWABLE_Z_ERROR = 0.25; // Meters
 
         public static final Translation3d BLUE_SPEAKER_POS = new Translation3d(
-            0.25,
+            0.15,
             5.5474,
             2.0828
         );
         public static final Translation3d RED_SPEAKER_POS = new Translation3d(
-            FIELD_LENGTH - 0.25,
+            FIELD_LENGTH - 0.15,
             5.5474,
             2.0828
         );
@@ -265,7 +265,14 @@ public final class Constants {
         public static final double KV = 0.0018042; // V * min / rotation
         public static final double KA = 0.00028741;
 
-        public static final double LAUNCH_VELOCITY = (28 * 5280 * 12 * 2.54) / (3600 * 100); // m/s, measured via radar gun on 2024-03-23
+        public static final double LAUNCH_VELOCITY = 21.6; // Calculated based on surface speeds; radar gun was wrong
+        private static final double MAX_RANGE_AVG_SPEED = 12.5;
+        public static final double AUTO_SHOOT_MAX_RANGE = 5.1;
+        private static final double MIN_RANGE_AVG_SPEED = 20;
+        private static final double MIN_RANGE = 1.44;
+        public static final double DRAG_INTERPOLATION_SLOPE = (MAX_RANGE_AVG_SPEED - MIN_RANGE_AVG_SPEED) / (AUTO_SHOOT_MAX_RANGE - MIN_RANGE);
+        public static final double DRAG_INTERPOLATION_INTERCEPT = MAX_RANGE_AVG_SPEED - (DRAG_INTERPOLATION_SLOPE * AUTO_SHOOT_MAX_RANGE);
+        public static final Rotation2d DEAD_ZONE_FUDGE_OFFSET = Rotation2d.fromDegrees(0.2);
     }
     public static final class ArmConstants {
         public static final int DEBUG_FLAG = 0b1000;
@@ -285,15 +292,13 @@ public final class Constants {
 
         public static final Rotation2d ZERO_OFFSET = Rotation2d.fromDegrees(17.1); // Set to zero, read arm pos at hardstop, then subtract the lower limit
         public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(110);
-        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(28.2);
+        public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(30);
 
         public static final Rotation2d MANUAL_SHOT_ANGLE = Rotation2d.fromDegrees(50);
         public static final Rotation2d AMP_ALIGNMENT_ANGLE = Rotation2d.fromDegrees(108);
         public static final Rotation2d AMP_SCORE_ANGLE = Rotation2d.fromDegrees(108);
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
-
-        public static final Rotation2d AUTO_SHOOT_FUDGE = Rotation2d.fromDegrees(0.2773); // per meter of range
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -303,12 +308,12 @@ public final class Constants {
         public static final double MAX_CONTROL_EFFORT = 1;
         public static final double MIN_CONTROL_EFFORT = -1;
 
-        public static final double DEADBAND = Math.toRadians(0.5);
+        public static final double DEADBAND = Math.toRadians(0.1);
 
         public static final double TOLERANCE = Math.toRadians(0.3);
         public static final int SETTLE_TIME_LOOP_CYCLES = 10;
 
-        public static final double KP = 3;
+        public static final double KP = 5;
         public static final double KI = 0;
         public static final double KD = 0.2;
         public static final double KF = 0;
@@ -402,10 +407,10 @@ public final class Constants {
         public static final double LOADER_IDLE = 0;
         public static final double LOADER_INDEXING = 0.1;
 
-        public static final double PORT_SHOOTER = 5000;
-        public static final double STARBOARD_SHOOTER = 3500;
-        public static final double PORT_IDLE = 3500;
-        public static final double STARBOARD_IDLE = 2000;
+        public static final double PORT_SHOOTER = 3400;
+        public static final double STARBOARD_SHOOTER = 2600;
+        public static final double PORT_IDLE = 3400;
+        public static final double STARBOARD_IDLE = 2600;
         public static final double PORT_AMP_SCORE = 500;
         public static final double STARBOARD_AMP_SCORE = PORT_AMP_SCORE;
         public static final double SHOOTER_INTAKE = -500;
@@ -414,7 +419,7 @@ public final class Constants {
         public static final double PORT_CLIMB = 0;
         public static final double STARBOARD_CLIMB = PORT_CLIMB;
 
-        public static final double SHOOTER_TOLERANCE = 100;
+        public static final double SHOOTER_TOLERANCE = 50;
     }
     public static final class ClimberConstants {
         public static final int DEBUG_FLAG = 0b100000;

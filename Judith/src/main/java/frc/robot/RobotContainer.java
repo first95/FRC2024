@@ -13,7 +13,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Vision;
-//import frc.robot.commands.AutoAmp;
+import frc.robot.commands.AutoAmp;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.drivebase.AbsoluteDrive;

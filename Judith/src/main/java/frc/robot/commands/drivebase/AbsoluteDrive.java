@@ -126,7 +126,8 @@ public class AbsoluteDrive extends Command {
       y = Math.pow(vY.getAsDouble(), 3) * Drivebase.MAX_SPEED;
 
       // Limit velocity to prevent tippy
-      Translation2d translation = limitVelocity(new Translation2d(x, y));
+      //Translation2d translation = limitVelocity(new Translation2d(x, y));
+      Translation2d translation = new Translation2d(x, y);
       
 
       // Make the robot move
