@@ -299,6 +299,7 @@ public final class Constants {
         public static final Rotation2d AMP_SCORE_ANGLE = Rotation2d.fromDegrees(108);
         public static final Rotation2d HP_COLLECT_ANGLE = Rotation2d.fromDegrees(109);
         public static final Rotation2d CLIMB_ANGLE = Rotation2d.fromDegrees(117.7);
+        public static final Rotation2d FEEDER_SHOT_ANGLE = Rotation2d.fromDegrees(45);
 
         public static final Translation3d PIVOT_LOCATION = new Translation3d(
             0.2286,
@@ -423,6 +424,10 @@ public final class Constants {
         public static final double STARBOARD_EJECT = PORT_EJECT;
         public static final double PORT_CLIMB = 0;
         public static final double STARBOARD_CLIMB = PORT_CLIMB;
+        public static final double PORT_FEEDER = 2800;
+        public static final double STARBOARD_FEEDER = 2000;
+        public static final double PORT_LOW_FEEDER = 2100;
+        public static final double STARBOARD_LOW_FEEDER = 1700;
 
         public static final double SHOOTER_TOLERANCE = 50;
     }

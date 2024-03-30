@@ -145,7 +145,8 @@ public class RobotContainer {
         () -> operatorController.getHID().getBButton(),
         () -> operatorController.getHID().getAButton(),
         () -> operatorController.getHID().getXButton(),
-        () -> operatorController.getHID().getLeftStickButton());
+        () -> driveController.getHID().getRawButton(2),
+        () -> driveController.getHID().getRawButton(4));
 
     shooter.setDefaultCommand(noteManager);
 
