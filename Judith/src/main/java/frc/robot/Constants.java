@@ -255,7 +255,7 @@ public final class Constants {
         public static final int SHOOTER_CURRENT_LIMIT = 50; // A
         public static final int LOADER_CURRENT_LIMIT = 40; // A
 
-        public static final double SHOOTER_RAMP_RATE = 0.5; // seconds / 100% output
+        public static final double SHOOTER_RAMP_RATE = 0.2; // seconds / 100% output
 
         public static final double KP = 2E-4;
         public static final double KI = 0;
@@ -338,7 +338,7 @@ public final class Constants {
         public static final String EJECT_MODE_KEY = "PurgeModeRequested";
 
         // Trapezoidal drive PID constants
-        public static final double DRIVE_ACCELERATION_LIMIT = 2.1; // m/s/s
+        public static final double DRIVE_ACCELERATION_LIMIT = 1;//2.1; // m/s/s
         public static final double DRIVE_VELOCITY_LIMIT = 6; // m/s
         public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
             DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);

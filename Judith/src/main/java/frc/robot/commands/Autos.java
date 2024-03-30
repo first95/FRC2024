@@ -146,14 +146,15 @@ public final class Autos {
   }
 
   public static Command ampMidlineDisruptor(SwerveBase drive, Map<String, ChoreoTrajectory> trajMap) {
-    Command command = new InstantCommand(() -> {
+    Command command = new AutoShoot(drive, 1.3)
+    .andThen(new InstantCommand(() -> {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, true);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
-    })
+    }))
     .andThen(new AlignToPose("AmpDisruptorStart", drive))
     .andThen(new FollowTrajectory(trajMap.get("AmpSideDisruptor"), drive, false, true))
     .alongWith(
-      new WaitCommand(5)
+      new WaitCommand(10)
       .andThen(new InstantCommand(() -> SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, false)))
     )
     .andThen(new WaitCommand(0.4))
