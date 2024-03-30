@@ -150,6 +150,7 @@ public final class Autos {
       SmartDashboard.putBoolean(Auton.EJECT_MODE_KEY, true);
       SmartDashboard.putNumber(Auton.AUTO_INTAKE_SPEED_KEY, 1);
     })
+    .andThen(new AlignToPose("AmpDisruptorStart", drive))
     .andThen(new FollowTrajectory(trajMap.get("AmpSideDisruptor"), drive, false, true))
     .alongWith(
       new WaitCommand(5)
