@@ -325,7 +325,7 @@ public class Shooter extends SubsystemBase {
 
     lastArmVelocitySetpoint = armSetpoint.velocity;
 
-    if (Math.abs(armSetpoint.position - ArmConstants.LOWER_LIMIT.getRadians()) <= ArmConstants.DEADBAND) {
+    if (!armAtGoal() && (Math.abs(armSetpoint.position - ArmConstants.LOWER_LIMIT.getRadians()) <= ArmConstants.DEADBAND)) {
       shoulder.set(0);
       armFeedforwardValue = 0;
     } else {
