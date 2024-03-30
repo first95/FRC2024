@@ -59,7 +59,7 @@ public final class Constants {
 
         public static final int SWERVE_MODULE_CURRENT_LIMIT = 60;
 
-        public static final double HEADING_TOLERANCE = Math.toRadians(2);
+        public static final double HEADING_TOLERANCE = Math.toRadians(1.5);
 
         // Motor and encoder inversions
         public static final boolean ABSOLUTE_ENCODER_INVERT = true;
@@ -343,6 +343,11 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS = new TrapezoidProfile.Constraints(
             DRIVE_VELOCITY_LIMIT, DRIVE_ACCELERATION_LIMIT);
         
+        public static final double ANGULAR_ACCELERATION_LIMIT = 1;
+        public static final double ANGULAR_VELOCITY_LIMIT = 3;
+        public static final TrapezoidProfile.Constraints ANGULAR_CONSTRAINTS = new TrapezoidProfile.Constraints(
+            ANGULAR_VELOCITY_LIMIT, ANGULAR_ACCELERATION_LIMIT);
+        
         public static final double DRIVE_KP = 2;
         public static final double DRIVE_KI = 0;
         public static final double DRIVE_KD = 0;
@@ -380,7 +385,7 @@ public final class Constants {
         );
 
         // Added to final autoshoot calculations-- remember that we shoot from the back
-        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(3.5);
+        public static final Rotation2d AUTO_SHOOT_AZIMUTH_ADJUSTMENT = Rotation2d.fromDegrees(4);
 
         public static final double AUTO_INTAKE_SPEED = 1;
     }

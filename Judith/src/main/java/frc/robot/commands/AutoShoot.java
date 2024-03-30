@@ -125,7 +125,8 @@ public class AutoShoot extends Command {
     // Solving the quadratic gives the tangent of the angle
     double elevation = Math.atan(root);
 
-    if (elevation > (Math.PI) / 2) {
+    if (Double.isNaN(elevation) || (elevation > (Math.PI) / 2)) {
+      DriverStation.reportError("AutoShoot aborted!  Invalid solution!", false);
       cancel();
     }
     if (elevation < ArmConstants.LOWER_LIMIT.getRadians()) {
